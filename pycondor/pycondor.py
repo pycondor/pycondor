@@ -167,7 +167,7 @@ class Job(BaseSubmitNode):
 
         # Start constructing lines to go into job submit file
         lines = []
-        submit_attrs = ['universe', 'request_memory', 'request_disk', 'getenv',
+        submit_attrs = ['universe', 'executable', 'request_memory', 'request_disk', 'getenv',
             'initialdir', 'notification', 'requirements']
         for attr in submit_attrs:
             if getattr(self, attr) is not None:
