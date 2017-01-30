@@ -205,11 +205,13 @@ class Job(BaseSubmitNode):
                     self.logger.error(message)
                     raise NotImplementedError(message)
                 else:
-                    lines.append('arguments = {}'.format(base.string_rep(self.args)))
+                    lines.append('arguments = {}'.format(base.string_rep(self.args, quotes=True)))
                     lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
             elif self.args:
-                lines.append('queue 1 arguments in {}'.format(base.string_rep(self.args)))
+                for arg in self.args:
+                    lines.append('arguments = {}'.format(base.string_rep(arg)))
+                    lines.append('queue')
             elif self.queue:
                 lines.append('queue {}'.format(self.queue))
             else:
