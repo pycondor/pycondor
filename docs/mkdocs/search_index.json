@@ -1,0 +1,124 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "Welcome to the PyCondor documentation\n\u00b6\n\n\nPyCondor\n (Python HTCondor) is a tool that helps build and submit HTCondor jobs in a straight-forward manner with minimal hassle.\n\n\nMotivation\n\u00b6\n\n\nHTCondor\n is a an open-source workload management system for high-throughput computing tasks developed at the University of Wisconsin\u2013Madison. It is an incredibly useful and versatile tool. However, the process of submitting jobs to HTCondor, especially when there are inter-job dependencies, can quickly become both tedious and complex. PyCondor is a tool to help streamline this job submission process through a user-friendly API and built-in functionality to automate common tasks.\n\n\nGetting started\n\u00b6\n\n\n\n\nInstallation\n\n\nAPI\n\n\nExamples\n\n\n\n\nExample\n\u00b6\n\n\nWith just a couple lines of code, you can get PyCondor up and running!\n\n\nimport\n \npycondor\n\n\n\n# Setting up a PyCondor Job\n\n\njob\n \n=\n \npycondor\n.\nJob\n(\n'examplejob'\n,\n \n'script.py'\n)\n\n\n# Write all necessary submit files and submit job to Condor\n\n\njob\n.\nbuild_submit\n()",
+            "title": "Home"
+        },
+        {
+            "location": "/#welcome-to-the-pycondor-documentation",
+            "text": "PyCondor  (Python HTCondor) is a tool that helps build and submit HTCondor jobs in a straight-forward manner with minimal hassle.",
+            "title": "Welcome to the PyCondor documentation"
+        },
+        {
+            "location": "/#motivation",
+            "text": "HTCondor  is a an open-source workload management system for high-throughput computing tasks developed at the University of Wisconsin\u2013Madison. It is an incredibly useful and versatile tool. However, the process of submitting jobs to HTCondor, especially when there are inter-job dependencies, can quickly become both tedious and complex. PyCondor is a tool to help streamline this job submission process through a user-friendly API and built-in functionality to automate common tasks.",
+            "title": "Motivation"
+        },
+        {
+            "location": "/#getting-started",
+            "text": "Installation  API  Examples",
+            "title": "Getting started"
+        },
+        {
+            "location": "/#example",
+            "text": "With just a couple lines of code, you can get PyCondor up and running!  import   pycondor  # Setting up a PyCondor Job  job   =   pycondor . Job ( 'examplejob' ,   'script.py' )  # Write all necessary submit files and submit job to Condor  job . build_submit ()",
+            "title": "Example"
+        },
+        {
+            "location": "/installation/",
+            "text": "Installing PyCondor\n\u00b6\n\n\nPyCondor can be easily installed via pip\n\n\npip install pycondor\n\n\n\n\n\nIn addition, you can also install PyCondor by downloading the \nproject .tar file from the Python Package Index\n, unzip the download, navigate to the PyCondor project directory and run\n\n\npython setup.py install\n\n\n\n\n\nTo upgrade an existing version of PyCondor, execute the following\n\n\npip install pycondor --upgrade\n\n\n\n\n\nLastly, you can always fork the \nGitHub repository\n and install locally via\n\n\npython setup.py install",
+            "title": "Installation"
+        },
+        {
+            "location": "/installation/#installing-pycondor",
+            "text": "PyCondor can be easily installed via pip  pip install pycondor  In addition, you can also install PyCondor by downloading the  project .tar file from the Python Package Index , unzip the download, navigate to the PyCondor project directory and run  python setup.py install  To upgrade an existing version of PyCondor, execute the following  pip install pycondor --upgrade  Lastly, you can always fork the  GitHub repository  and install locally via  python setup.py install",
+            "title": "Installing PyCondor"
+        },
+        {
+            "location": "/API/",
+            "text": "PyCondor API\n\u00b6\n\n\nPyCondor consists of two objects, the \nJob\n object and the \nDagman\n object.\n\n\nThe \nJob\n object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable.\n\n\nThe \nDagman\n object is effectively just a container for \nJob\n objects\n\n\nJob\n\u00b6\n\n\nJob(name, executable, error=None, log=None, output=None, submit=cwd, request_memory=None, request_disk=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0)\n\n\nParameters\n\u00b6\n\n\n\n\n\n\nname\n : \nstr\n\n\nName of the Job instance. This will also be the name of the corresponding error, log, output, and submit files associated with this job.\n\n\n\n\n\n\nexecutable\n : \nstr\n\n\nPath to corresponding executable for Job.\n\n\n\n\n\n\nerror\n : \nstr\n (default: \nNone\n)\n\n\nPath to directory where condor job error files will be written.\n\n\n\n\n\n\nlog\n : \nstr\n (default: \nNone\n)\n\n\nPath to directory where condor job log files will be written.\n\n\n\n\n\n\noutput\n : \nstr\n (default: \nNone\n)\n\n\nPath to directory where condor job output files will be written.\n\n\n\n\n\n\nsubmit\n : \nstr\n (default: current directory)\n\n\nPath to directory where condor job submit files will be written. (Defaults to the directory was the job was submitted from).\n\n\n\n\n\n\nrequest_memory\n : \nstr\n (default: \nNone\n)\n\n\nMemory request to be included in submit file.\n\n\n\n\n\n\nrequest_disk\n : \nstr\n (default: \nNone\n)\n\n\nDisk request to be included in submit file.\n\n\n\n\n\n\ngetenv\n : \nbool\n (default: \nTrue\n)\n\n\nWhether or not to use the current environment settings when running the job.\n\n\n\n\n\n\nuniverse\n : \nstr\n (default: \n'vanilla'\n)\n\n\nUniverse execution environment to be specified in submit file.\n\n\n\n\n\n\ninitialdir\n : \nstr\n (default: \nNone\n)\n\n\nInitial directory for relative paths (defaults to the directory was the job was submitted from).\n\n\n\n\n\n\nnotification\n : \nstr\n (default: \n'never'\n)\n\n\nE-mail notification preference.\n\n\n\n\n\n\nrequirements\n : \nstr\n (default: \nNone\n)\n\n\nAdditional requirements to be included in ClassAd.\n\n\n\n\n\n\nqueue\n : \nint\n (default: \nNone\n)\n\n\nInteger specifying how many times you would like this job to run.\n\n\n\n\n\n\nextra_lines\n : \nlist\n (default: \nNone\n)\n\n\nList of additional lines to be added to submit file.\n\n\n\n\n\n\nverbose\n : \nint\n (default: 0)\n\n\nLevel of logging verbosity.\n\n\n\n\n0 \u2014 warning (least verbose)\n\n\n1 \u2014 info\n\n\n2 \u2014 debug (most verbose)\n\n\n\n\n\n\n\n\nAttributes\n\u00b6\n\n\n\n\n\n\nargs\n : \nlist\n (default: \n[]\n)\n\n\nList of command-line arguments that will be passed to the Job executable.\n\n\n\n\n\n\nparents\n : \nlist\n (default: \n[]\n)\n\n\nOnly applies when Job is in a Dagman. List of parent Jobs.\n\n\n\n\n\n\nchildren\n : \nlist\n (default: \n[]\n)\n\n\nOnly applies when Job is in a Dagman. List of child Jobs.\n\n\n\n\n\n\nMethods\n\u00b6\n\n\n\n\n\n\nadd_arg()\n\n\nAppends \narg\n to end of the \nargs\n list.\n\n\n\n\n\n\nadd_parent()\n\n\nAdds parent\n\n\n\n\n\n\nadd_child()\n\n\nAdds Child\n\n\n\n\n\n\nbuild()\n\n\nBuild submit file\n\n\n\n\n\n\nsubmit()\n\n\nSubmits Job to HTCondor\n\n\n\n\n\n\nbuild_submit()\n\n\nConvenience method. First calls \nbuild()\n, then calls \nsubmit()\n.\n\n\n\n\n\n\nDagman\n\u00b6\n\n\n[ \nback to top\n ]\n\n\nDagman(name, submit=cwd, verbose=0)\n\n\nParameters\n\u00b6\n\n\n\n\n\n\nname\n : \nstr\n\n\nName of the Dagman instance. This will also be the name of the corresponding error, log, output, and submit files associated with this Dagman.\n\n\n\n\n\n\nsubmit\n : \nstr\n (default: current directory)\n\n\nPath to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).\n\n\n\n\n\n\nverbose\n : \nint\n (default: 0)\n\n\nLevel of logging verbosity.\n\n\n\n\n0 \u2014 warning (least verbose)\n\n\n1 \u2014 info\n\n\n2 \u2014 debug (most verbose)\n\n\n\n\n\n\n\n\nAttributes\n\u00b6\n\n\n\n\njobs\n : \nlist\n (default: \n[]\n)\n\n\n\n\nMethods\n\u00b6",
+            "title": "API"
+        },
+        {
+            "location": "/API/#pycondor-api",
+            "text": "PyCondor consists of two objects, the  Job  object and the  Dagman  object.  The  Job  object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable.  The  Dagman  object is effectively just a container for  Job  objects",
+            "title": "PyCondor API"
+        },
+        {
+            "location": "/API/#job",
+            "text": "Job(name, executable, error=None, log=None, output=None, submit=cwd, request_memory=None, request_disk=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0)",
+            "title": "Job"
+        },
+        {
+            "location": "/API/#parameters",
+            "text": "name  :  str  Name of the Job instance. This will also be the name of the corresponding error, log, output, and submit files associated with this job.    executable  :  str  Path to corresponding executable for Job.    error  :  str  (default:  None )  Path to directory where condor job error files will be written.    log  :  str  (default:  None )  Path to directory where condor job log files will be written.    output  :  str  (default:  None )  Path to directory where condor job output files will be written.    submit  :  str  (default: current directory)  Path to directory where condor job submit files will be written. (Defaults to the directory was the job was submitted from).    request_memory  :  str  (default:  None )  Memory request to be included in submit file.    request_disk  :  str  (default:  None )  Disk request to be included in submit file.    getenv  :  bool  (default:  True )  Whether or not to use the current environment settings when running the job.    universe  :  str  (default:  'vanilla' )  Universe execution environment to be specified in submit file.    initialdir  :  str  (default:  None )  Initial directory for relative paths (defaults to the directory was the job was submitted from).    notification  :  str  (default:  'never' )  E-mail notification preference.    requirements  :  str  (default:  None )  Additional requirements to be included in ClassAd.    queue  :  int  (default:  None )  Integer specifying how many times you would like this job to run.    extra_lines  :  list  (default:  None )  List of additional lines to be added to submit file.    verbose  :  int  (default: 0)  Level of logging verbosity.   0 \u2014 warning (least verbose)  1 \u2014 info  2 \u2014 debug (most verbose)",
+            "title": "Parameters"
+        },
+        {
+            "location": "/API/#attributes",
+            "text": "args  :  list  (default:  [] )  List of command-line arguments that will be passed to the Job executable.    parents  :  list  (default:  [] )  Only applies when Job is in a Dagman. List of parent Jobs.    children  :  list  (default:  [] )  Only applies when Job is in a Dagman. List of child Jobs.",
+            "title": "Attributes"
+        },
+        {
+            "location": "/API/#methods",
+            "text": "add_arg()  Appends  arg  to end of the  args  list.    add_parent()  Adds parent    add_child()  Adds Child    build()  Build submit file    submit()  Submits Job to HTCondor    build_submit()  Convenience method. First calls  build() , then calls  submit() .",
+            "title": "Methods"
+        },
+        {
+            "location": "/API/#dagman",
+            "text": "[  back to top  ]  Dagman(name, submit=cwd, verbose=0)",
+            "title": "Dagman"
+        },
+        {
+            "location": "/API/#parameters_1",
+            "text": "name  :  str  Name of the Dagman instance. This will also be the name of the corresponding error, log, output, and submit files associated with this Dagman.    submit  :  str  (default: current directory)  Path to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).    verbose  :  int  (default: 0)  Level of logging verbosity.   0 \u2014 warning (least verbose)  1 \u2014 info  2 \u2014 debug (most verbose)",
+            "title": "Parameters"
+        },
+        {
+            "location": "/API/#attributes_1",
+            "text": "jobs  :  list  (default:  [] )",
+            "title": "Attributes"
+        },
+        {
+            "location": "/API/#methods_1",
+            "text": "",
+            "title": "Methods"
+        },
+        {
+            "location": "/examples/",
+            "text": "Job examples\n\u00b6\n\n\nBasic Job submission\n\u00b6\n\n\nimport\n \npycondor\n\n\n\n# Declare the error, output, log, and submit directories for Condor Job\n\n\nerror\n \n=\n \n'condor/error'\n\n\noutput\n \n=\n \n'condor/output'\n\n\nlog\n \n=\n \n'condor/log'\n\n\nsubmit\n \n=\n \n'condor/submit'\n\n\n\n# Setting up a PyCondor Job\n\n\njob\n \n=\n \npycondor\n.\nJob\n(\n'examplejob'\n,\n \n'savelist.py'\n,\n\n               \nerror\n=\nerror\n,\n \noutput\n=\noutput\n,\n\n               \nlog\n=\nlog\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Write all necessary submit files and submit job to Condor\n\n\njob\n.\nbuild_submit\n()\n\n\n\n\n\n\nAdding arguments to a Job\n\u00b6\n\n\nimport\n \npycondor\n\n\n\n# Declare the error, output, log, and submit directories for Condor Job\n\n\nerror\n \n=\n \n'condor/error'\n\n\noutput\n \n=\n \n'condor/output'\n\n\nlog\n \n=\n \n'condor/log'\n\n\nsubmit\n \n=\n \n'condor/submit'\n\n\n\n# Setting up a PyCondor Job\n\n\njob\n \n=\n \npycondor\n.\nJob\n(\n'examplejob'\n,\n \n'savelist.py'\n,\n\n               \nerror\n=\nerror\n,\n \noutput\n=\noutput\n,\n\n               \nlog\n=\nlog\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Adding arguments to job\n\n\njob\n.\nadd_arg\n(\n'--length 50'\n)\n\n\njob\n.\nadd_arg\n(\n'--length 100'\n)\n\n\njob\n.\nadd_arg\n(\n'--length 200'\n)\n\n\n# Write all necessary submit files and submit job to Condor\n\n\njob\n.\nbuild_submit\n()\n\n\n\n\n\n\n\n\nDagman examples\n\u00b6\n\n\nAdding Jobs to a Dagman\n\u00b6\n\n\nimport\n \npycondor\n\n\n\n# Declare the error, output, log, and submit directories for Condor Job\n\n\nerror\n \n=\n \n'condor/error'\n\n\noutput\n \n=\n \n'condor/output'\n\n\nlog\n \n=\n \n'condor/log'\n\n\nsubmit\n \n=\n \n'condor/submit'\n\n\n\n# Setting up a PyCondor Job\n\n\njob\n \n=\n \npycondor\n.\nJob\n(\n'examplejob'\n,\n \n'savelist.py'\n,\n\n               \nerror\n=\nerror\n,\n \noutput\n=\noutput\n,\n\n               \nlog\n=\nlog\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Adding arguments to job\n\n\njob\n.\nadd_arg\n(\n'--length 50'\n)\n\n\njob\n.\nadd_arg\n(\n'--length 100'\n)\n\n\njob\n.\nadd_arg\n(\n'--length 200'\n)\n\n\n\n# Setting up a PyCondor Dagman\n\n\ndagman\n \n=\n \npycondor\n.\nDagman\n(\n'exampledagman'\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Add job to dagman\n\n\ndagman\n.\nadd_job\n(\njob\n)\n\n\n# Write all necessary submit files and submit job to Condor\n\n\ndagman\n.\nbuild_submit\n()\n\n\n\n\n\n\nCreating inter-job dependencies\n\u00b6\n\n\nimport\n \npycondor\n\n\n\n# Declare the error, output, log, and submit directories for Condor Job\n\n\nerror\n \n=\n \n'condor/error'\n\n\noutput\n \n=\n \n'condor/output'\n\n\nlog\n \n=\n \n'condor/log'\n\n\nsubmit\n \n=\n \n'condor/submit'\n\n\n\n# Setting up first PyCondor Job\n\n\njob1\n \n=\n \npycondor\n.\nJob\n(\n'examplejob1'\n,\n \n'savelist.py'\n,\n\n               \nerror\n=\nerror\n,\n \noutput\n=\noutput\n,\n\n               \nlog\n=\nlog\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Adding arguments to job1\n\n\njob1\n.\nadd_arg\n(\n'--length 100'\n)\n\n\n# Setting up second PyCondor Job\n\n\njob2\n \n=\n \npycondor\n.\nJob\n(\n'examplejob2'\n,\n \n'savelist.py'\n,\n\n               \nerror\n=\nerror\n,\n \noutput\n=\noutput\n,\n\n               \nlog\n=\nlog\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Adding arguments to job1\n\n\njob2\n.\nadd_arg\n(\n'--length 200'\n)\n\n\n\n# Add interjob reltionship.\n\n\n# Ensure that job1 is complete before job2 starts\n\n\njob1\n.\nadd_child\n(\njob2\n)\n\n\n\n# Setting up a PyCondor Dagman\n\n\ndagman\n \n=\n \npycondor\n.\nDagman\n(\n'exampledagman'\n,\n \nsubmit\n=\nsubmit\n,\n \nverbose\n=\n2\n)\n\n\n# Add jobs to dagman\n\n\ndagman\n.\nadd_job\n(\njob1\n)\n\n\ndagman\n.\nadd_job\n(\njob2\n)\n\n\n# Write all necessary submit files and submit job to Condor\n\n\ndagman\n.\nbuild_submit\n()",
+            "title": "Examples"
+        },
+        {
+            "location": "/examples/#job-examples",
+            "text": "",
+            "title": "Job examples"
+        },
+        {
+            "location": "/examples/#basic-job-submission",
+            "text": "import   pycondor  # Declare the error, output, log, and submit directories for Condor Job  error   =   'condor/error'  output   =   'condor/output'  log   =   'condor/log'  submit   =   'condor/submit'  # Setting up a PyCondor Job  job   =   pycondor . Job ( 'examplejob' ,   'savelist.py' , \n                error = error ,   output = output , \n                log = log ,   submit = submit ,   verbose = 2 )  # Write all necessary submit files and submit job to Condor  job . build_submit ()",
+            "title": "Basic Job submission"
+        },
+        {
+            "location": "/examples/#adding-arguments-to-a-job",
+            "text": "import   pycondor  # Declare the error, output, log, and submit directories for Condor Job  error   =   'condor/error'  output   =   'condor/output'  log   =   'condor/log'  submit   =   'condor/submit'  # Setting up a PyCondor Job  job   =   pycondor . Job ( 'examplejob' ,   'savelist.py' , \n                error = error ,   output = output , \n                log = log ,   submit = submit ,   verbose = 2 )  # Adding arguments to job  job . add_arg ( '--length 50' )  job . add_arg ( '--length 100' )  job . add_arg ( '--length 200' )  # Write all necessary submit files and submit job to Condor  job . build_submit ()",
+            "title": "Adding arguments to a Job"
+        },
+        {
+            "location": "/examples/#dagman-examples",
+            "text": "",
+            "title": "Dagman examples"
+        },
+        {
+            "location": "/examples/#adding-jobs-to-a-dagman",
+            "text": "import   pycondor  # Declare the error, output, log, and submit directories for Condor Job  error   =   'condor/error'  output   =   'condor/output'  log   =   'condor/log'  submit   =   'condor/submit'  # Setting up a PyCondor Job  job   =   pycondor . Job ( 'examplejob' ,   'savelist.py' , \n                error = error ,   output = output , \n                log = log ,   submit = submit ,   verbose = 2 )  # Adding arguments to job  job . add_arg ( '--length 50' )  job . add_arg ( '--length 100' )  job . add_arg ( '--length 200' )  # Setting up a PyCondor Dagman  dagman   =   pycondor . Dagman ( 'exampledagman' ,   submit = submit ,   verbose = 2 )  # Add job to dagman  dagman . add_job ( job )  # Write all necessary submit files and submit job to Condor  dagman . build_submit ()",
+            "title": "Adding Jobs to a Dagman"
+        },
+        {
+            "location": "/examples/#creating-inter-job-dependencies",
+            "text": "import   pycondor  # Declare the error, output, log, and submit directories for Condor Job  error   =   'condor/error'  output   =   'condor/output'  log   =   'condor/log'  submit   =   'condor/submit'  # Setting up first PyCondor Job  job1   =   pycondor . Job ( 'examplejob1' ,   'savelist.py' , \n                error = error ,   output = output , \n                log = log ,   submit = submit ,   verbose = 2 )  # Adding arguments to job1  job1 . add_arg ( '--length 100' )  # Setting up second PyCondor Job  job2   =   pycondor . Job ( 'examplejob2' ,   'savelist.py' , \n                error = error ,   output = output , \n                log = log ,   submit = submit ,   verbose = 2 )  # Adding arguments to job1  job2 . add_arg ( '--length 200' )  # Add interjob reltionship.  # Ensure that job1 is complete before job2 starts  job1 . add_child ( job2 )  # Setting up a PyCondor Dagman  dagman   =   pycondor . Dagman ( 'exampledagman' ,   submit = submit ,   verbose = 2 )  # Add jobs to dagman  dagman . add_job ( job1 )  dagman . add_job ( job2 )  # Write all necessary submit files and submit job to Condor  dagman . build_submit ()",
+            "title": "Creating inter-job dependencies"
+        }
+    ]
+}
