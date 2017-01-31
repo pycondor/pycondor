@@ -417,8 +417,8 @@
                 <p><a id='top'> </a></p>
 <h1 id="pycondor-api">PyCondor API<a class="headerlink" href="#pycondor-api" title="Permanent link">&para;</a></h1>
 <p>PyCondor consists of two objects, the <code>Job</code> object and the <code>Dagman</code> object.</p>
-<p>The <code>Job</code> object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable.</p>
-<p>The <code>Dagman</code> object is effectively just a container for <code>Job</code> objects</p>
+<p>The <code>Job</code> object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable. <code>Job</code> objects can be submitted directly to HTCondor, or can be included in a <code>Dagman</code> object for additional job management functionality.</p>
+<p>The <code>Dagman</code> object acts as a container for <code>Job</code> objects. <code>Dagman</code> objects also handle any inter-job dependencies, such as parent-child relationships between jobs.</p>
 <h2 id="job">Job<a class="headerlink" href="#job" title="Permanent link">&para;</a></h2>
 <p><strong>Job(name, executable, error=None, log=None, output=None, submit=cwd, request_memory=None, request_disk=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0)</strong></p>
 <h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
@@ -501,38 +501,72 @@
 </li>
 <li>
 <p><code>parents</code> : <code>list</code> (default: <code>[]</code>)</p>
-<p>Only applies when Job is in a Dagman. List of parent Jobs.</p>
+<p><em>Only applies when Job is in a Dagman</em>. List of parent Jobs. Dagman will ensure that Jobs in the parents list will complete before this Job is submitted to HTCondor.</p>
 </li>
 <li>
 <p><code>children</code> : <code>list</code> (default: <code>[]</code>)</p>
-<p>Only applies when Job is in a Dagman. List of child Jobs.</p>
+<p><em>Only applies when Job is in a Dagman</em>. List of child Jobs. Dagman will ensure that Jobs in the children list will be submitted to HTCondor only after this Job has completed.</p>
 </li>
 </ul>
 <h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><code>add_arg()</code></p>
-<p>Appends <code>arg</code> to end of the <code>args</code> list.</p>
+<p><code>add_arg(arg)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>arg</code> : <code>str</code></p>
+<p>Argument to append to Job <code>args</code> list.</p>
+</li>
+</ul>
 </li>
 <li>
-<p><code>add_parent()</code></p>
-<p>Adds parent</p>
+<p><code>add_parent(job)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>job</code> : <code>Job</code></p>
+<p>Job to append to the <code>parents</code> list.</p>
+</li>
+</ul>
 </li>
 <li>
-<p><code>add_child()</code></p>
-<p>Adds Child</p>
+<p><code>add_child(job)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>job</code> : <code>Job</code></p>
+<p>Job to append to the <code>children</code> list.</p>
+</li>
+</ul>
 </li>
 <li>
-<p><code>build()</code></p>
-<p>Build submit file</p>
+<p><code>build(makedirs, fancyname)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>makedirs</code> : <code>bool</code> (default: <code>True</code>)</p>
+<p>If specified Job directories (e.g. error, output, log, submit) don't exist, create them.</p>
 </li>
 <li>
-<p><code>submit()</code></p>
-<p>Submits Job to HTCondor</p>
+<p><code>fancyname</code> : <code>bool</code> (default: <code>True</code>)</p>
+<p>Appends the date and unique id number to error, log, output, and submit files. For example, instead of <code>jobname.submit</code> the submit file becomes <code>jobname_YYYYMMD_id</code>. This is useful when running several Jobs of the same name.</p>
+</li>
+</ul>
 </li>
 <li>
-<p><code>build_submit()</code></p>
-<p>Convenience method. First calls <code>build()</code>, then calls <code>submit()</code>.</p>
+<p><code>submit_job(kwargs)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>kwargs</code> : <code>dict</code> (default: <code>{}</code>)</p>
+<p>Any additional options you would like specified when <code>condor_submit</code> is called (see HTCondor <a href="http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html">documentation</a> for possible options). For example, if you would like to add <code>-maxjobs 1000</code> to the <code>condor_submit</code> command, then <code>kwargs = {'-maxjobs': 1000}</code>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>build_submit(makedirs, fancyname, kwargs)</code></p>
+<p>Convenience method. First calls <code>build()</code> then <code>submit_job()</code>, with appropriate arguments.</p>
 </li>
 </ul>
 <h2 id="dagman">Dagman<a class="headerlink" href="#dagman" title="Permanent link">&para;</a></h2>
@@ -560,9 +594,52 @@
 </ul>
 <h3 id="attributes_1">Attributes<a class="headerlink" href="#attributes_1" title="Permanent link">&para;</a></h3>
 <ul>
-<li><code>jobs</code> : <code>list</code> (default: <code>[]</code>)</li>
+<li>
+<p><code>jobs</code> : <code>list</code> (default: <code>[]</code>)</p>
+<p>List of Job objects to be included in DAGMan submit file.</p>
+</li>
 </ul>
 <h3 id="methods_1">Methods<a class="headerlink" href="#methods_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>add_job(job)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>job</code> : <code>Job</code></p>
+<p>Job to append to the <code>jobs</code> list.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>build(makedirs, fancyname)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>makedirs</code> : <code>bool</code> (default: <code>True</code>)</p>
+<p>If specified Dagman and/or Job directories (e.g. error, output, log, submit) don't exist, create them.</p>
+</li>
+<li>
+<p><code>fancyname</code> : <code>bool</code> (default: <code>True</code>)</p>
+<p>Appends the date and unique id number to error, log, output, and submit files. For example, instead of <code>jobname.submit</code> the submit file becomes <code>jobname_YYYYMMD_id</code>. This is useful when running several Jobs of the same name.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>submit_dag(kwargs)</code></p>
+<p>Parameters:</p>
+<ul>
+<li>
+<p><code>kwargs</code> : <code>dict</code> (default: <code>{}</code>)</p>
+<p>Any additional options you would like specified when <code>condor_submit_dag</code> is called (see HTCondor <a href="http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html">documentation</a> for possible options). For example, if you would like to add <code>-maxjobs 1000</code> to the <code>condor_submit_dag</code> command, then <code>kwargs = {'-maxjobs': 1000}</code>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>build_submit(makedirs, fancyname, kwargs)</code></p>
+<p>Convenience method. First calls <code>build()</code> then <code>submit_dag()</code>, with appropriate arguments.</p>
+</li>
+</ul>
               
             </article>
           </div>
