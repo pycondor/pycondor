@@ -29,7 +29,7 @@ class BaseSubmitNode(object):
 
 class Job(BaseSubmitNode):
 
-    def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(), request_memory=None, request_disk=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0):
+    def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(), request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0):
 
         super(Job, self).__init__(name, submit, verbose)
 
@@ -39,6 +39,7 @@ class Job(BaseSubmitNode):
         self.output = output
         self.request_memory = request_memory
         self.request_disk = request_disk
+        self.request_cpus = request_cpus
         self.getenv = getenv
         self.universe = universe
         self.initialdir = initialdir
@@ -167,8 +168,7 @@ class Job(BaseSubmitNode):
 
         # Start constructing lines to go into job submit file
         lines = []
-        submit_attrs = ['universe', 'executable', 'request_memory', 'request_disk', 'getenv',
-            'initialdir', 'notification', 'requirements']
+        submit_attrs = ['universe', 'executable', 'request_memory', 'request_disk', 'request_cpus', 'getenv', 'initialdir', 'notification', 'requirements']
         for attr in submit_attrs:
             if getattr(self, attr) is not None:
                 attr_str = base.string_rep(getattr(self, attr))

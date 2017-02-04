@@ -311,6 +311,17 @@
   </li>
 
     
+      
+      
+  <li class="md-nav__item">
+    
+      <a href="../releasenotes/" title="Release notes" class="md-nav__link">
+        Release notes
+      </a>
+    
+  </li>
+
+    
   </ul>
 </nav>
                   </div>
@@ -420,7 +431,7 @@
 <p>The <code>Job</code> object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable. <code>Job</code> objects can be submitted directly to HTCondor, or can be included in a <code>Dagman</code> object for additional job management functionality.</p>
 <p>The <code>Dagman</code> object acts as a container for <code>Job</code> objects. <code>Dagman</code> objects also handle any inter-job dependencies, such as parent-child relationships between jobs.</p>
 <h2 id="job">Job<a class="headerlink" href="#job" title="Permanent link">&para;</a></h2>
-<p><strong>Job(name, executable, error=None, log=None, output=None, submit=cwd, request_memory=None, request_disk=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0)</strong></p>
+<p><strong>Job(name, executable, error=None, log=None, output=None, submit=cwd, request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0)</strong></p>
 <h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
@@ -454,6 +465,11 @@
 <li>
 <p><code>request_disk</code> : <code>str</code> (default: <code>None</code>)</p>
 <p>Disk request to be included in submit file.</p>
+</li>
+<li>
+<p><code>request_cpus</code> : <code>int</code> (default: <code>None</code>)</p>
+<p><em>(Added in version 0.0.2)</em></p>
+<p>Number of CPUs to request in submit file.</p>
 </li>
 <li>
 <p><code>getenv</code> : <code>bool</code> (default: <code>True</code>)</p>
