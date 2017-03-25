@@ -15,7 +15,7 @@ class BaseSubmitNode(object):
         self.submit = submit
         self._built = False
         # Set up logger
-        self.logger = logger.setup_logger(self, verbose)
+        self.logger = logger._setup_logger(self, verbose)
 
     def _get_fancyname(self):
         date = time.strftime('%Y%m%d')
