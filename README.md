@@ -1,3 +1,7 @@
+![pypi version](https://img.shields.io/pypi/v/pycondor.svg 'pypi version')
+![pypi status](https://img.shields.io/pypi/status/pycondor.svg 'pypi status')
+![license](https://img.shields.io/pypi/l/pycondor.svg 'license')
+
 ## PyCondor (Python HTCondor)
 
 [HTCondor](https://research.cs.wisc.edu/htcondor/) is a an open-source workload management system for high throughput computing developed at the University of Wisconsin–Madison. PyCondor is a tool that helps **build and submit HTCondor submission files in a straight-forward manner with minimal hassle**.
