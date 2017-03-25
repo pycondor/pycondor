@@ -4,11 +4,11 @@ import logging
 
 # Specify logging settings
 logging.basicConfig(
-    format='%(levelname)s: dagmanager - %(name)s : %(message)s')
+    format='%(levelname)s: pycondor - %(name)s : %(message)s')
 logging_level_dict = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
 
 
-def setup_logger(cls, verbose):
+def _setup_logger(cls, verbose=0):
     """Configures and returns logger instance.
 
     This function takes a class instance (which must have a `name` attribute)
@@ -18,8 +18,7 @@ def setup_logger(cls, verbose):
     Parameters
     ----------
     cls : object
-        dagmanager class instance with attribute `name` (e.g. CondorExecutable,
-        CondorJob, DagManager)
+        Class instance with attribute `name` (e.g. Dagman, Job)
     verbose: int
         Verbosity level. Values can be 0, 1, or 2, with 0 being the least
         verbose and 2 being the most verbose.
@@ -29,10 +28,10 @@ def setup_logger(cls, verbose):
     logger : logging.Logger
         Configured logger
 
-    The dagmanager classes each have their own seperate loggers in order to
+    Allows classes to each have their own seperate loggers in order to
     allow for varying levels of verbosity. For example, you might want low
-    verbosity for CondorExecutable classes, but high verbosity for DagManager
-    classes. setup_logger() helps streamline this process.
+    verbosity for a pycondor Job, but high verbosity for a Dagman
+    class. setup_logger() helps streamline this process.
     """
     # Set up logger
     if verbose not in logging_level_dict:
