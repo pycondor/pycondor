@@ -111,6 +111,12 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 
         Argument to append to Job `args` list.
 
+    *Returns:*
+
+    * `self` : `Job`
+
+        Returns self.
+
 * `add_parent(job)`
 
     *Parameters:*
@@ -119,6 +125,13 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 
         Job to append to the `parents` list.
 
+    *Returns:*
+
+    * `self` : `Job`
+
+        Returns self.
+        
+
 * `add_child(job)`
 
     *Parameters:*
@@ -126,6 +139,12 @@ The `Job` object consists of an executable to run on Condor, any specifications 
     * `job` : `Job`
 
         Job to append to the `children` list.
+
+    *Returns:*
+
+    * `self` : `Job`
+
+        Returns self.
 
 
 * `build(makedirs, fancyname)`
@@ -139,6 +158,12 @@ The `Job` object consists of an executable to run on Condor, any specifications 
     * `fancyname` : `bool` (default: `True`)
 
         Appends the date and unique id number to error, log, output, and submit files. For example, instead of `jobname.submit` the submit file becomes `jobname_YYYYMMD_id`. This is useful when running several Jobs of the same name.
+
+    *Returns:*
+
+    * `self` : `Job`
+
+        Returns self.
 
 * `submit_job(kwargs)`
 

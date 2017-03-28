@@ -69,7 +69,8 @@ class Job(BaseSubmitNode):
         self.args.append(arg_str)
         self.logger.debug(
             'Added argument \'{}\' to Job {}'.format(arg_str, self.name))
-        return
+
+        return self
 
     def add_args(self, args):
         try:
@@ -79,7 +80,7 @@ class Job(BaseSubmitNode):
             raise TypeError(
                 'add_args() is expecting an iterable of argument strings')
 
-        return
+        return self
 
     def _hasparent(self, job):
         return job in self.parents
@@ -91,7 +92,7 @@ class Job(BaseSubmitNode):
 
         # Don't bother continuing if job is already in the parents list
         if self._hasparent(job):
-            return
+            return self
 
         # Add job to existing parents
         self.parents.append(job)
@@ -101,7 +102,7 @@ class Job(BaseSubmitNode):
         # Add self Job instance as a child to the new parent job
         job.add_child(self)
 
-        return
+        return self
 
     def add_parents(self, job_list):
 
@@ -112,7 +113,7 @@ class Job(BaseSubmitNode):
         except:
             raise TypeError('add_parents() is expecting an iterable of Jobs')
 
-        return
+        return self
 
     def _haschild(self, job):
         return job in self.children
@@ -124,7 +125,7 @@ class Job(BaseSubmitNode):
 
         # Don't bother continuing if job is already in the children list
         if self._haschild(job):
-            return
+            return self
 
         # Add job to existing children
         self.children.append(job)
@@ -133,7 +134,7 @@ class Job(BaseSubmitNode):
         # Add this Job instance as a parent to the new child job
         job.add_parent(self)
 
-        return
+        return self
 
     def add_children(self, jobs):
 
@@ -144,7 +145,7 @@ class Job(BaseSubmitNode):
         except:
             raise TypeError('add_children() is expecting a list of Jobs')
 
-        return
+        return self
 
     def haschildren(self):
         return bool(self.children)
@@ -231,7 +232,8 @@ class Job(BaseSubmitNode):
         self._make_submit_script(makedirs, fancyname, indag=False)
         self._built = True
         self.logger.info('Condor submission file for {} successfully built!'.format(self.name))
-        return
+
+        return self
 
     def _build_from_dag(self, makedirs=True, fancyname=True):
         self.logger.debug(
@@ -239,6 +241,7 @@ class Job(BaseSubmitNode):
         self._make_submit_script(makedirs, fancyname, indag=True)
         self._built = True
         self.logger.debug('Condor submission file for {} successfully built!'.format(self.name))
+
         return
 
     def submit_job(self, **kwargs):
@@ -258,11 +261,13 @@ class Job(BaseSubmitNode):
         for option in kwargs:
             command += ' {} {}'.format(option, kwargs[option])
         os.system(command)
+
         return
 
     def build_submit(self, makedirs=True, fancyname=True, **kwargs):
         self.build(makedirs, fancyname)
         self.submit_job(**kwargs)
+
         return
 
 
@@ -281,6 +286,7 @@ class Dagman(BaseSubmitNode):
             if getattr(self, attr) and attr not in ['name', 'jobs', 'logger']:
                 nondefaults += ', {}={}'.format(attr, getattr(self, attr))
         output = 'Dagman(name={}, n_jobs={}{})'.format(self.name, len(self.jobs), nondefaults)
+
         return output
 
     def __iter__(self):
@@ -292,7 +298,7 @@ class Dagman(BaseSubmitNode):
     def add_job(self, job):
         # Don't bother adding job if it's already in the jobs list
         if self._hasjob(job):
-            return
+            return self
         if isinstance(job, Job):
             self.jobs.append(job)
         else:
@@ -300,7 +306,7 @@ class Dagman(BaseSubmitNode):
         self.logger.debug(
             'Added Job {} Dagman {}'.format(job.name, self.name))
 
-        return
+        return self
 
     def build(self, makedirs=True, fancyname=True):
         for job in self.jobs:
@@ -336,7 +342,7 @@ class Dagman(BaseSubmitNode):
         self._built = True
         self.logger.info('DAGMan submission file for {} successfully built!'.format(self.name))
 
-        return
+        return self
 
     def submit_dag(self, maxjobs=3000, **kwargs):
         command = 'condor_submit_dag -maxjobs {} {}'.format(
@@ -344,9 +350,11 @@ class Dagman(BaseSubmitNode):
         for option in kwargs:
             command += ' {} {}'.format(option, kwargs[option])
         os.system(command)
+
         return
 
     def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000, **kwargs):
         self.build(makedirs, fancyname)
         self.submit_dag(maxjobs, **kwargs)
+
         return

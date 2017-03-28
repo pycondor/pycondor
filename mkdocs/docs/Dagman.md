@@ -40,6 +40,12 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
 
         Job to append to the `jobs` list.
 
+    *Returns:*
+
+    * `self` : `Job`
+
+        Returns self.
+
 * `build(makedirs, fancyname)`
 
     *Parameters:*
@@ -51,6 +57,13 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
     * `fancyname` : `bool` (default: `True`)
 
         Appends the date and unique id number to error, log, output, and submit files. For example, instead of `jobname.submit` the submit file becomes `jobname_YYYYMMD_id`. This is useful when running several Jobs of the same name.
+
+    *Returns:*
+
+    * `self` : `Job`
+
+        Returns self.
+
 
 * `submit_dag(kwargs)`
 
