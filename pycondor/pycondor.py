@@ -356,5 +356,5 @@ class Dagman(BaseSubmitNode):
     def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000, **kwargs):
         self.build(makedirs, fancyname)
         self.submit_dag(maxjobs, **kwargs)
-        
+
         return
