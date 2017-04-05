@@ -1,5 +1,7 @@
 
 import os
+import subprocess
+
 
 def checkdir(path, makedirs):
     assert path is not None, 'path must me non-NoneType'
@@ -16,8 +18,7 @@ def checkdir(path, makedirs):
     return
 
 
-def list_queue():
-    import subprocess
+def get_queue():
     proc = subprocess.Popen(["condor_q"], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
     return out
