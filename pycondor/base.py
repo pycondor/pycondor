@@ -1,5 +1,7 @@
 
 import os
+import subprocess
+
 
 def checkdir(path, makedirs):
     assert path is not None, 'path must me non-NoneType'
@@ -15,6 +17,12 @@ def checkdir(path, makedirs):
             raise OSError('The directory {} doesn\'t exist'.format(outdir))
     return
 
+
+def get_queue():
+    proc = subprocess.Popen(["condor_q"], stdout=subprocess.PIPE, shell=True)
+    (out, err) = proc.communicate()
+    return out
+    
 
 def string_rep(obj, quotes=False):
     '''Converts basic python objects to a string representation
