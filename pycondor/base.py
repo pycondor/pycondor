@@ -16,6 +16,14 @@ def checkdir(path, makedirs):
     return
 
 
+def list_queue():
+    import subprocess
+    try:
+        proc = subprocess.Popen(["condor_q"], stdout=subprocess.PIPE, shell=True)
+        (out, err) = proc.communicate()
+    return out
+    
+
 def string_rep(obj, quotes=False):
     '''Converts basic python objects to a string representation
 
