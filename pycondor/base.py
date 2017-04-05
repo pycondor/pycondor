@@ -18,9 +18,8 @@ def checkdir(path, makedirs):
 
 def list_queue():
     import subprocess
-    try:
-        proc = subprocess.Popen(["condor_q"], stdout=subprocess.PIPE, shell=True)
-        (out, err) = proc.communicate()
+    proc = subprocess.Popen(["condor_q"], stdout=subprocess.PIPE, shell=True)
+    (out, err) = proc.communicate()
     return out
     
 
