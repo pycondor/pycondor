@@ -18,11 +18,14 @@ def checkdir(path, makedirs):
     return
 
 
-def get_queue():
-    proc = subprocess.Popen(["condor_q"], stdout=subprocess.PIPE, shell=True)
+def get_queue(submitter=None):
+    command = 'condor_q'
+    if submitter:
+        command += ' -submitter {}'.format(submitter)
+    proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
     return out
-    
+
 
 def string_rep(obj, quotes=False):
     '''Converts basic python objects to a string representation
