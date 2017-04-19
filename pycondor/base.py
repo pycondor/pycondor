@@ -19,10 +19,10 @@ def checkdir(path, makedirs):
 
 
 def get_queue(submitter=None):
-    command = 'condor_q'
+    queue_command = 'condor_q'
     if submitter:
-        command += ' -submitter {}'.format(submitter)
-    proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
+        queue_command += ' -submitter {}'.format(submitter)
+    proc = subprocess.Popen([queue_command], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
     return out
 

@@ -3,6 +3,6 @@
 from __future__ import division, print_function
 
 from .pycondor import Job, Dagman
-from . import base
+from .base import get_queue
 
 __version__ = '0.0.1'
