@@ -14,7 +14,7 @@ VERSION = pycondor.__version__
 
 setup(
     name='PyCondor',
-    version='0.0.1',
+    version=VERSION,
     description='Python utility for HTCondor',
     url='https://github.com/jrbourbeau/pycondor',
     author='James Bourbeau',

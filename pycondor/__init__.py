@@ -5,4 +5,4 @@ from __future__ import division, print_function
 from .pycondor import Job, Dagman
 from .base import get_queue
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
