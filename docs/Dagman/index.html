@@ -390,7 +390,7 @@
                 
                   <h1>Dagman</h1>
                 
-                <div class="codehilite"><pre><span></span>Dagman(name, submit=cwd, verbose=0)
+                <div class="codehilite"><pre><span></span>Dagman(name, submit=cwd, extra_lines=None, verbose=0)
 </pre></div>
 
 
@@ -404,6 +404,10 @@
 <li>
 <p><code>submit</code> : <code>str</code> (default: current directory)</p>
 <p>Path to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).</p>
+</li>
+<li>
+<p><code>extra_lines</code> : <code>list</code> (default: <code>None</code>)</p>
+<p>List of additional lines to be added to submit file.</p>
 </li>
 <li>
 <p><code>verbose</code> : <code>int</code> (default: 0)</p>
