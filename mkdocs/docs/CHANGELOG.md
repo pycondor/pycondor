@@ -5,7 +5,8 @@
 **Changes**:
 
 * Adds `use_unique_id` option when creating a Job object. This will then create a separate error, log, and output file for each of the arguments in the Job `args` list.
-* Replaces all occurances of `os.system()` with `subprocess.Popen()`. This won't affect anything the user touches, just modernizing under-the-hood stuff. 
+* Adds `extra_lines` option when creating a Dagman object (similar to the Job object).
+* Replaces all occurances of `os.system()` with `subprocess.Popen()`. This won't affect anything the user touches, just modernizing under-the-hood stuff.
 
 
 ## Version 0.1.0
