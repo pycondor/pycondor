@@ -2,6 +2,7 @@
 import os
 import glob
 import time
+import subprocess
 
 from . import base
 from . import logger
@@ -265,10 +266,13 @@ class Job(BaseSubmitNode):
             message = 'You are submitting a Job with {} arguments. Consider using a Dagman in the future to help monitor jobs.'.format(len(self.args))
             self.logger.warning(message)
 
+        # Construct and execute condor_submit command
         command = 'condor_submit {}'.format(self.submit_file)
         for option in kwargs:
             command += ' {} {}'.format(option, kwargs[option])
-        os.system(command)
+        proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
+        out, err = proc.communicate()
+        print(out)
 
         return
 
@@ -362,11 +366,14 @@ class Dagman(BaseSubmitNode):
         return self
 
     def submit_dag(self, maxjobs=3000, **kwargs):
+        # Construct and execute condor_submit_dag command
         command = 'condor_submit_dag -maxjobs {} {}'.format(
             maxjobs, self.submit_file)
         for option in kwargs:
             command += ' {} {}'.format(option, kwargs[option])
-        os.system(command)
+        proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
+        out, err = proc.communicate()
+        print(out)
 
         return
 

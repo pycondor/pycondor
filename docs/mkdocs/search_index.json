@@ -117,7 +117,7 @@
         }, 
         {
             "location": "/CHANGELOG/", 
-            "text": "Release Notes\n\n\nVersion 0.1.1\n\n\nChanges\n:\n\n\n\n\nAdds \nuse_unique_id\n option when creating a Job object. This will then create a separate error, log, and output file for each of the arguments in the Job \nargs\n list.\n\n\n\n\nVersion 0.1.0\n\n\nChanges\n:\n\n\n\n\nAdds \nrequest_cpus\n attribute to Job object to make it easier to request a specified number of CPUs.\n\n\nAdds \npycondor.get_queue()\n feature to get \ncondor_q\n information.\n\n\nJob and Dagman object methods now return \nself\n.\n\n\nFixed typo in logger formatting.", 
+            "text": "Release Notes\n\n\nVersion 0.1.1\n\n\nChanges\n:\n\n\n\n\nAdds \nuse_unique_id\n option when creating a Job object. This will then create a separate error, log, and output file for each of the arguments in the Job \nargs\n list.\n\n\nReplaces all occurances of \nos.system()\n with \nsubprocess.Popen()\n. This won't affect anything the user touches, just modernizing under-the-hood stuff. \n\n\n\n\nVersion 0.1.0\n\n\nChanges\n:\n\n\n\n\nAdds \nrequest_cpus\n attribute to Job object to make it easier to request a specified number of CPUs.\n\n\nAdds \npycondor.get_queue()\n feature to get \ncondor_q\n information.\n\n\nJob and Dagman object methods now return \nself\n.\n\n\nFixed typo in logger formatting.", 
             "title": "Release notes"
         }, 
         {
@@ -127,7 +127,7 @@
         }, 
         {
             "location": "/CHANGELOG/#version-011", 
-            "text": "Changes :   Adds  use_unique_id  option when creating a Job object. This will then create a separate error, log, and output file for each of the arguments in the Job  args  list.", 
+            "text": "Changes :   Adds  use_unique_id  option when creating a Job object. This will then create a separate error, log, and output file for each of the arguments in the Job  args  list.  Replaces all occurances of  os.system()  with  subprocess.Popen() . This won't affect anything the user touches, just modernizing under-the-hood stuff.", 
             "title": "Version 0.1.1"
         }, 
         {
