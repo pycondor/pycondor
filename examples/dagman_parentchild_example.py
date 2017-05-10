@@ -13,9 +13,10 @@ if __name__ == "__main__":
     # Setting up first PyCondor Job
     job1 = pycondor.Job('examplejob1', 'savelist.py',
                    error=error, output=output,
-                   log=log, submit=submit, verbose=2)
+                   log=log, submit=submit, use_unique_id=True, verbose=2)
     # Adding arguments to job1
-    job1.add_arg('--length 100')
+    for i in range(10, 100, 10):
+        job1.add_arg('--length {}'.format(i))
     # Setting up second PyCondor Job
     job2 = pycondor.Job('examplejob2', 'savelist.py',
                    error=error, output=output,
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     job2.add_arg('--length 200')
 
     # Add interjob reltionship.
-    # Ensure that job1 is complete before job2 starts 
+    # Ensure that job1 is complete before job2 starts
     job1.add_child(job2)
 
     # Setting up a PyCondor Dagman

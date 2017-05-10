@@ -3,7 +3,7 @@
 Job(name, executable, error=None, log=None, output=None, submit=cwd,
     request_memory=None, request_disk=None, request_cpus=None, getenv=True,
     universe='vanilla', initialdir=None, notification='never', requirements=None,
-    queue=None, extra_lines=None, verbose=0)
+    queue=None, extra_lines=None, use_unique_id=False, verbose=0)
 ```
 
 The `Job` object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable. `Job` objects can be submitted directly to HTCondor, or can be included in a `Dagman` object for additional job management functionality.
@@ -45,7 +45,7 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 
 * `request_cpus` : `int` (default: `None`)
 
-    *(Added in version 0.0.2)*
+    *(Added in version 0.1.0)*
 
     Number of CPUs to request in submit file.
 
@@ -76,6 +76,12 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 * `extra_lines` : `list` (default: `None`)
 
     List of additional lines to be added to submit file.
+
+* `use_unique_id` : `bool` (default: `False`)
+
+    *(Added in version 0.1.1)*
+
+    Option to have a separate set of error, output, and log files for each argument in Job.
 
 * `verbose` : `int` (default: 0)
 
@@ -130,7 +136,7 @@ The `Job` object consists of an executable to run on Condor, any specifications 
     * `self` : `Job`
 
         Returns self.
-        
+
 
 * `add_child(job)`
 
