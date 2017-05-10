@@ -379,7 +379,8 @@
 <p><strong>Changes</strong>:</p>
 <ul>
 <li>Adds <code>use_unique_id</code> option when creating a Job object. This will then create a separate error, log, and output file for each of the arguments in the Job <code>args</code> list.</li>
-<li>Replaces all occurances of <code>os.system()</code> with <code>subprocess.Popen()</code>. This won't affect anything the user touches, just modernizing under-the-hood stuff. </li>
+<li>Adds <code>extra_lines</code> option when creating a Dagman object (similar to the Job object).</li>
+<li>Replaces all occurances of <code>os.system()</code> with <code>subprocess.Popen()</code>. This won't affect anything the user touches, just modernizing under-the-hood stuff.</li>
 </ul>
 <h2 id="version-010">Version 0.1.0<a class="headerlink" href="#version-010" title="Permanent link">&para;</a></h2>
 <p><strong>Changes</strong>:</p>
