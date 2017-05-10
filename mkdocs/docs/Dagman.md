@@ -1,6 +1,6 @@
 
 ```
-Dagman(name, submit=cwd, verbose=0)
+Dagman(name, submit=cwd, extra_lines=None, verbose=0)
 ```
 
 The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also handle any inter-job dependencies, such as parent-child relationships between jobs.
@@ -15,6 +15,10 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
 * `submit` : `str` (default: current directory)
 
     Path to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).
+
+* `extra_lines` : `list` (default: `None`)
+
+    List of additional lines to be added to submit file.
 
 * `verbose` : `int` (default: 0)
 
