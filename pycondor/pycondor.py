@@ -9,10 +9,11 @@ from . import logger
 
 class BaseSubmitNode(object):
 
-    def __init__(self, name, submit=os.getcwd(), verbose=0):
+    def __init__(self, name, submit=os.getcwd(), extra_lines=None, verbose=0):
 
         self.name = base.string_rep(name)
         self.submit = submit
+        self.extra_lines = extra_lines
         self._built = False
         # Set up logger
         self.logger = logger._setup_logger(self, verbose)
@@ -34,7 +35,7 @@ class Job(BaseSubmitNode):
     initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None,
     use_unique_id=False, verbose=0):
 
-        super(Job, self).__init__(name, submit, verbose)
+        super(Job, self).__init__(name, submit, extra_lines, verbose)
 
         self.executable = base.string_rep(executable)
         self.error = error
@@ -49,7 +50,6 @@ class Job(BaseSubmitNode):
         self.notification = notification
         self.requirements = requirements
         self.queue = queue
-        self.extra_lines = extra_lines
         self.use_unique_id = use_unique_id
 
         self.args = []
@@ -281,9 +281,9 @@ class Job(BaseSubmitNode):
 
 class Dagman(BaseSubmitNode):
 
-    def __init__(self, name, submit=None, verbose=0):
+    def __init__(self, name, submit=None, extra_lines=None, verbose=0):
 
-        super(Dagman, self).__init__(name, submit, verbose)
+        super(Dagman, self).__init__(name, submit, extra_lines, verbose)
 
         self.jobs = []
         self.logger.debug('{} initialized'.format(self.name))
@@ -346,6 +346,15 @@ class Dagman(BaseSubmitNode):
                     for k, arg in enumerate(job):
                         child_string += ' {}_part{}'.format(job.name, k)
                     dag.write(parent_string + ' ' + child_string + '\n')
+
+            # Add any extra lines to submit file, if specified
+            if self.extra_lines:
+                extra_lines = self.extra_lines
+                assert isinstance(extra_lines, (str, list, tuple)), 'extra_lines must be of type str, list, or tuple'
+                if isinstance(extra_lines, str):
+                    extra_lines = [extra_lines]
+                for line in extra_lines:
+                    dag.write(line + '\n')
 
         self._built = True
         self.logger.info('DAGMan submission file for {} successfully built!'.format(self.name))
