@@ -29,7 +29,10 @@ class BaseSubmitNode(object):
 
 class Job(BaseSubmitNode):
 
-    def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(), request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla', initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None, verbose=0):
+    def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(),
+    request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla',
+    initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None,
+    use_unique_id=False, verbose=0):
 
         super(Job, self).__init__(name, submit, verbose)
 
@@ -47,6 +50,8 @@ class Job(BaseSubmitNode):
         self.requirements = requirements
         self.queue = queue
         self.extra_lines = extra_lines
+        self.use_unique_id = use_unique_id
+
         self.args = []
         self.parents = []
         self.children = []
@@ -181,7 +186,10 @@ class Job(BaseSubmitNode):
                 path = getattr(self, attr)
                 # If path has trailing '/', then it it removed. Else, path is unmodified
                 path = path.rstrip('/')
-                lines.append('{} = {}/{}.{}'.format(attr, path, name, attr))
+                if getattr(self, 'use_unique_id'):
+                    lines.append('{} = {}/{}_$(Cluster).$(Process).{}'.format(attr, path, name, attr))
+                else:
+                    lines.append('{} = {}/{}.{}'.format(attr, path, name, attr))
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
@@ -325,18 +333,18 @@ class Dagman(BaseSubmitNode):
                 self.logger.info('Working on Job {} [{} of {}]'.format(
                     job.name, job_index, len(self.jobs)))
                 for i, arg in enumerate(job):
-                    dag.write('JOB {}_p{} '.format(job.name, i) + job.submit_file + '\n')
-                    dag.write('VARS {}_p{} '.format(job.name, i) +
+                    dag.write('JOB {}_part{} '.format(job.name, i) + job.submit_file + '\n')
+                    dag.write('VARS {}_part{} '.format(job.name, i) +
                               'ARGS={}\n'.format(base.string_rep(arg, quotes=True)))
                 # Add parent/child information if necessary
                 if job.hasparents():
                     parent_string = 'Parent'
                     for parentjob in job.parents:
                         for j, parentarg in enumerate(parentjob):
-                            parent_string += ' {}_p{}'.format(parentjob.name, j)
+                            parent_string += ' {}_part{}'.format(parentjob.name, j)
                     child_string = 'Child'
                     for k, arg in enumerate(job):
-                        child_string += ' {}_p{}'.format(job.name, k)
+                        child_string += ' {}_part{}'.format(job.name, k)
                     dag.write(parent_string + ' ' + child_string + '\n')
 
         self._built = True
