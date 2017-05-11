@@ -1,7 +1,7 @@
 site_name: PyCondor
 site_author: James Bourbeau
 site_description: Python utility for HTCondor
-site_dir: ../docs
+# site_dir: ../docs
 copyright: Copyright &copy; 2017 <a href="http://jamesbourbeau.com">James Bourbeau</a>
 pages:
     - Home: index.md
@@ -14,6 +14,7 @@ pages:
 repo_name: 'GitHub'
 repo_url: https://github.com/jrbourbeau/pycondor
 theme: material
+theme_dir: 'mkdocs-material/material'
 extra:
     font:
         text: 'Roboto'
@@ -28,4 +29,3 @@ extra:
 markdown_extensions:
   - codehilite
   - toc(permalink=true)
-# theme: readthedocs
