@@ -19,8 +19,8 @@ extra:
     font:
         text: 'Roboto'
     palette:
-        primary: 'green'
-        accent: 'light blue'
+        primary: 'teal'
+        accent: 'green'
     social:
         - type: 'github'
           link: 'https://github.com/jrbourbeau'
