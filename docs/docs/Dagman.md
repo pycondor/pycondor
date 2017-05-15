@@ -1,5 +1,5 @@
 
-```
+```python
 Dagman(name, submit=cwd, extra_lines=None, verbose=0)
 ```
 
