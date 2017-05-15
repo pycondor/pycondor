@@ -34,7 +34,7 @@ class Job(BaseSubmitNode):
     def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(),
     request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla',
     initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None,
-    use_unique_id=False, verbose=0):
+    retry=None, use_unique_id=False, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, verbose)
 
@@ -51,6 +51,7 @@ class Job(BaseSubmitNode):
         self.notification = notification
         self.requirements = requirements
         self.queue = queue
+        self.retry = retry
         self.use_unique_id = use_unique_id
 
         self.args = []
@@ -161,6 +162,14 @@ class Job(BaseSubmitNode):
 
     def _make_submit_script(self, makedirs=True, fancyname=True, indag=False):
 
+        # Retrying failed nodes is only available to Jobs in a Dagman
+        if (self.retry is not None) and (not indag):
+            message = 'Retrying failed Jobs is only available when submitting from a Dagman.'
+            self.logger.error(message)
+            raise NotImplementedError(message)
+        elif (self.retry is not None) and (not isinstance(self.retry, int)):
+                raise ValueError('Retry option for Job {} must be an integer, '
+                                 'but got a {}'.format(self.name, type(self.retry)))
 
         # Check that paths/files exist
         if not os.path.exists(self.executable):
@@ -340,6 +349,8 @@ class Dagman(BaseSubmitNode):
                     dag.write('JOB {}_part{} '.format(job.name, i) + job.submit_file + '\n')
                     dag.write('VARS {}_part{} '.format(job.name, i) +
                               'ARGS={}\n'.format(base.string_rep(arg, quotes=True)))
+                    if job.retry is not None:
+                        dag.write('Retry {}_part{} {}'.format(job.name, i, job.retry) + '\n')
                 # Add parent/child information if necessary
                 if job.hasparents():
                     parent_string = 'Parent'
