@@ -8,7 +8,7 @@ from . import base
 from . import logger
 
 
-class BaseSubmitNode(object):
+class SubmitFile(object):
 
     def __init__(self, name, submit=os.getcwd(), extra_lines=None, verbose=0):
 
@@ -20,16 +20,16 @@ class BaseSubmitNode(object):
         self.logger = logger._setup_logger(self, verbose)
 
     def _get_fancyname(self):
+
         date = time.strftime('%Y%m%d')
-        othersubmits = glob.glob('{}/{}_{}_??.submit'.format(self.submit,
-                                                             self.name, date))
-        submit_number = len(othersubmits) + 1
-        fancyname = self.name + \
-            '_{}'.format(date) + '_{:02d}'.format(submit_number)
+        file_pattern = '{}/{}_{}_??.submit'.format(self.submit, self.name, date)
+        submit_number = len(glob.glob(file_pattern)) + 1
+        fancyname = self.name + '_{}_{:02d}'.format(date, submit_number)
+
         return fancyname
 
 
-class Job(BaseSubmitNode):
+class Job(SubmitFile):
 
     def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(),
     request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla',
@@ -55,6 +55,7 @@ class Job(BaseSubmitNode):
         self.use_unique_id = use_unique_id
 
         self.args = []
+        self.arg_names = []
         self.parents = []
         self.children = []
 
@@ -71,9 +72,10 @@ class Job(BaseSubmitNode):
     def __iter__(self):
         return iter(self.args)
 
-    def add_arg(self, arg):
+    def add_arg(self, arg, name=None):
         arg_str = base.string_rep(arg)
         self.args.append(arg_str)
+        self.arg_names.append(name)
         self.logger.debug(
             'Added argument \'{}\' to Job {}'.format(arg_str, self.name))
 
@@ -160,6 +162,22 @@ class Job(BaseSubmitNode):
     def hasparents(self):
         return bool(self.parents)
 
+    def _get_log_output_error_string(self, name, arg_name=True):
+        lines = []
+        for attr in ['log', 'output', 'error']:
+            if getattr(self, attr) is not None:
+                path = getattr(self, attr)
+                # If path has trailing '/', then it it removed. Else, path is unmodified
+                path = path.rstrip('/')
+                if arg_name:
+                    lines.append('{} = {}/{}_$(arg_name).{}'.format(attr, path, name, attr))
+                else:
+                    lines.append('{} = {}/{}.{}'.format(attr, path, name, attr))
+
+        log_output_error_string = '\n\t'.join(lines)
+
+        return log_output_error_string
+
     def _make_submit_script(self, makedirs=True, fancyname=True, indag=False):
 
         # Retrying failed nodes is only available to Jobs in a Dagman
@@ -184,52 +202,64 @@ class Job(BaseSubmitNode):
 
         # Start constructing lines to go into job submit file
         lines = []
-        submit_attrs = ['universe', 'executable', 'request_memory', 'request_disk', 'request_cpus', 'getenv', 'initialdir', 'notification', 'requirements']
+        submit_attrs = ['universe', 'executable', 'request_memory',
+                        'request_disk', 'request_cpus', 'getenv',
+                        'initialdir', 'notification', 'requirements']
         for attr in submit_attrs:
             if getattr(self, attr) is not None:
                 attr_str = base.string_rep(getattr(self, attr))
                 lines.append('{} = {}'.format(attr, attr_str))
 
-        # Set up files paths
+        # Set up log, output, and error files paths
+        self._has_arg_names = any(self.arg_names)
         for attr in ['log', 'output', 'error']:
             if getattr(self, attr) is not None:
                 path = getattr(self, attr)
                 # If path has trailing '/', then it it removed. Else, path is unmodified
                 path = path.rstrip('/')
-                if getattr(self, 'use_unique_id'):
-                    lines.append('{} = {}/{}_$(Cluster).$(Process).{}'.format(attr, path, name, attr))
+                if self._has_arg_names:
+                    lines.append('{} = {}/$(job_name).{}'.format(attr, path, attr))
                 else:
                     lines.append('{} = {}/{}.{}'.format(attr, path, name, attr))
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
             extra_lines = self.extra_lines
-            assert isinstance(extra_lines, (str, list, tuple)), 'extra_lines must be of type str, list, or tuple'
+            if not isinstance(extra_lines, (str, list, tuple)):
+                raise ValueError('extra_lines must be of type str, list, or tuple')
             if isinstance(extra_lines, str):
                 lines.append(extra_lines)
             else:
                 lines.extend(extra_lines)
 
         # Add arguments and queue line
-        if self.queue:
-            assert isinstance(self.queue, int), 'queue must be of type int'
+        if self.queue is not None and not isinstance(self.queue, int):
+            raise ValueError('queue must be of type int')
         # If building this submit file for a job that's being managed by DAGMan, just add simple arguments and queue lines
         if indag:
             lines.append('arguments = $(ARGS)')
+            if self._has_arg_names:
+                lines.append('job_name = $(job_name)')
             lines.append('queue')
         else:
             if self.args and self.queue:
                 if len(self.args) > 1:
-                    message = 'At this time multiple arguments and queue values are only supported through Dagman'
-                    self.logger.error(message)
-                    raise NotImplementedError(message)
+                    raise NotImplementedError(
+                        'At this time multiple arguments and queue values '
+                        'are only supported through Dagman')
                 else:
                     lines.append('arguments = {}'.format(base.string_rep(self.args, quotes=True)))
                     lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
             elif self.args:
-                for arg in self.args:
-                    lines.append('arguments = {}'.format(base.string_rep(arg)))
+                for arg, arg_name in zip(self.args, self.arg_names):
+                    lines.append('arguments = {}'.format(arg))
+                    if not self._has_arg_names:
+                        pass
+                    elif arg_name is not None:
+                        lines.append('job_name = {}_{}'.format(name, arg_name))
+                    else:
+                        lines.append('job_name = {}'.format(name))
                     lines.append('queue')
             elif self.queue:
                 lines.append('queue {}'.format(self.queue))
@@ -292,7 +322,7 @@ class Job(BaseSubmitNode):
         return
 
 
-class Dagman(BaseSubmitNode):
+class Dagman(SubmitFile):
 
     def __init__(self, name, submit=None, extra_lines=None, verbose=0):
 
@@ -330,13 +360,14 @@ class Dagman(BaseSubmitNode):
         return self
 
     def build(self, makedirs=True, fancyname=True):
-        for job in self.jobs:
-            job._build_from_dag(makedirs, fancyname)
+        # for job in self.jobs:
+        #     job._build_from_dag(makedirs, fancyname)
 
         # Create DAG submit file path
         name = self._get_fancyname() if fancyname else self.name
         submit_file = '{}/{}.submit'.format(self.submit, name)
         self.submit_file = submit_file
+        base.checkdir(self.submit_file, makedirs)
 
         # Write dag submit file
         self.logger.info(
@@ -345,21 +376,37 @@ class Dagman(BaseSubmitNode):
             for job_index, job in enumerate(self, start=1):
                 self.logger.info('Working on Job {} [{} of {}]'.format(
                     job.name, job_index, len(self.jobs)))
+                # Build the Job submit file
+                job._build_from_dag(makedirs, fancyname)
+                # Add Job variables to Dagman submit file
                 for i, arg in enumerate(job):
-                    dag.write('JOB {}_part{} '.format(job.name, i) + job.submit_file + '\n')
-                    dag.write('VARS {}_part{} '.format(job.name, i) +
+                    dag.write('JOB {}_arg_{} '.format(job.name, i) + job.submit_file + '\n')
+                    dag.write('VARS {}_arg_{} '.format(job.name, i) +
                               'ARGS={}\n'.format(base.string_rep(arg, quotes=True)))
+                    # Define job_name if there are arg_names present for this Job
+                    if not job._has_arg_names:
+                        pass
+                    elif job.arg_names[i] is not None:
+                        job_name = job._get_fancyname() if fancyname else job.name
+                        job_name += '_{}'.format(job.arg_names[i])
+                        dag.write('VARS {}_arg_{} '.format(job.name, i) +
+                                  'job_name={}\n'.format(base.string_rep(job_name, quotes=True)))
+                    else:
+                        job_name = job._get_fancyname() if fancyname else job.name
+                        dag.write('VARS {}_arg_{} '.format(job.name, i) +
+                                  'job_name={}\n'.format(base.string_rep(job_name, quotes=True)))
+                    # Add retry option for Job
                     if job.retry is not None:
-                        dag.write('Retry {}_part{} {}'.format(job.name, i, job.retry) + '\n')
+                        dag.write('Retry {}_arg_{} {}'.format(job.name, i, job.retry) + '\n')
                 # Add parent/child information if necessary
                 if job.hasparents():
                     parent_string = 'Parent'
                     for parentjob in job.parents:
                         for j, parentarg in enumerate(parentjob):
-                            parent_string += ' {}_part{}'.format(parentjob.name, j)
+                            parent_string += ' {}_arg_{}'.format(parentjob.name, j)
                     child_string = 'Child'
                     for k, arg in enumerate(job):
-                        child_string += ' {}_part{}'.format(job.name, k)
+                        child_string += ' {}_arg_{}'.format(job.name, k)
                     dag.write(parent_string + ' ' + child_string + '\n')
 
             # Add any extra lines to submit file, if specified
