@@ -18,6 +18,8 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
 
 * `extra_lines` : `list` (default: `None`)
 
+    *(Added in version 0.1.1)*
+
     List of additional lines to be added to submit file.
 
 * `verbose` : `int` (default: 0)

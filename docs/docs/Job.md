@@ -3,7 +3,7 @@
 Job(name, executable, error=None, log=None, output=None, submit=cwd,
     request_memory=None, request_disk=None, request_cpus=None, getenv=True,
     universe='vanilla', initialdir=None, notification='never', requirements=None,
-    queue=None, extra_lines=None, retry=None, use_unique_id=False, verbose=0)
+    queue=None, extra_lines=None, verbose=0)
 ```
 
 The `Job` object consists of an executable to run on Condor, any specifications to include in the corresponding submit file (e.g. memory request, universe execution environment, etc.), and any arguments that you would like to pass to the executable. `Job` objects can be submitted directly to HTCondor, or can be included in a `Dagman` object for additional job management functionality.
@@ -77,20 +77,6 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 
     List of additional lines to be added to submit file.
 
-* `retry` : `int` (default: `None`)
-
-    *(Added in version 0.1.2)*
-
-    Option to specify the number of times to retry failed nodes for this Job.
-    Default number of retries is 0. *Note*: this feature is only available to
-    Jobs that are submitted via a Dagman.
-
-* `use_unique_id` : `bool` (default: `False`)
-
-    *(Added in version 0.1.1)*
-
-    Option to have a separate set of error, output, and log files for each argument in Job.
-
 * `verbose` : `int` (default: 0)
 
     Level of logging verbosity.
@@ -124,6 +110,22 @@ The `Job` object consists of an executable to run on Condor, any specifications 
     * `arg` : `str`
 
         Argument to append to Job `args` list.
+
+    * `name` : `str` (default: `None`)
+
+        *(Added in version 0.1.2)*
+
+        Option to specify a name related to this argument. If a name is
+        specified, then a separate set of log, output, and error files will
+        be generated for this particular argument.  
+
+    * `retry` : `int` (default: `None`)
+
+        *(Added in version 0.1.2)*
+
+        Option to specify the number of times to retry this node. Default
+        number of retries is 0. *Note*: this feature is only available to
+        Jobs that are submitted via a Dagman.
 
     *Returns:*
 

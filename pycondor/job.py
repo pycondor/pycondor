@@ -1,40 +1,18 @@
 
 import os
-import glob
-import time
 import subprocess
+from collections import namedtuple
 
 from . import base
-from . import logger
 
+JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
 
-class BaseSubmitNode(object):
-
-    def __init__(self, name, submit=os.getcwd(), extra_lines=None, verbose=0):
-
-        self.name = base.string_rep(name)
-        self.submit = submit
-        self.extra_lines = extra_lines
-        self._built = False
-        # Set up logger
-        self.logger = logger._setup_logger(self, verbose)
-
-    def _get_fancyname(self):
-        date = time.strftime('%Y%m%d')
-        othersubmits = glob.glob('{}/{}_{}_??.submit'.format(self.submit,
-                                                             self.name, date))
-        submit_number = len(othersubmits) + 1
-        fancyname = self.name + \
-            '_{}'.format(date) + '_{:02d}'.format(submit_number)
-        return fancyname
-
-
-class Job(BaseSubmitNode):
+class Job(base.SubmitFile):
 
     def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(),
     request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla',
     initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None,
-    retry=None, use_unique_id=False, verbose=0):
+    verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, verbose)
 
@@ -51,8 +29,6 @@ class Job(BaseSubmitNode):
         self.notification = notification
         self.requirements = requirements
         self.queue = queue
-        self.retry = retry
-        self.use_unique_id = use_unique_id
 
         self.args = []
         self.parents = []
@@ -71,11 +47,21 @@ class Job(BaseSubmitNode):
     def __iter__(self):
         return iter(self.args)
 
-    def add_arg(self, arg):
-        arg_str = base.string_rep(arg)
-        self.args.append(arg_str)
-        self.logger.debug(
-            'Added argument \'{}\' to Job {}'.format(arg_str, self.name))
+    def __len__(self):
+        return len(self.args)
+
+    def add_arg(self, arg, name=None, retry=None):
+        # Validate user input
+        if not isinstance(arg, str):
+            raise ValueError('arg must be a string')
+        elif name and not isinstance(arg, str):
+            raise ValueError('name must be a string')
+        elif retry and not isinstance(retry, int):
+            raise ValueError('retry must be an int')
+
+        job_arg = JobArg(arg=arg, name=name, retry=retry)
+        self.args.append(job_arg)
+        self.logger.debug('Added argument \'{}\' to Job {}'.format(arg, self.name))
 
         return self
 
@@ -163,18 +149,15 @@ class Job(BaseSubmitNode):
     def _make_submit_script(self, makedirs=True, fancyname=True, indag=False):
 
         # Retrying failed nodes is only available to Jobs in a Dagman
-        if (self.retry is not None) and (not indag):
+        self._has_arg_retries = any([job_arg.retry for job_arg in self.args])
+        if self._has_arg_retries and (not indag):
             message = 'Retrying failed Jobs is only available when submitting from a Dagman.'
             self.logger.error(message)
             raise NotImplementedError(message)
-        elif (self.retry is not None) and (not isinstance(self.retry, int)):
-                raise ValueError('Retry option for Job {} must be an integer, '
-                                 'but got a {}'.format(self.name, type(self.retry)))
 
         # Check that paths/files exist
         if not os.path.exists(self.executable):
-            raise IOError(
-                'The path {} does not exist...'.format(self.executable))
+            raise IOError('The path {} does not exist...'.format(self.executable))
         for directory in [self.submit, self.log, self.output, self.error]:
             if directory is not None:
                 base.checkdir(directory + '/', makedirs)
@@ -184,52 +167,59 @@ class Job(BaseSubmitNode):
 
         # Start constructing lines to go into job submit file
         lines = []
-        submit_attrs = ['universe', 'executable', 'request_memory', 'request_disk', 'request_cpus', 'getenv', 'initialdir', 'notification', 'requirements']
+        submit_attrs = ['universe', 'executable', 'request_memory',
+                        'request_disk', 'request_cpus', 'getenv',
+                        'initialdir', 'notification', 'requirements']
         for attr in submit_attrs:
             if getattr(self, attr) is not None:
                 attr_str = base.string_rep(getattr(self, attr))
                 lines.append('{} = {}'.format(attr, attr_str))
 
-        # Set up files paths
+        # Set up log, output, and error files paths
+        self._has_arg_names = any([arg.name for arg in self.args])
         for attr in ['log', 'output', 'error']:
             if getattr(self, attr) is not None:
                 path = getattr(self, attr)
                 # If path has trailing '/', then it it removed. Else, path is unmodified
                 path = path.rstrip('/')
-                if getattr(self, 'use_unique_id'):
-                    lines.append('{} = {}/{}_$(Cluster).$(Process).{}'.format(attr, path, name, attr))
+                if self._has_arg_names:
+                    lines.append('{} = {}/$(job_name).{}'.format(attr, path, attr))
                 else:
                     lines.append('{} = {}/{}.{}'.format(attr, path, name, attr))
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
-            extra_lines = self.extra_lines
-            assert isinstance(extra_lines, (str, list, tuple)), 'extra_lines must be of type str, list, or tuple'
-            if isinstance(extra_lines, str):
-                lines.append(extra_lines)
-            else:
-                lines.extend(extra_lines)
+            lines.extend(self.extra_lines)
 
         # Add arguments and queue line
-        if self.queue:
-            assert isinstance(self.queue, int), 'queue must be of type int'
+        if self.queue is not None and not isinstance(self.queue, int):
+            raise ValueError('queue must be of type int')
         # If building this submit file for a job that's being managed by DAGMan, just add simple arguments and queue lines
         if indag:
             lines.append('arguments = $(ARGS)')
+            if self._has_arg_names:
+                lines.append('job_name = $(job_name)')
             lines.append('queue')
         else:
             if self.args and self.queue:
                 if len(self.args) > 1:
-                    message = 'At this time multiple arguments and queue values are only supported through Dagman'
-                    self.logger.error(message)
-                    raise NotImplementedError(message)
+                    raise NotImplementedError(
+                        'At this time multiple arguments and queue values '
+                        'are only supported through Dagman')
                 else:
-                    lines.append('arguments = {}'.format(base.string_rep(self.args, quotes=True)))
+                    arg = self.args[0].arg
+                    lines.append('arguments = {}'.format(base.string_rep(arg, quotes=True)))
                     lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
             elif self.args:
-                for arg in self.args:
-                    lines.append('arguments = {}'.format(base.string_rep(arg)))
+                for arg, arg_name, _ in self.args:
+                    lines.append('arguments = {}'.format(arg))
+                    if not self._has_arg_names:
+                        pass
+                    elif arg_name is not None:
+                        lines.append('job_name = {}_{}'.format(name, arg_name))
+                    else:
+                        lines.append('job_name = {}'.format(name))
                     lines.append('queue')
             elif self.queue:
                 lines.append('queue {}'.format(self.queue))
@@ -288,108 +278,5 @@ class Job(BaseSubmitNode):
     def build_submit(self, makedirs=True, fancyname=True, **kwargs):
         self.build(makedirs, fancyname)
         self.submit_job(**kwargs)
-
-        return
-
-
-class Dagman(BaseSubmitNode):
-
-    def __init__(self, name, submit=None, extra_lines=None, verbose=0):
-
-        super(Dagman, self).__init__(name, submit, extra_lines, verbose)
-
-        self.jobs = []
-        self.logger.debug('{} initialized'.format(self.name))
-
-    def __repr__(self):
-        nondefaults = ''
-        for attr in vars(self):
-            if getattr(self, attr) and attr not in ['name', 'jobs', 'logger']:
-                nondefaults += ', {}={}'.format(attr, getattr(self, attr))
-        output = 'Dagman(name={}, n_jobs={}{})'.format(self.name, len(self.jobs), nondefaults)
-
-        return output
-
-    def __iter__(self):
-        return iter(self.jobs)
-
-    def _hasjob(self, job):
-        return job in self.jobs
-
-    def add_job(self, job):
-        # Don't bother adding job if it's already in the jobs list
-        if self._hasjob(job):
-            return self
-        if isinstance(job, Job):
-            self.jobs.append(job)
-        else:
-            raise TypeError('add_job() is expecting a Job')
-        self.logger.debug(
-            'Added Job {} Dagman {}'.format(job.name, self.name))
-
-        return self
-
-    def build(self, makedirs=True, fancyname=True):
-        for job in self.jobs:
-            job._build_from_dag(makedirs, fancyname)
-
-        # Create DAG submit file path
-        name = self._get_fancyname() if fancyname else self.name
-        submit_file = '{}/{}.submit'.format(self.submit, name)
-        self.submit_file = submit_file
-
-        # Write dag submit file
-        self.logger.info(
-            'Building DAG submission file {}...'.format(self.submit_file))
-        with open(submit_file, 'w') as dag:
-            for job_index, job in enumerate(self, start=1):
-                self.logger.info('Working on Job {} [{} of {}]'.format(
-                    job.name, job_index, len(self.jobs)))
-                for i, arg in enumerate(job):
-                    dag.write('JOB {}_part{} '.format(job.name, i) + job.submit_file + '\n')
-                    dag.write('VARS {}_part{} '.format(job.name, i) +
-                              'ARGS={}\n'.format(base.string_rep(arg, quotes=True)))
-                    if job.retry is not None:
-                        dag.write('Retry {}_part{} {}'.format(job.name, i, job.retry) + '\n')
-                # Add parent/child information if necessary
-                if job.hasparents():
-                    parent_string = 'Parent'
-                    for parentjob in job.parents:
-                        for j, parentarg in enumerate(parentjob):
-                            parent_string += ' {}_part{}'.format(parentjob.name, j)
-                    child_string = 'Child'
-                    for k, arg in enumerate(job):
-                        child_string += ' {}_part{}'.format(job.name, k)
-                    dag.write(parent_string + ' ' + child_string + '\n')
-
-            # Add any extra lines to submit file, if specified
-            if self.extra_lines:
-                extra_lines = self.extra_lines
-                assert isinstance(extra_lines, (str, list, tuple)), 'extra_lines must be of type str, list, or tuple'
-                if isinstance(extra_lines, str):
-                    extra_lines = [extra_lines]
-                for line in extra_lines:
-                    dag.write(line + '\n')
-
-        self._built = True
-        self.logger.info('DAGMan submission file for {} successfully built!'.format(self.name))
-
-        return self
-
-    def submit_dag(self, maxjobs=3000, **kwargs):
-        # Construct and execute condor_submit_dag command
-        command = 'condor_submit_dag -maxjobs {} {}'.format(
-            maxjobs, self.submit_file)
-        for option in kwargs:
-            command += ' {} {}'.format(option, kwargs[option])
-        proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
-        out, err = proc.communicate()
-        print(out)
-
-        return
-
-    def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000, **kwargs):
-        self.build(makedirs, fancyname)
-        self.submit_dag(maxjobs, **kwargs)
 
         return

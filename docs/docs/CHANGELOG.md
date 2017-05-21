@@ -4,8 +4,11 @@
 
 **Changes**:
 
-* Adds `retry` option when creating a Job object. This allows the user to
-specify the number of times failed nodes in the Job should be re-submitted.
+* Adds `retry` option to the Job `add_arg` method. This allows the user to
+specify the number of times to re-submit this node in the Job if the node fails.
+* Adds `name` option to the Job `add_arg` method. If a name is specified, then a
+separate set of log, output, and error files will be generated specifically for
+that node.
 
 
 ## Version 0.1.1
