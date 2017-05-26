@@ -54,7 +54,7 @@ class Job(base.SubmitFile):
         # Validate user input
         if not isinstance(arg, str):
             raise ValueError('arg must be a string')
-        elif name and not isinstance(arg, str):
+        elif name and not isinstance(name, str):
             raise ValueError('name must be a string')
         elif retry and not isinstance(retry, int):
             raise ValueError('retry must be an int')
@@ -81,7 +81,8 @@ class Job(base.SubmitFile):
     def add_parent(self, job):
 
         # Ensure that job is a Job
-        assert isinstance(job, Job), 'job must be of type Job'
+        if not isinstance(job, Job):
+            raise ValueError('job must be of type Job')
 
         # Don't bother continuing if job is already in the parents list
         if self._hasparent(job):
@@ -114,7 +115,8 @@ class Job(base.SubmitFile):
     def add_child(self, job):
 
         # Ensure that job is a Job
-        assert isinstance(job, Job), 'job must be of type Job'
+        if not isinstance(job, Job):
+            raise ValueError('job must be of type Job')
 
         # Don't bother continuing if job is already in the children list
         if self._haschild(job):
