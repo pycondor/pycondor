@@ -6,4 +6,4 @@ from .job import Job
 from .dagman import Dagman
 from .base import get_queue
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'

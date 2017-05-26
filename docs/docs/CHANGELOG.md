@@ -9,6 +9,7 @@ specify the number of times to re-submit this node in the Job if the node fails.
 * Adds `name` option to the Job `add_arg` method. If a name is specified, then a
 separate set of log, output, and error files will be generated specifically for
 that node.
+* Adds `tests` directory in `pycondor`!
 
 
 ## Version 0.1.1
