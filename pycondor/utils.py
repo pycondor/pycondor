@@ -5,6 +5,7 @@ import time
 import glob
 import logging
 
+
 # Specify logging settings
 logging.basicConfig(
     format='%(levelname)s: pycondor - %(name)s : %(message)s')
@@ -84,31 +85,3 @@ def string_rep(obj, quotes=False):
         obj_str = str(obj)
 
     return quote + obj_str + quote
-
-
-class SubmitFile(object):
-
-    def __init__(self, name, submit=os.getcwd(), extra_lines=None, verbose=0):
-
-        # Validate user input
-        if extra_lines and not isinstance(extra_lines, (str, list, tuple)):
-            raise ValueError('extra_lines must be of type str, list, or tuple')
-        elif extra_lines and isinstance(extra_lines, str):
-            extra_lines = [extra_lines]
-
-        self.name = string_rep(name)
-        self.submit = submit
-        self.extra_lines = extra_lines
-        self._built = False
-
-        # Set up logger
-        self.logger = _setup_logger(self, verbose)
-
-    def _get_fancyname(self):
-
-        date = time.strftime('%Y%m%d')
-        file_pattern = '{}/{}_{}_??.submit'.format(self.submit, self.name, date)
-        submit_number = len(glob.glob(file_pattern)) + 1
-        fancyname = self.name + '_{}_{:02d}'.format(date, submit_number)
-
-        return fancyname
