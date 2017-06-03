@@ -10,3 +10,6 @@ upload:
 	twine upload dist/*
 
 release: dist upload
+
+deploy-docs:
+	mkdocs gh-deploy --clean
