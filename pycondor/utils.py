@@ -37,6 +37,8 @@ def _setup_logger(cls, verbose=0):
     verbosity for a pycondor Job, but high verbosity for a Dagman
     class. setup_logger() helps streamline this process.
     """
+    if not hasattr(cls, 'name'):
+        raise AttributeError('Input must have a "name" attribute.')
     # Set up logger
     if verbose not in logging_level_dict:
         raise KeyError('Verbose option {} for {} not valid. Valid options are {}.'.format(
@@ -63,11 +65,13 @@ def checkdir(path, makedirs):
 
 
 def get_queue(submitter=None):
+
     queue_command = 'condor_q'
     if submitter:
         queue_command += ' -submitter {}'.format(submitter)
     proc = subprocess.Popen([queue_command], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
+
     return out
 
 
@@ -75,7 +79,7 @@ def string_rep(obj, quotes=False):
     '''Converts basic python objects to a string representation
 
     '''
-    assert obj is not None, 'obj must not be None'
+    assert obj is not None, 'Input must not be None'
 
     quote = '"' if quotes else ''
 

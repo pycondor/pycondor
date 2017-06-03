@@ -126,6 +126,12 @@ class Dagman(BaseNode):
 
     def build(self, makedirs=True, fancyname=True):
 
+        if self._built:
+            self.logger.warning(
+                    '{} submit file has already been built. '
+                    'Skipping the build process...'.format(self.name))
+            return self
+
         # Create DAG submit file path
         name = self._get_fancyname() if fancyname else self.name
         submit_file = '{}/{}.submit'.format(self.submit, name)
@@ -135,6 +141,7 @@ class Dagman(BaseNode):
         # Write dag submit file
         self.logger.info('Building DAG submission file {}...'.format(self.submit_file))
         lines = []
+        parent_child_lines = []
         for node_index, node in enumerate(self, start=1):
             self.logger.info('Working on {} [{} of {}]'.format(node.name, node_index, len(self.nodes)))
             # Build the BaseNode submit file
@@ -152,7 +159,7 @@ class Dagman(BaseNode):
             # Add parent/child information, if necessary
             if node.hasparents():
                 parent_child_string = _get_parent_child_string(node)
-                lines.append(parent_child_string)
+                parent_child_lines.append(parent_child_string)
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
@@ -160,7 +167,8 @@ class Dagman(BaseNode):
 
         # Write lines to dag submit file
         with open(submit_file, 'w') as dag:
-            dag.writelines('\n'.join(lines))
+            dag_lines = lines + ['\n#Inter-job dependencies'] + parent_child_lines
+            dag.writelines('\n'.join(dag_lines))
 
         self._built = True
         self.logger.info('Dagman submission file for {} successfully '

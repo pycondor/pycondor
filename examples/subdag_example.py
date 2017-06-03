@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Setting up a PyCondor Dagman
     dagman = pycondor.Dagman('exampledagman', submit=submit, verbose=2)
     # Add jobs to dagman
-    dagman.add_subdag(subdag)
     dagman.add_job(job3)
+    dagman.add_subdag(subdag)
     # Write all necessary submit files and submit job to Condor
     dagman.build_submit()

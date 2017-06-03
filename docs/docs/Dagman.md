@@ -3,7 +3,7 @@
 Dagman(name, submit=cwd, extra_lines=None, verbose=0)
 ```
 
-The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also handle any inter-job dependencies, such as parent-child relationships between jobs.
+The `Dagman` object acts as a container for `Job`  and other `Dagman` objects. `Dagman` objects also handle any inter-job dependencies, such as parent-child relationships between `Jobs` and other `Dagmans`.
 
 
 ### Parameters
@@ -32,9 +32,25 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
 
 ### Attributes
 
-* `jobs` : `list` (default: `[]`)
+* `nodes` : `list` (default: `[]`)
 
-    List of Job objects to be included in DAGMan submit file.
+    List of Job and other Dagman objects to be included in Dagman submit file.
+
+
+* `parents` : `list` (default: `[]`)
+
+    *(Added in version 0.1.3)*
+
+    List of parent Jobs and Dagmans. Ensures that Jobs and other Dagmans in the parents list will complete before this Dagman is submitted to HTCondor.
+
+
+* `children` : `list` (default: `[]`)
+
+    *(Added in version 0.1.3)*
+
+    List of children Jobs and Dagmans. Ensures that Jobs and other Dagmans in the children list will be submitted after this Dagman is has completed.
+
+
 
 ### Methods
 
@@ -44,13 +60,58 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
 
     * `job` : `Job`
 
-        Job to append to the `jobs` list.
+        Job to append to the `nodes` list.
+
+    *Returns:*
+
+    * `self` : `Dagman`
+
+        Returns self.
+
+* `add_subdag(dag)`
+
+    *Parameters:*
+
+    * `dag` : `Dagman`
+
+        Dagman to append to the `nodes` list.
+
+    *Returns:*
+
+    * `self` : `Dagman`
+
+        Returns self.
+
+
+* `add_parent(object)`
+
+    *Parameters:*
+
+    * `object` : `Job`, `Dagman`
+
+        Job or Dagman to append to the `parents` list.
+
+    *Returns:*
+
+    * `self` : `Job`, `Dagman`
+
+        Returns self.
+
+
+* `add_child(object)`
+
+    *Parameters:*
+
+    * `object` : `Job`
+
+        Job or Dagman to append to the `children` list.
 
     *Returns:*
 
     * `self` : `Job`
 
         Returns self.
+
 
 * `build(makedirs, fancyname)`
 
@@ -66,7 +127,7 @@ The `Dagman` object acts as a container for `Job` objects. `Dagman` objects also
 
     *Returns:*
 
-    * `self` : `Job`
+    * `self` : `Dagman`
 
         Returns self.
 

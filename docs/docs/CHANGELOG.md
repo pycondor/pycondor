@@ -1,5 +1,13 @@
 # Release Notes
 
+## Version 0.1.3
+
+**Changes**:
+
+* Adds subdag support. Now Dagman objects can be added to other Dagman object
+with the new `add_subdag` class method.
+
+
 ## Version 0.1.2
 
 **Changes**:
