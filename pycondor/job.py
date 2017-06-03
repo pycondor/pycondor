@@ -3,11 +3,12 @@ import os
 import subprocess
 from collections import namedtuple
 
-from . import base
+from . import utils
+from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
 
-class Job(base.SubmitFile):
+class Job(BaseNode):
 
     def __init__(self, name, executable, error=None, log=None, output=None, submit=os.getcwd(),
     request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla',
@@ -16,7 +17,7 @@ class Job(base.SubmitFile):
 
         super(Job, self).__init__(name, submit, extra_lines, verbose)
 
-        self.executable = base.string_rep(executable)
+        self.executable = utils.string_rep(executable)
         self.error = error
         self.log = log
         self.output = output
@@ -31,8 +32,6 @@ class Job(base.SubmitFile):
         self.queue = queue
 
         self.args = []
-        self.parents = []
-        self.children = []
 
         self.logger.debug('{} initialized'.format(self.name))
 
@@ -75,79 +74,6 @@ class Job(base.SubmitFile):
 
         return self
 
-    def _hasparent(self, job):
-        return job in self.parents
-
-    def add_parent(self, job):
-
-        # Ensure that job is a Job
-        if not isinstance(job, Job):
-            raise ValueError('job must be of type Job')
-
-        # Don't bother continuing if job is already in the parents list
-        if self._hasparent(job):
-            return self
-
-        # Add job to existing parents
-        self.parents.append(job)
-        self.logger.debug(
-            'Added Job {} as a parent for Job {}'.format(job.name, self.name))
-
-        # Add self Job instance as a child to the new parent job
-        job.add_child(self)
-
-        return self
-
-    def add_parents(self, job_list):
-
-        # Ensure that job_list is an iterable of type Job
-        try:
-            for job in job_list:
-                self.add_parent(job)
-        except:
-            raise TypeError('add_parents() is expecting an iterable of Jobs')
-
-        return self
-
-    def _haschild(self, job):
-        return job in self.children
-
-    def add_child(self, job):
-
-        # Ensure that job is a Job
-        if not isinstance(job, Job):
-            raise ValueError('job must be of type Job')
-
-        # Don't bother continuing if job is already in the children list
-        if self._haschild(job):
-            return self
-
-        # Add job to existing children
-        self.children.append(job)
-        self.logger.debug(
-            'Added Job {} as a child for Job {}'.format(job.name, self.name))
-        # Add this Job instance as a parent to the new child job
-        job.add_parent(self)
-
-        return self
-
-    def add_children(self, jobs):
-
-        # Ensure that jobs is an iterable of type Job
-        try:
-            for job in jobs:
-                self.add_child(job)
-        except:
-            raise TypeError('add_children() is expecting a list of Jobs')
-
-        return self
-
-    def haschildren(self):
-        return bool(self.children)
-
-    def hasparents(self):
-        return bool(self.parents)
-
     def _make_submit_script(self, makedirs=True, fancyname=True, indag=False):
 
         # Retrying failed nodes is only available to Jobs in a Dagman
@@ -162,7 +88,7 @@ class Job(base.SubmitFile):
             raise IOError('The path {} does not exist...'.format(self.executable))
         for directory in [self.submit, self.log, self.output, self.error]:
             if directory is not None:
-                base.checkdir(directory + '/', makedirs)
+                utils.checkdir(directory + '/', makedirs)
 
         name = self._get_fancyname() if fancyname else self.name
         submit_file= '{}/{}.submit'.format(self.submit, name)
@@ -174,7 +100,7 @@ class Job(base.SubmitFile):
                         'initialdir', 'notification', 'requirements']
         for attr in submit_attrs:
             if getattr(self, attr) is not None:
-                attr_str = base.string_rep(getattr(self, attr))
+                attr_str = utils.string_rep(getattr(self, attr))
                 lines.append('{} = {}'.format(attr, attr_str))
 
         # Set up log, output, and error files paths
@@ -210,7 +136,7 @@ class Job(base.SubmitFile):
                         'are only supported through Dagman')
                 else:
                     arg = self.args[0].arg
-                    lines.append('arguments = {}'.format(base.string_rep(arg, quotes=True)))
+                    lines.append('arguments = {}'.format(utils.string_rep(arg, quotes=True)))
                     lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
             elif self.args:

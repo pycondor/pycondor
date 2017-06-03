@@ -5,6 +5,7 @@ import time
 import glob
 import logging
 
+
 # Specify logging settings
 logging.basicConfig(
     format='%(levelname)s: pycondor - %(name)s : %(message)s')
@@ -36,6 +37,8 @@ def _setup_logger(cls, verbose=0):
     verbosity for a pycondor Job, but high verbosity for a Dagman
     class. setup_logger() helps streamline this process.
     """
+    if not hasattr(cls, 'name'):
+        raise AttributeError('Input must have a "name" attribute.')
     # Set up logger
     if verbose not in logging_level_dict:
         raise KeyError('Verbose option {} for {} not valid. Valid options are {}.'.format(
@@ -62,11 +65,13 @@ def checkdir(path, makedirs):
 
 
 def get_queue(submitter=None):
+
     queue_command = 'condor_q'
     if submitter:
         queue_command += ' -submitter {}'.format(submitter)
     proc = subprocess.Popen([queue_command], stdout=subprocess.PIPE, shell=True)
     (out, err) = proc.communicate()
+
     return out
 
 
@@ -74,7 +79,7 @@ def string_rep(obj, quotes=False):
     '''Converts basic python objects to a string representation
 
     '''
-    assert obj is not None, 'obj must not be None'
+    assert obj is not None, 'Input must not be None'
 
     quote = '"' if quotes else ''
 
@@ -84,31 +89,3 @@ def string_rep(obj, quotes=False):
         obj_str = str(obj)
 
     return quote + obj_str + quote
-
-
-class SubmitFile(object):
-
-    def __init__(self, name, submit=os.getcwd(), extra_lines=None, verbose=0):
-
-        # Validate user input
-        if extra_lines and not isinstance(extra_lines, (str, list, tuple)):
-            raise ValueError('extra_lines must be of type str, list, or tuple')
-        elif extra_lines and isinstance(extra_lines, str):
-            extra_lines = [extra_lines]
-
-        self.name = string_rep(name)
-        self.submit = submit
-        self.extra_lines = extra_lines
-        self._built = False
-
-        # Set up logger
-        self.logger = _setup_logger(self, verbose)
-
-    def _get_fancyname(self):
-
-        date = time.strftime('%Y%m%d')
-        file_pattern = '{}/{}_{}_??.submit'.format(self.submit, self.name, date)
-        submit_number = len(glob.glob(file_pattern)) + 1
-        fancyname = self.name + '_{}_{:02d}'.format(date, submit_number)
-
-        return fancyname

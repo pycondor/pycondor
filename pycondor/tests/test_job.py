@@ -31,7 +31,8 @@ def test_add_child_fail():
     with pytest.raises(ValueError) as excinfo:
         job = pycondor.Job('jobname', 'jobex')
         job.add_child('childjob')
-    error = 'job must be of type Job'
+    error = 'add_child() is expecting a Job or Dagman instance. ' + \
+            'Got an object of type {}'.format(type('childjob'))
     assert error == str(excinfo.value)
 
 
@@ -39,7 +40,8 @@ def test_add_parent_fail():
     with pytest.raises(ValueError) as excinfo:
         job = pycondor.Job('jobname', 'jobex')
         job.add_parent('parentjob')
-    error = 'job must be of type Job'
+    error = 'add_parent() is expecting a Job or Dagman instance. ' + \
+            'Got an object of type {}'.format(type('parentjob'))
     assert error == str(excinfo.value)
 
 

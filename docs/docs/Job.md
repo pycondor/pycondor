@@ -94,11 +94,11 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 
 * `parents` : `list` (default: `[]`)
 
-    *Only applies when Job is in a Dagman*. List of parent Jobs. Dagman will ensure that Jobs in the parents list will complete before this Job is submitted to HTCondor.
+    *Only applies when Job is in a Dagman*. List of parent Jobs and Dagmans. Ensures that Jobs and other Dagmans in the parents list will complete before this Job is submitted to HTCondor.
 
 * `children` : `list` (default: `[]`)
 
-    *Only applies when Job is in a Dagman*. List of child Jobs. Dagman will ensure that Jobs in the children list will be submitted to HTCondor only after this Job has completed.
+    *Only applies when Job is in a Dagman*. List of child Jobs and Dagmans. Ensures that Jobs and other Dagmans in the children list will be submitted after this Job is has completed.
 
 
 ### Methods
@@ -133,28 +133,28 @@ The `Job` object consists of an executable to run on Condor, any specifications 
 
         Returns self.
 
-* `add_parent(job)`
+* `add_parent(object)`
 
     *Parameters:*
 
-    * `job` : `Job`
+    * `object` : `Job`, `Dagman`
 
-        Job to append to the `parents` list.
+        Job or Dagman to append to the `parents` list.
 
     *Returns:*
 
-    * `self` : `Job`
+    * `self` : `Job`, `Dagman`
 
         Returns self.
 
 
-* `add_child(job)`
+* `add_child(object)`
 
     *Parameters:*
 
-    * `job` : `Job`
+    * `object` : `Job`
 
-        Job to append to the `children` list.
+        Job or Dagman to append to the `children` list.
 
     *Returns:*
 
