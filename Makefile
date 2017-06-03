@@ -12,4 +12,4 @@ upload:
 release: dist upload
 
 deploy-docs:
-	mkdocs gh-deploy --clean
+	mkdocs gh-deploy --clean docs
