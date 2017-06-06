@@ -36,5 +36,6 @@ setup(
                   'examples/job_example.py',
                   'examples/job_arguments_example.py',
                   'examples/dagman_example.py',
-                  'examples/jagman_parentchild_example.py']}
+                  'examples/dagman_parentchild_example.py',
+                  'examples/subdag_example.py']}
 )

@@ -9,7 +9,7 @@
 
 ### Useful Links
 
-* Documentation: [http://www.jamesbourbeau.com/pycondor](http://www.jamesbourbeau.com/pycondor)
+* Documentation: [https://jrbourbeau.github.io/pycondor](https://jrbourbeau.github.io/pycondor)
 * GitHub repository: [https://github.com/jrbourbeau/pycondor](https://github.com/jrbourbeau/pycondor)
 * PyPI: [https://pypi.python.org/pypi/PyCondor](https://pypi.python.org/pypi/PyCondor)
 
@@ -44,7 +44,7 @@ python setup.py install
 
 ### Examples
 
-For example uses of PyCondor, please see the [examples page](http://www.jamesbourbeau.com/pycondor/examples/) in the documentation or the `examples/` directory in the project repository.
+For example uses of PyCondor, please see the [examples page](https://jrbourbeau.github.io/pycondor/examples/) in the documentation or the `examples/` directory in the project repository.
 
 
 
