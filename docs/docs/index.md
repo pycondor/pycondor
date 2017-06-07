@@ -3,9 +3,9 @@
 [PyCondor](https://github.com/jrbourbeau/pycondor) (Python HTCondor) is a tool that helps build and submit HTCondor jobs in a straight-forward manner with minimal hassle.
 
 [![Build Status](https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master)](https://travis-ci.org/jrbourbeau/pycondor)
-![pypi version](https://img.shields.io/pypi/v/pycondor.svg 'pypi version')
-![pypi status](https://img.shields.io/pypi/status/pycondor.svg 'pypi status')
-![license](https://img.shields.io/pypi/l/pycondor.svg 'license')
+![pypi version](https://img.shields.io/pypi/v/pycondor.svg)
+![pypi status](https://img.shields.io/pypi/status/pycondor.svg)
+![license](https://img.shields.io/pypi/l/pycondor.svg)
 
 ## Motivation
 
