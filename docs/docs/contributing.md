@@ -152,3 +152,8 @@ $ git push origin <new_feature_branch_name>
 ```
 
 ## Step 10: Submitting a pull request
+
+Finally, you can go to your copy of PyCondor on GitHub and submit a pull request by clicking the "Compare & pull request" button!
+
+
+![](./images/pull-request-button.png)
