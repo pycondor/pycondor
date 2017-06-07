@@ -1,3 +1,4 @@
 pytest
 mkdocs
 mkdocs-material
+twine
