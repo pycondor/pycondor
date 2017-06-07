@@ -10,6 +10,7 @@ pages:
         - 'Dagman': Dagman.md
     - Examples : examples.md
     - Release notes : CHANGELOG.md
+    - Contributing : contributing.md
 repo_name: 'GitHub'
 repo_url: https://github.com/jrbourbeau/pycondor
 theme: material
