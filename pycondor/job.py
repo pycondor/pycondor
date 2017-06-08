@@ -124,7 +124,8 @@ class Job(BaseNode):
             raise ValueError('queue must be of type int')
         # If building this submit file for a job that's being managed by DAGMan, just add simple arguments and queue lines
         if indag:
-            lines.append('arguments = $(ARGS)')
+            if len(self.args) > 0:
+                lines.append('arguments = $(ARGS)')
             if self._has_arg_names:
                 lines.append('job_name = $(job_name)')
             lines.append('queue')

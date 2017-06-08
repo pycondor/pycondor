@@ -1,5 +1,13 @@
 # Release Notes
 
+## Version 0.1.4
+
+**Changes**:
+
+* Fixes bug where Jobs that have no arguments, when submitted from a Dagman,
+were not included in the dag submit file. (See [issue #33](https://github.com/jrbourbeau/pycondor/issues/33))
+
+
 ## Version 0.1.3
 
 **Changes**:

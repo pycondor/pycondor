@@ -23,26 +23,29 @@ def _get_job_arg_lines(job, fancyname):
         raise ValueError('Expecting a Job object, got {}'.format(type(job)))
 
     job_arg_lines = []
-    for idx, job_arg in enumerate(job):
-        arg, name, retry = job_arg
-        job_arg_lines.append('JOB {}_arg_{} '.format(job.name, idx) + job.submit_file)
-        job_arg_lines.append('VARS {}_arg_{} '.format(job.name, idx) +
-                  'ARGS={}'.format(utils.string_rep(arg, quotes=True)))
-        # Define job_name variable if there are arg_names present for this Job
-        if not job._has_arg_names:
-            pass
-        elif name is not None:
-            job_name = job._get_fancyname() if fancyname else job.name
-            job_name += '_{}'.format(name)
-            job_name = utils.string_rep(job_name, quotes=True)
-            job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(job.name, idx, job_name))
-        else:
-            job_name = job._get_fancyname() if fancyname else job.name
-            job_name = utils.string_rep(job_name, quotes=True)
-            job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(job.name, idx, job_name))
-        # Add retry option for Job
-        if retry is not None:
-            job_arg_lines.append('Retry {}_arg_{} {}'.format(job.name, idx, retry))
+    if len(job) == 0:
+        job_arg_lines.append('JOB {} '.format(job.name) + job.submit_file)
+    else:
+        for idx, job_arg in enumerate(job):
+            arg, name, retry = job_arg
+            job_arg_lines.append('JOB {}_arg_{} '.format(job.name, idx) + job.submit_file)
+            job_arg_lines.append('VARS {}_arg_{} '.format(job.name, idx) +
+                      'ARGS={}'.format(utils.string_rep(arg, quotes=True)))
+            # Define job_name variable if there are arg_names present for this Job
+            if not job._has_arg_names:
+                pass
+            elif name is not None:
+                job_name = job._get_fancyname() if fancyname else job.name
+                job_name += '_{}'.format(name)
+                job_name = utils.string_rep(job_name, quotes=True)
+                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(job.name, idx, job_name))
+            else:
+                job_name = job._get_fancyname() if fancyname else job.name
+                job_name = utils.string_rep(job_name, quotes=True)
+                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(job.name, idx, job_name))
+            # Add retry option for Job
+            if retry is not None:
+                job_arg_lines.append('Retry {}_arg_{} {}'.format(job.name, idx, retry))
 
     return job_arg_lines
 
@@ -54,14 +57,14 @@ def _get_parent_child_string(node):
 
     parent_string = 'Parent'
     for parent_node in node.parents:
-        if isinstance(parent_node, Job):
+        if isinstance(parent_node, Job) and len(parent_node) > 0:
             for parent_arg_idx in range(len(parent_node)):
                 parent_string += ' {}_arg_{}'.format(parent_node.name, parent_arg_idx)
         else:
             parent_string += ' {}'.format(parent_node.name)
 
     child_string = 'Child'
-    if isinstance(node, Job):
+    if isinstance(node, Job) and len(node) > 0:
         for node_arg_idx in range(len(node)):
             child_string += ' {}_arg_{}'.format(node.name, node_arg_idx)
     else:

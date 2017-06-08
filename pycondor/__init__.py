@@ -6,4 +6,4 @@ from .job import Job
 from .dagman import Dagman
 from . import utils
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
