@@ -1,4 +1,4 @@
 pytest
-mkdocs
-mkdocs-material
 twine
+sphinx
+travis-sphinx

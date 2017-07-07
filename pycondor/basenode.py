@@ -10,7 +10,7 @@ from . import utils
 
 class BaseNode(object):
 
-    def __init__(self, name, submit=os.getcwd(), extra_lines=None, verbose=0):
+    def __init__(self, name, submit=None, extra_lines=None, verbose=0):
 
         # Validate user input
         if extra_lines and not isinstance(extra_lines, (str, list, tuple)):
@@ -19,7 +19,7 @@ class BaseNode(object):
             extra_lines = [extra_lines]
 
         self.name = utils.string_rep(name)
-        self.submit = submit
+        self.submit = submit if submit is not None else os.getcwd()
         self.extra_lines = extra_lines
         self._built = False
 
@@ -42,6 +42,19 @@ class BaseNode(object):
         return node in self.parents
 
     def add_parent(self, node):
+        """Adds to parents list
+
+        Parameters
+        ----------
+        node : BaseNode
+            Job or Dagman to append to the parents list.
+
+        Returns
+        -------
+        self : BaseNode
+            Returns self.
+
+        """
 
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
@@ -76,6 +89,19 @@ class BaseNode(object):
         return node in self.children
 
     def add_child(self, node):
+        """Adds to children list
+
+        Parameters
+        ----------
+        node : BaseNode
+            Job or Dagman to append to the children list.
+
+        Returns
+        -------
+        self : BaseNode
+            Returns self.
+
+        """
 
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
