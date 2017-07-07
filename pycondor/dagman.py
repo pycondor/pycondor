@@ -75,8 +75,26 @@ def _get_parent_child_string(node):
     return parent_child_string
 
 
-
 class Dagman(BaseNode):
+    """Dagman object
+
+    Parameters
+    ----------
+    name : str
+        Name of the Dagman instance. This will also be the name of the corresponding error, log, output, and submit files associated with this Dagman.
+    submit : str (default: current directory)
+        Path to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).
+    extra_lines : list (default: None)
+        (Added in version 0.1.1)
+        List of additional lines to be added to submit file.
+    verbose : int (default: 0)
+        Level of logging verbosity.
+        
+        * 0 — warning (least verbose)
+        * 1 — info
+        * 2 — debug (most verbose)
+
+    """
 
     def __init__(self, name, submit=None, extra_lines=None, verbose=0):
 
