@@ -47,11 +47,8 @@ class Job(BaseNode):
     extra_lines : list or None, optional
         List of additional lines to be added to submit file.
     verbose : int
-        Level of logging verbosity (default is 0).
-
-        * 0 — warning (least verbose)
-        * 1 — info
-        * 2 — debug (most verbose)
+        Level of logging verbosity option are 0-warning, 1-info, 
+        2-debugging(default is 0).
 
     Attributes
     ----------

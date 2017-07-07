@@ -88,11 +88,8 @@ class Dagman(BaseNode):
         (Added in version 0.1.1)
         List of additional lines to be added to submit file.
     verbose : int (default: 0)
-        Level of logging verbosity.
-        
-        * 0 — warning (least verbose)
-        * 1 — info
-        * 2 — debug (most verbose)
+        Level of logging verbosity option are 0-warning, 1-info, 
+        2-debugging(default is 0).
 
     """
 
