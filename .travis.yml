@@ -13,4 +13,9 @@ install:
   - pip install .
   - pip install -r requirements-dev.txt
 # command to run tests
-script: make tests
+script:
+    - make tests
+    - travis-sphinx --source=docs build
+
+after_success:
+    - travis-sphinx deploy
