@@ -81,15 +81,36 @@ class Dagman(BaseNode):
     Parameters
     ----------
     name : str
-        Name of the Dagman instance. This will also be the name of the corresponding error, log, output, and submit files associated with this Dagman.
-    submit : str (default: current directory)
+        Name of the Dagman instance. This will also be the name of the
+        corresponding error, log, output, and submit files associated with
+        this Dagman.
+
+    submit : str
         Path to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).
-    extra_lines : list (default: None)
-        (Added in version 0.1.1)
+
+    extra_lines : list or None, optional
         List of additional lines to be added to submit file.
-    verbose : int (default: 0)
-        Level of logging verbosity option are 0-warning, 1-info, 
-        2-debugging(default is 0).
+
+        .. versionadded:: 0.1.1
+
+    verbose : int, optional
+        Level of logging verbosity option are 0-warning, 1-info,
+        2-debugging (default is 0).
+
+    Attributes
+    ----------
+    jobs : list
+        The list of jobs for this Dagman instance to manage.
+
+    parents : list
+        List of parent Jobs and Dagmans. Ensures that Jobs and other
+        Dagmans in the parents list will complete before this Dagman
+        is submitted to HTCondor.
+
+    children : list
+        List of child Jobs and Dagmans. Ensures that Jobs and other
+        Dagmans in the children list will be submitted after this Dagman
+        is has completed.
 
     """
 
@@ -133,16 +154,63 @@ class Dagman(BaseNode):
         return self
 
     def add_job(self, job):
+        """Add job to Dagman
+
+        Parameters
+        ----------
+        job : Job
+            Job to append to Dagman jobs list.
+
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
         self._add_node(job)
 
         return self
 
     def add_subdag(self, dag):
+        """Add dag to Dagman
+
+        Parameters
+        ----------
+        dag : Dagman
+            Subdag to append to Dagman jobs list.
+
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
         self._add_node(dag)
 
         return self
 
     def build(self, makedirs=True, fancyname=True):
+        """Build and saves the submit file for Dagman
+
+        Parameters
+        ----------
+        makedirs : bool, optional
+            If Job directories (e.g. error, output, log, submit) don't exist,
+            create them (default is ``True``).
+
+        fancyname : bool, optional
+            Appends the date and unique id number to error, log, output, and
+            submit files. For example, instead of ``dagname.submit`` the submit
+            file becomes ``dagname_YYYYMMD_id``. This is useful when running
+            several Dags/Jobs of the same name (default is ``True``).
+
+        Returns
+        -------
+        self : object
+            Returns self.
+        """
 
         if self._built:
             self.logger.warning(
@@ -195,6 +263,24 @@ class Dagman(BaseNode):
         return self
 
     def submit_dag(self, maxjobs=3000, **kwargs):
+        """Submits Dagman to condor
+
+        Parameters
+        ----------
+        maxjobs : int, optional
+            Maximum number of jobs to have running at a single time (default is 3000).
+
+        kwargs : dict, optional
+            Any additional options you would like specified when
+            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
+            For example, if you would like to add ``-maxjobs 1000`` to the
+            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+
+        Returns
+        -------
+        self : object
+            Returns self.
+        """
         # Construct and execute condor_submit_dag command
         command = 'condor_submit_dag -maxjobs {} {}'.format(
             maxjobs, self.submit_file)
@@ -207,6 +293,34 @@ class Dagman(BaseNode):
         return
 
     def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000, **kwargs):
+        """Calls build and submit sequentially
+
+        Parameters
+        ----------
+        makedirs : bool, optional
+            If Job directories (e.g. error, output, log, submit) don't exist,
+            create them (default is ``True``).
+
+        fancyname : bool, optional
+            Appends the date and unique id number to error, log, output, and
+            submit files. For example, instead of ``dagname.submit`` the submit
+            file becomes ``dagname_YYYYMMD_id``. This is useful when running
+            several Dags/Jobs of the same name (default is ``True``).
+
+        maxjobs : int, optional
+            Maximum number of jobs to have running at a single time (default is 3000).
+
+        kwargs : dict, optional
+            Any additional options you would like specified when
+            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
+            For example, if you would like to add ``-maxjobs 1000`` to the
+            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+
+        Returns
+        -------
+        self : object
+            Returns self.
+        """
         self.build(makedirs, fancyname)
         self.submit_dag(maxjobs, **kwargs)
 

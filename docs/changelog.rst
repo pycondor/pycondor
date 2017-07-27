@@ -1,5 +1,7 @@
 .. _changelog:
 
+:github_url: https://github.com/jrbourbeau/pycondor
+
 *************
 Release Notes
 *************

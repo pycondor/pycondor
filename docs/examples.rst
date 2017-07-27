@@ -1,10 +1,12 @@
 .. _examples:
 
+:github_url: https://github.com/jrbourbeau/pycondor
+
 ********
 Examples
 ********
 
-All of the following examples use a dummy script, ``savelist.py``, that creates and saves a Python ``list``. ``savelist.py`` has a command-line argument `--length` that specifies how many items to generate in the list (default: ``10``). The script is located in the ``examples/`` directory in the `PyCondor repository <https://github.com/jrbourbeau/pycondor>`_.
+All of the following examples use a dummy script, ``savelist.py``, that creates and saves a Python ``list``. ``savelist.py`` has a command-line argument ``--length`` that specifies how many items to generate in the list (default: ``10``). The script is located in the ``examples/`` directory in the `PyCondor repository <https://github.com/jrbourbeau/pycondor>`_.
 
 
 ============
@@ -15,6 +17,8 @@ Basic Job submission
 --------------------
 
 .. code-block:: python
+
+    import pycondor
 
     # Declare the error, output, log, and submit directories for Condor Job
     error = 'condor/error'
@@ -133,6 +137,8 @@ A Dagman within a Dagman
 ------------------------
 
 .. code-block:: python
+
+    import pycondor
 
     # Declare the error, output, log, and submit directories for Condor Job
     error = 'condor/error'

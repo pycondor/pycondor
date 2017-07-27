@@ -42,7 +42,7 @@ class BaseNode(object):
         return node in self.parents
 
     def add_parent(self, node):
-        """Adds to parents list
+        """Adds node to parents list
 
         Parameters
         ----------
@@ -51,7 +51,7 @@ class BaseNode(object):
 
         Returns
         -------
-        self : BaseNode
+        self : object
             Returns self.
 
         """
@@ -76,6 +76,19 @@ class BaseNode(object):
         return self
 
     def add_parents(self, node_list):
+        """Adds nodes to the parents list
+
+        Parameters
+        ----------
+        args : list or tuple
+            List of nodes to append to the parents list
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
 
         try:
             for node in node_list:
@@ -89,7 +102,7 @@ class BaseNode(object):
         return node in self.children
 
     def add_child(self, node):
-        """Adds to children list
+        """Adds node to children list
 
         Parameters
         ----------
@@ -98,7 +111,7 @@ class BaseNode(object):
 
         Returns
         -------
-        self : BaseNode
+        self : object
             Returns self.
 
         """
@@ -122,6 +135,19 @@ class BaseNode(object):
         return self
 
     def add_children(self, nodes):
+        """Adds nodes to the children list
+
+        Parameters
+        ----------
+        args : list or tuple
+            List of nodes to append to the children list
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
 
         # Ensure that nodes is an iterable of type Job
         try:
@@ -133,7 +159,23 @@ class BaseNode(object):
         return self
 
     def haschildren(self):
+        """Checks for any children nodes
+
+        Returns
+        -------
+        bool
+            Returns whether or not this node has any child nodes.
+
+        """
         return bool(self.children)
 
     def hasparents(self):
+        """Checks for any parent nodes
+
+        Returns
+        -------
+        bool
+            Returns whether or not this node has any parent nodes.
+
+        """
         return bool(self.parents)

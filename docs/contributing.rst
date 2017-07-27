@@ -1,5 +1,7 @@
 .. _contributing:
 
+:github_url: https://github.com/jrbourbeau/pycondor
+
 ************
 Contributing
 ************
