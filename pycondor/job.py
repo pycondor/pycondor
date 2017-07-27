@@ -15,49 +15,72 @@ class Job(BaseNode):
     ----------
     name : str
         Name of the Job instance. This will also be the name of the corresponding error, log, output, and submit files associated with this job.
+
     executable : str
         Path to corresponding executable for Job.
+
     error : str or None, optional
         Path to directory where condor job error files will be written.
+
     log : str or None, optional
         Path to directory where condor job log files will be written.
+
     output : str or None, optional
         Path to directory where condor job output files will be written.
+
     submit : str, optional
         Path to directory where condor job submit files will be written. (Defaults to the directory was the job was submitted from).
+
     request_memory : str or None, optional
         Memory request to be included in submit file.
+
     request_disk : str or None, optional
         Disk request to be included in submit file.
+
     request_cpus : int or None, optional
-        (Added in version 0.1.0)
         Number of CPUs to request in submit file.
+
+        .. versionadded:: 0.1.0
+
     getenv : bool, optional
         Whether or not to use the current environment settings when running the job (default is True).
+
     universe : str, optional
         Universe execution environment to be specified in submit file (default is 'vanilla').
+
     initialdir : str or None, optional
         Initial directory for relative paths (defaults to the directory was the job was submitted from).
+
     notification : str, optional
         E-mail notification preference (default is 'never').
+
     requirements : str or None, optional
         Additional requirements to be included in ClassAd.
+
     queue : int or None, optional
         Integer specifying how many times you would like this job to run.
+
     extra_lines : list or None, optional
         List of additional lines to be added to submit file.
+
     verbose : int
-        Level of logging verbosity option are 0-warning, 1-info, 
+        Level of logging verbosity option are 0-warning, 1-info,
         2-debugging(default is 0).
 
     Attributes
     ----------
     args : list
         The list of arguments for this Job instance.
+
     parents : list
-        Only applies when Job is in a Dagman. List of parent Jobs and Dagmans. Ensures that Jobs and other Dagmans in the parents list will complete before this Job is submitted to HTCondor.
+        Only applies when Job is in a Dagman. List of parent Jobs and Dagmans.
+        Ensures that Jobs and other Dagmans in the parents list will complete
+        before this Job is submitted to HTCondor.
+
     children : list
-        Only applies when Job is in a Dagman. List of child Jobs and Dagmans. Ensures that Jobs and other Dagmans in the children list will be submitted after this Job is has completed.
+        Only applies when Job is in a Dagman. List of child Jobs and Dagmans.
+        Ensures that Jobs and other Dagmans in the children list will be
+        submitted after this Job is has completed.
 
 
     """
@@ -108,17 +131,25 @@ class Job(BaseNode):
         ----------
         arg : str
             Argument to append to Job args list.
+
         name : str or None, optional
-            (Added in version 0.1.2)
-            Option to specify a name related to this argument. If a name is specified, then a separate set of log, output, and error files will be generated for this particular argument.
+            Option to specify a name related to this argument. If a name is
+            specified, then a separate set of log, output, and error files
+            will be generated for this particular argument
+            (default is ``None``).
+
+            .. versionadded:: 0.1.2
+
         retry : int or None, optional
-            (Added in version 0.1.2)
-            Option to specify the number of times to retry this node. Default number of retries is 0. Note: this feature is only available to Jobs that are submitted via a Dagman.
+            Option to specify the number of times to retry this node. Default
+            number of retries is 0. Note: this feature is only available to Jobs that are submitted via a Dagman.
+
+            .. versionadded:: 0.1.2
 
         Returns
         -------
-        Job
-            Returns self
+        self : object
+            Returns self.
 
         """
         # Validate user input
@@ -145,8 +176,8 @@ class Job(BaseNode):
 
         Returns
         -------
-        Job
-            Returns self
+        self : object
+            Returns self.
 
         """
         try:
@@ -248,6 +279,26 @@ class Job(BaseNode):
         return
 
     def build(self, makedirs=True, fancyname=True):
+        """Build and saves the submit file for Job
+
+        Parameters
+        ----------
+        makedirs : bool, optional
+            If Job directories (e.g. error, output, log, submit) don't exist,
+            create them (default is ``True``).
+
+        fancyname : bool, optional
+            Appends the date and unique id number to error, log, output, and
+            submit files. For example, instead of ``jobname.submit`` the submit
+            file becomes ``jobname_YYYYMMD_id``. This is useful when running
+            several Jobs of the same name (default is ``True``).
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
         self.logger.info(
             'Building submission file for Job {}...'.format(self.name))
         self._make_submit_script(makedirs, fancyname, indag=False)
@@ -266,6 +317,22 @@ class Job(BaseNode):
         return
 
     def submit_job(self, **kwargs):
+        """Submits Job to condor
+
+        Parameters
+        ----------
+        kwargs : dict, optional
+            Any additional options you would like specified when
+            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
+            For example, if you would like to add ``-maxjobs 1000`` to the
+            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+
+        Returns
+        -------
+        self : object
+            Returns self.
+
+        """
         # Ensure that submit file has been written
         assert self._built, 'build() must be called before submit()'
         # Ensure that there are no parent relationships
@@ -289,6 +356,31 @@ class Job(BaseNode):
         return
 
     def build_submit(self, makedirs=True, fancyname=True, **kwargs):
+        """Calls build and submit sequentially
+
+        Parameters
+        ----------
+        makedirs : bool, optional
+            If Job directories (e.g. error, output, log, submit) don't exist,
+            create them (default is ``True``).
+
+        fancyname : bool, optional
+            Appends the date and unique id number to error, log, output, and
+            submit files. For example, instead of ``jobname.submit`` the submit
+            file becomes ``jobname_YYYYMMD_id``. This is useful when running
+            several Jobs of the same name (default is ``True``).
+
+        kwargs : dict, optional
+            Any additional options you would like specified when
+            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
+            For example, if you would like to add ``-maxjobs 1000`` to the
+            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+
+        Returns
+        -------
+        self : object
+            Returns self.
+        """
         self.build(makedirs, fancyname)
         self.submit_job(**kwargs)
 

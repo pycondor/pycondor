@@ -3,8 +3,28 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+:github_url: https://github.com/jrbourbeau/pycondor
+
 .. toctree::
-    :hidden:
+   :maxdepth: 3
+   :caption: User Guide
+   :hidden:
+
+   api
+   examples
+   changelog
+   contributing
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Useful links
+   :hidden:
+
+   PyCondor @ GitHub <https://github.com/jrbourbeau/pycondor>
+   PyCondor @ PyPI <https://pypi.python.org/pypi/PyCondor>
+   Issue tracker <https://github.com/jrbourbeau/pycondor/issues>
+
+
 
 **********************
 PyCondor Documentation
@@ -61,27 +81,8 @@ For the latest development version, ``pip`` install directly from GitHub
 ==========
 User Guide
 ==========
-.. toctree::
-   :maxdepth: 2
 
-   api
-   examples
-   changelog
-
-
-==================
-Contributing Guide
-==================
-
-.. toctree::
-   :maxdepth: 1
-
-   contributing
-
-==================
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+* :doc:`api`
+* :doc:`examples`
+* :doc:`changelog`
+* :doc:`contributing`
