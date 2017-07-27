@@ -1,4 +1,5 @@
 .. _examples:
+
 :github_url: https://github.com/jrbourbeau/pycondor
 
 ********

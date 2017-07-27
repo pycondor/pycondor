@@ -14,7 +14,7 @@ install:
 # command to run tests
 script:
     - make tests
-    - travis-sphinx --source=docs build
+    - travis-sphinx --nowarn --source=docs build
 
 after_success:
     - travis-sphinx deploy

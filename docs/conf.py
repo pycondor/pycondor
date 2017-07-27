@@ -39,6 +39,10 @@ extensions = ['sphinx.ext.autodoc',
                 'sphinx.ext.githubpages',
                 'numpydoc']
 
+# this is needed for some reason...
+# see https://github.com/numpy/numpydoc/issues/69
+numpydoc_class_members_toctree = False
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
