@@ -243,7 +243,10 @@ class Job(BaseNode):
                 lines.append('arguments = $(ARGS)')
             if self._has_arg_names:
                 lines.append('job_name = $(job_name)')
-            lines.append('queue')
+            if self.queue:
+                lines.append('queue {}'.format(self.queue))
+            else:
+                lines.append('queue')
         else:
             if self.args and self.queue:
                 if len(self.args) > 1:
