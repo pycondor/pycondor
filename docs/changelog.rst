@@ -6,6 +6,14 @@
 Release Notes
 *************
 
+Version 0.1.5
+-------------
+
+**Changes**:
+
+* Fixes bug where the queue parameter for a Job was not written to the job submit file when the Job was built by a Dagman. (See `issue #38 <https://github.com/jrbourbeau/pycondor/issues/38>`_ )
+
+
 Version 0.1.4
 -------------
 
