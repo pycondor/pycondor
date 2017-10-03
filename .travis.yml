@@ -14,6 +14,7 @@ install:
 # command to run tests
 script:
     - make tests
+    - flake8 --exclude pycondor/__init__.py pycondor
     - travis-sphinx --nowarn --source=docs build
 
 after_success:
