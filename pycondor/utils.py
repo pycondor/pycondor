@@ -1,8 +1,6 @@
 
 import os
 import subprocess
-import time
-import glob
 import logging
 
 
@@ -41,8 +39,9 @@ def _setup_logger(cls, verbose=0):
         raise AttributeError('Input must have a "name" attribute.')
     # Set up logger
     if verbose not in logging_level_dict:
-        raise KeyError('Verbose option {} for {} not valid. Valid options are {}.'.format(
-            verbose, cls.name, logging_level_dict.keys()))
+        raise KeyError('Verbose option {} for {} not valid. '
+                       'Valid options are {}.'.format(
+                           verbose, cls.name, logging_level_dict.keys()))
     logger = logging.getLogger(cls.name)
     logger.setLevel(logging_level_dict[verbose])
 
@@ -69,7 +68,8 @@ def get_queue(submitter=None):
     queue_command = 'condor_q'
     if submitter:
         queue_command += ' -submitter {}'.format(submitter)
-    proc = subprocess.Popen([queue_command], stdout=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen([queue_command], stdout=subprocess.PIPE,
+                            shell=True)
     (out, err) = proc.communicate()
 
     return out

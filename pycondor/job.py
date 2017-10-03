@@ -8,13 +8,16 @@ from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
 
+
 class Job(BaseNode):
     """Job object
 
     Parameters
     ----------
     name : str
-        Name of the Job instance. This will also be the name of the corresponding error, log, output, and submit files associated with this job.
+        Name of the Job instance. This will also be the name of the
+        corresponding error, log, output, and submit files associated with
+        this job.
 
     executable : str
         Path to corresponding executable for Job.
@@ -29,7 +32,8 @@ class Job(BaseNode):
         Path to directory where condor job output files will be written.
 
     submit : str, optional
-        Path to directory where condor job submit files will be written. (Defaults to the directory was the job was submitted from).
+        Path to directory where condor job submit files will be written.
+        (Defaults to the directory was the job was submitted from).
 
     request_memory : str or None, optional
         Memory request to be included in submit file.
@@ -43,13 +47,16 @@ class Job(BaseNode):
         .. versionadded:: 0.1.0
 
     getenv : bool, optional
-        Whether or not to use the current environment settings when running the job (default is True).
+        Whether or not to use the current environment settings when running
+        the job (default is True).
 
     universe : str, optional
-        Universe execution environment to be specified in submit file (default is 'vanilla').
+        Universe execution environment to be specified in submit file
+        (default is 'vanilla').
 
     initialdir : str or None, optional
-        Initial directory for relative paths (defaults to the directory was the job was submitted from).
+        Initial directory for relative paths (defaults to the directory was
+        the job was submitted from).
 
     notification : str, optional
         E-mail notification preference (default is 'never').
@@ -85,10 +92,11 @@ class Job(BaseNode):
 
     """
 
-    def __init__(self, name, executable, error=None, log=None, output=None, submit=None,
-    request_memory=None, request_disk=None, request_cpus=None, getenv=True, universe='vanilla',
-    initialdir=None, notification='never', requirements=None, queue=None, extra_lines=None,
-    verbose=0):
+    def __init__(self, name, executable, error=None, log=None, output=None,
+                 submit=None, request_memory=None, request_disk=None,
+                 request_cpus=None, getenv=True, universe='vanilla',
+                 initialdir=None, notification='never', requirements=None,
+                 queue=None, extra_lines=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, verbose)
 
@@ -112,10 +120,12 @@ class Job(BaseNode):
 
     def __repr__(self):
         nondefaults = ''
+        default_attr = ['name', 'executable', 'logger']
         for attr in vars(self):
-            if getattr(self, attr) and attr not in ['name', 'executable', 'logger']:
+            if getattr(self, attr) and attr not in default_attr:
                 nondefaults += ', {}={}'.format(attr, getattr(self, attr))
-        output = 'Job(name={}, executable={}{})'.format(self.name, os.path.basename(self.executable), nondefaults)
+        output = 'Job(name={}, executable={}{})'.format(
+            self.name, os.path.basename(self.executable), nondefaults)
         return output
 
     def __iter__(self):
@@ -142,7 +152,8 @@ class Job(BaseNode):
 
         retry : int or None, optional
             Option to specify the number of times to retry this node. Default
-            number of retries is 0. Note: this feature is only available to Jobs that are submitted via a Dagman.
+            number of retries is 0. Note: this feature is only available to
+            Jobs that are submitted via a Dagman.
 
             .. versionadded:: 0.1.2
 
@@ -162,7 +173,8 @@ class Job(BaseNode):
 
         job_arg = JobArg(arg=arg, name=name, retry=retry)
         self.args.append(job_arg)
-        self.logger.debug('Added argument \'{}\' to Job {}'.format(arg, self.name))
+        self.logger.debug('Added argument \'{}\' to Job {}'.format(arg,
+                                                                   self.name))
 
         return self
 
@@ -194,19 +206,20 @@ class Job(BaseNode):
         # Retrying failed nodes is only available to Jobs in a Dagman
         self._has_arg_retries = any([job_arg.retry for job_arg in self.args])
         if self._has_arg_retries and (not indag):
-            message = 'Retrying failed Jobs is only available when submitting from a Dagman.'
+            message = 'Retrying failed Jobs is only available when ' + \
+                      'submitting from a Dagman.'
             self.logger.error(message)
             raise NotImplementedError(message)
 
         # Check that paths/files exist
         if not os.path.exists(self.executable):
-            raise IOError('The path {} does not exist...'.format(self.executable))
+            raise IOError('The path {} does not exist'.format(self.executable))
         for directory in [self.submit, self.log, self.output, self.error]:
             if directory is not None:
                 utils.checkdir(directory + '/', makedirs)
 
         name = self._get_fancyname() if fancyname else self.name
-        submit_file= '{}/{}.submit'.format(self.submit, name)
+        submit_file = '{}/{}.submit'.format(self.submit, name)
 
         # Start constructing lines to go into job submit file
         lines = []
@@ -223,12 +236,15 @@ class Job(BaseNode):
         for attr in ['log', 'output', 'error']:
             if getattr(self, attr) is not None:
                 path = getattr(self, attr)
-                # If path has trailing '/', then it it removed. Else, path is unmodified
+                # If path has trailing '/', then it it removed.
+                # Else, path is unmodified
                 path = path.rstrip('/')
                 if self._has_arg_names:
-                    lines.append('{} = {}/$(job_name).{}'.format(attr, path, attr))
+                    lines.append('{} = {}/$(job_name).{}'.format(
+                                 attr, path, attr))
                 else:
-                    lines.append('{} = {}/{}.{}'.format(attr, path, name, attr))
+                    lines.append('{} = {}/{}.{}'.format(attr, path,
+                                 name, attr))
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
@@ -237,7 +253,8 @@ class Job(BaseNode):
         # Add arguments and queue line
         if self.queue is not None and not isinstance(self.queue, int):
             raise ValueError('queue must be of type int')
-        # If building this submit file for a job that's being managed by DAGMan, just add simple arguments and queue lines
+        # If building this submit file for a job that's being managed by DAGMan
+        # just add simple arguments and queue lines
         if indag:
             if len(self.args) > 0:
                 lines.append('arguments = $(ARGS)')
@@ -255,7 +272,8 @@ class Job(BaseNode):
                         'are only supported through Dagman')
                 else:
                     arg = self.args[0].arg
-                    lines.append('arguments = {}'.format(utils.string_rep(arg, quotes=True)))
+                    lines.append('arguments = {}'.format(utils.string_rep(arg,
+                                                         quotes=True)))
                     lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
             elif self.args:
@@ -306,7 +324,8 @@ class Job(BaseNode):
             'Building submission file for Job {}...'.format(self.name))
         self._make_submit_script(makedirs, fancyname, indag=False)
         self._built = True
-        self.logger.info('Condor submission file for {} successfully built!'.format(self.name))
+        self.logger.info('Condor submission file for {} successfully '
+                         'built!'.format(self.name))
 
         return self
 
@@ -315,7 +334,8 @@ class Job(BaseNode):
             'Building submission file for Job {}...'.format(self.name))
         self._make_submit_script(makedirs, fancyname, indag=True)
         self._built = True
-        self.logger.debug('Condor submission file for {} successfully built!'.format(self.name))
+        self.logger.debug('Condor submission file for {} successfully '
+                          'built!'.format(self.name))
 
         return
 
@@ -326,9 +346,11 @@ class Job(BaseNode):
         ----------
         kwargs : dict, optional
             Any additional options you would like specified when
-            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
-            For example, if you would like to add ``-maxjobs 1000`` to the
-            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+            ``condor_submit`` is called (see `HTCondor documentation
+            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
+            for possible options). For example, if you would like to add
+            ``-maxjobs 1000`` to the ``condor_submit`` command, then
+            ``kwargs = {'-maxjobs': 1000}``.
 
         Returns
         -------
@@ -337,16 +359,23 @@ class Job(BaseNode):
 
         """
         # Ensure that submit file has been written
-        assert self._built, 'build() must be called before submit()'
+        if not self._built:
+            raise ValueError('build() must be called before submit()')
         # Ensure that there are no parent relationships
-        assert len(self.parents) == 0, 'Attempting to submit a Job with the following parents:\n\t{}\nInterjob relationships requires Dagman.'.format(self.parents)
-        command = 'condor_submit {}'.format(self.submit_file)
+        if len(self.parents) != 0:
+            raise ValueError('Attempting to submit a Job with the following'
+                             ' parents:\n\t{}\nInterjob relationships requires'
+                             ' Dagman.'.format(self.parents))
         # Ensure that there are no child relationships
-        assert len(self.children) == 0, 'Attempting to submit a Job with the following children:\n\t{}\nInterjob relationships requires Dagman.'.format(self.children)
+        if len(self.children) != 0:
+            raise ValueError('Attempting to submit a Job with the following'
+                             ' children:\n\t{}\nInterjob relationships'
+                             ' requires Dagman.'.format(self.children))
 
         if len(self.args) > 20:
-            message = 'You are submitting a Job with {} arguments. Consider using a Dagman in the future to help monitor jobs.'.format(len(self.args))
-            self.logger.warning(message)
+            self.logger.warning('You are submitting a Job with {} arguments. '
+                                'Consider using a Dagman in the future to '
+                                'help monitor jobs.'.format(len(self.args)))
 
         # Construct and execute condor_submit command
         command = 'condor_submit {}'.format(self.submit_file)
@@ -375,9 +404,11 @@ class Job(BaseNode):
 
         kwargs : dict, optional
             Any additional options you would like specified when
-            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
-            For example, if you would like to add ``-maxjobs 1000`` to the
-            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+            ``condor_submit`` is called (see `HTCondor documentation
+            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
+            for possible options). For example, if you would like to add
+            ``-maxjobs 1000`` to the ``condor_submit`` command, then
+            ``kwargs = {'-maxjobs': 1000}``.
 
         Returns
         -------

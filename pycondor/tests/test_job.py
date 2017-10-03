@@ -1,5 +1,5 @@
+
 import os
-import filecmp
 import pytest
 import pycondor
 
@@ -51,8 +51,9 @@ def test_build_executeable_not_found_fail():
         ex = '/path/to/executable'
         job = pycondor.Job('jobname', ex)
         job.build(makedirs=False)
-    error = 'The path {} does not exist...'.format(ex)
+    error = 'The path {} does not exist'.format(ex)
     assert error == str(excinfo.value)
+
 
 def test_queue_written_to_submit_file(tmpdir):
     # Test to check that the queue parameter is properly written

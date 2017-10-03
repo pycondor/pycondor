@@ -1,9 +1,7 @@
 
 import os
-import subprocess
 import time
 import glob
-import logging
 
 from . import utils
 
@@ -32,7 +30,8 @@ class BaseNode(object):
     def _get_fancyname(self):
 
         date = time.strftime('%Y%m%d')
-        file_pattern = '{}/{}_{}_??.submit'.format(self.submit, self.name, date)
+        file_pattern = '{}/{}_{}_??.submit'.format(self.submit, self.name,
+                                                   date)
         submit_number = len(glob.glob(file_pattern)) + 1
         fancyname = self.name + '_{}_{:02d}'.format(date, submit_number)
 
@@ -58,8 +57,9 @@ class BaseNode(object):
 
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
-            raise ValueError('add_parent() is expecting a Job or Dagman '
-                             'instance. Got an object of type {}'.format(type(node)))
+            raise ValueError(
+                    'add_parent() is expecting a Job or Dagman instance.'
+                    ' Got an object of type {}'.format(type(node)))
 
         # Don't bother continuing if node is already in the parents list
         if self._hasparent(node):
@@ -94,7 +94,8 @@ class BaseNode(object):
             for node in node_list:
                 self.add_parent(node)
         except:
-            raise TypeError('add_parents() is expecting an iterable of Job and/or Dagman objects')
+            raise TypeError('add_parents() is expecting an iterable of '
+                            'Job and/or Dagman objects')
 
         return self
 
@@ -118,8 +119,9 @@ class BaseNode(object):
 
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
-            raise ValueError('add_child() is expecting a Job or Dagman '
-                             'instance. Got an object of type {}'.format(type(node)))
+            raise ValueError(
+                    'add_child() is expecting a Job or Dagman instance.'
+                    ' Got an object of type {}'.format(type(node)))
 
         # Don't bother continuing if node is already in the children list
         if self._haschild(node):
@@ -154,7 +156,8 @@ class BaseNode(object):
             for node in nodes:
                 self.add_child(node)
         except:
-            raise TypeError('add_children() is expecting a list of Jobs or Dagmans')
+            raise TypeError('add_children() is expecting a list of '
+                            'Jobs or Dagmans')
 
         return self
 
