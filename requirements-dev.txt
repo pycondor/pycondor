@@ -4,3 +4,4 @@ sphinx
 travis-sphinx
 numpydoc
 sphinx_rtd_theme
+flake8

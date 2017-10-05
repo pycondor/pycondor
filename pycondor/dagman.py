@@ -1,5 +1,4 @@
 
-import os
 import subprocess
 
 from . import utils
@@ -10,9 +9,11 @@ from .job import Job
 def _get_subdag_string(dagman):
 
     if not isinstance(dagman, Dagman):
-        raise ValueError('Expecting a Dagman object, got {}'.format(type(dagman)))
+        raise ValueError(
+                'Expecting a Dagman object, got {}'.format(type(dagman)))
 
-    subdag_string = 'SUBDAG EXTERNAL {} {}'.format(dagman.name, dagman.submit_file)
+    subdag_string = 'SUBDAG EXTERNAL {} {}'.format(dagman.name,
+                                                   dagman.submit_file)
 
     return subdag_string
 
@@ -28,24 +29,28 @@ def _get_job_arg_lines(job, fancyname):
     else:
         for idx, job_arg in enumerate(job):
             arg, name, retry = job_arg
-            job_arg_lines.append('JOB {}_arg_{} '.format(job.name, idx) + job.submit_file)
-            job_arg_lines.append('VARS {}_arg_{} '.format(job.name, idx) +
-                      'ARGS={}'.format(utils.string_rep(arg, quotes=True)))
-            # Define job_name variable if there are arg_names present for this Job
+            job_arg_lines.append('JOB {}_arg_{} {}'.format(job.name, idx,
+                                 job.submit_file))
+            job_arg_lines.append('VARS {}_arg_{} ARGS={}'.format(job.name, idx,
+                                 utils.string_rep(arg, quotes=True)))
+            # Define job_name variable if there are arg_names present for job
             if not job._has_arg_names:
                 pass
             elif name is not None:
                 job_name = job._get_fancyname() if fancyname else job.name
                 job_name += '_{}'.format(name)
                 job_name = utils.string_rep(job_name, quotes=True)
-                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(job.name, idx, job_name))
+                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(
+                    job.name, idx, job_name))
             else:
                 job_name = job._get_fancyname() if fancyname else job.name
                 job_name = utils.string_rep(job_name, quotes=True)
-                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(job.name, idx, job_name))
+                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(
+                    job.name, idx, job_name))
             # Add retry option for Job
             if retry is not None:
-                job_arg_lines.append('Retry {}_arg_{} {}'.format(job.name, idx, retry))
+                job_arg_lines.append('Retry {}_arg_{} {}'.format(job.name, idx,
+                                                                 retry))
 
     return job_arg_lines
 
@@ -53,13 +58,15 @@ def _get_job_arg_lines(job, fancyname):
 def _get_parent_child_string(node):
 
     if not isinstance(node, BaseNode):
-        raise ValueError('Expecting a Job or Dagman object, got {}'.format(type(job)))
+        raise ValueError('Expecting a Job or Dagman object, '
+                         'got {}'.format(type(node)))
 
     parent_string = 'Parent'
     for parent_node in node.parents:
         if isinstance(parent_node, Job) and len(parent_node) > 0:
             for parent_arg_idx in range(len(parent_node)):
-                parent_string += ' {}_arg_{}'.format(parent_node.name, parent_arg_idx)
+                parent_string += ' {}_arg_{}'.format(parent_node.name,
+                                                     parent_arg_idx)
         else:
             parent_string += ' {}'.format(parent_node.name)
 
@@ -86,7 +93,8 @@ class Dagman(BaseNode):
         this Dagman.
 
     submit : str
-        Path to directory where condor dagman submit files will be written. (Defaults to the directory was the job was submitted from).
+        Path to directory where condor dagman submit files will be written.
+        (Defaults to the directory was the job was submitted from).
 
     extra_lines : list or None, optional
         List of additional lines to be added to submit file.
@@ -126,7 +134,9 @@ class Dagman(BaseNode):
         for attr in vars(self):
             if getattr(self, attr) and attr not in ['name', 'nodes', 'logger']:
                 nondefaults += ', {}={}'.format(attr, getattr(self, attr))
-        output = 'Dagman(name={}, n_nodes={}{})'.format(self.name, len(self.nodes), nondefaults)
+        output = 'Dagman(name={}, n_nodes={}{})'.format(self.name,
+                                                        len(self.nodes),
+                                                        nondefaults)
 
         return output
 
@@ -225,11 +235,13 @@ class Dagman(BaseNode):
         utils.checkdir(self.submit_file, makedirs)
 
         # Write dag submit file
-        self.logger.info('Building DAG submission file {}...'.format(self.submit_file))
+        self.logger.info('Building DAG submission file {}...'.format(
+            self.submit_file))
         lines = []
         parent_child_lines = []
         for node_index, node in enumerate(self, start=1):
-            self.logger.info('Working on {} [{} of {}]'.format(node.name, node_index, len(self.nodes)))
+            self.logger.info('Working on {} [{} of {}]'.format(node.name,
+                             node_index, len(self.nodes)))
             # Build the BaseNode submit file
             if isinstance(node, Job):
                 node._build_from_dag(makedirs, fancyname)
@@ -253,8 +265,8 @@ class Dagman(BaseNode):
 
         # Write lines to dag submit file
         with open(submit_file, 'w') as dag:
-            dag_lines = lines + ['\n#Inter-job dependencies'] + parent_child_lines
-            dag.writelines('\n'.join(dag_lines))
+            dag.writelines('\n'.join(lines + ['\n#Inter-job dependencies'] +
+                                     parent_child_lines))
 
         self._built = True
         self.logger.info('Dagman submission file for {} successfully '
@@ -268,13 +280,16 @@ class Dagman(BaseNode):
         Parameters
         ----------
         maxjobs : int, optional
-            Maximum number of jobs to have running at a single time (default is 3000).
+            Maximum number of jobs to have running at a single time
+            (default is 3000).
 
         kwargs : dict, optional
             Any additional options you would like specified when
-            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
-            For example, if you would like to add ``-maxjobs 1000`` to the
-            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+            ``condor_submit`` is called (see `HTCondor documentation
+            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
+            for possible options). For example, if you would like to add
+            ``-maxjobs 1000`` to the ``condor_submit`` command, then
+            ``kwargs = {'-maxjobs': 1000}``.
 
         Returns
         -------
@@ -292,7 +307,8 @@ class Dagman(BaseNode):
 
         return
 
-    def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000, **kwargs):
+    def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000,
+                     **kwargs):
         """Calls build and submit sequentially
 
         Parameters
@@ -308,13 +324,16 @@ class Dagman(BaseNode):
             several Dags/Jobs of the same name (default is ``True``).
 
         maxjobs : int, optional
-            Maximum number of jobs to have running at a single time (default is 3000).
+            Maximum number of jobs to have running at a single time
+            (default is 3000).
 
         kwargs : dict, optional
             Any additional options you would like specified when
-            ``condor_submit`` is called (see `HTCondor documentation <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_ for possible options).
-            For example, if you would like to add ``-maxjobs 1000`` to the
-            ``condor_submit`` command, then ``kwargs = {'-maxjobs': 1000}``.
+            ``condor_submit`` is called (see `HTCondor documentation
+            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
+            for possible options). For example, if you would like to add
+            ``-maxjobs 1000`` to the ``condor_submit`` command, then
+            ``kwargs = {'-maxjobs': 1000}``.
 
         Returns
         -------
