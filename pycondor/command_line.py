@@ -84,7 +84,8 @@ def progress_bar_str(status, length=30, prog_char='#'):
     frac_done = n_done / n_total
     width = int(frac_done * length)
 
-    bar_str = '\r[{0:<{1}}] | {2:0.0%} complete'.format(prog_char*width, length,
+    bar_str = '\r[{0:<{1}}] | {2:0.0%} complete'.format(prog_char*width,
+                                                        length,
                                                         frac_done)
     count_str = '({} done, {} queued, {} ready, {} unready, {} failed)'.format(
             status.Done, status.Queued, status.Ready,
