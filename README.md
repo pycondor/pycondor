@@ -1,54 +1,52 @@
 [![Build Status](https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master)](https://travis-ci.org/jrbourbeau/pycondor)
 ![pypi version](https://img.shields.io/pypi/v/pycondor.svg 'pypi version')
-![pypi status](https://img.shields.io/pypi/status/pycondor.svg 'pypi status')
 ![license](https://img.shields.io/pypi/l/pycondor.svg 'license')
 
-## PyCondor (Python HTCondor)
+# PyCondor (Python HTCondor)
 
 [HTCondor](https://research.cs.wisc.edu/htcondor/) is a an open-source workload management system for high throughput computing developed at the University of Wisconsin–Madison. PyCondor is a tool that helps **build and submit HTCondor submission files in a straight-forward manner with minimal hassle**.
 
-### Useful Links
 
-* Documentation: [https://jrbourbeau.github.io/pycondor](https://jrbourbeau.github.io/pycondor)
-* GitHub repository: [https://github.com/jrbourbeau/pycondor](https://github.com/jrbourbeau/pycondor)
-* PyPI: [https://pypi.python.org/pypi/PyCondor](https://pypi.python.org/pypi/PyCondor)
+## Useful Links
+
+* Documentation: https://jrbourbeau.github.io/pycondor
+* PyPI: https://pypi.python.org/pypi/PyCondor
+* Release notes: https://jrbourbeau.github.io/pycondor/changelog.html
+* Contributing: https://jrbourbeau.github.io/pycondor/contributing.html
 
 
-### Installation
+## Installation
 
-PyCondor can be easily installed via pip
+### PyPI
+
+PyCondor can be easily installed via `pip`
 
 ```
 pip install pycondor
 ```
 
-In addition, you can also install PyCondor by downloading the [project .tar file from the Python Package Index](https://pypi.python.org/pypi/PyCondor), unzip the download, navigate to the PyCondor project directory and run
+### Dev
+
+The latest development version of PyCondor can be install directly from GitHub
 
 ```
-python setup.py install
+pip install git+https://github.com/jrbourbeau/pycondor.git
 ```
 
-To upgrade an existing version of PyCondor, execute the following
+or you can always fork the [GitHub repository](https://github.com/jrbourbeau/pycondor) and install PyCondor on your local machine via
 
 ```
-pip install pycondor --upgrade
-```
-
-Lastly, you can always fork the [GitHub repository](https://github.com/jrbourbeau/pycondor) and install locally via
-
-```
-python setup.py install
+git clone https://github.com/<your-username>/pycondor.git
+pip install pycondor
 ```
 
 
+## Examples
 
-### Examples
-
-For example uses of PyCondor, please see the [examples page](https://jrbourbeau.github.io/pycondor/examples/) in the documentation or the `examples/` directory in the project repository.
-
+For example uses of PyCondor, please see the [examples page](https://jrbourbeau.github.io/pycondor/examples.html) in the documentation or the `examples/` directory in the project repository.
 
 
-### License
+## License
 
 [MIT License](LICENSE)
 
