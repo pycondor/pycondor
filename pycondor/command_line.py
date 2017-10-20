@@ -3,7 +3,7 @@ from __future__ import division, print_function
 import os
 import sys
 import time
-from collections import deque, namedtuple
+from collections import namedtuple
 import argparse
 
 _states = ['Done', 'Pre', 'Queued', 'Post', 'Ready', 'UnReady', 'Failed']
