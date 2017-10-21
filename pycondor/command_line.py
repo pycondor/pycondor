@@ -5,46 +5,35 @@ import sys
 import time
 from collections import namedtuple
 import argparse
+from datetime import datetime
 
 _states = ['Done', 'Pre', 'Queued', 'Post', 'Ready', 'UnReady', 'Failed']
 Status = namedtuple('Status', _states)
 
 
-def _parse_lines(lines):
-    '''Function to parse input list of lines from dagman out file
+def line_to_datetime(line):
+    '''Function to extract a datetime from a dagman out file line
 
     Parameters
     ----------
-    lines : list
-        Iterable of lines to parse.
+    line : str
+        Any line from a .dagman.out file.
 
     Returns
     -------
-    status : Status
-        Status namedtuple that contains the current number of jobs that are
-        done, queued, ready, failed, etc. If no line is found indicating the
-        current dagman status, an empty Status object is returned.
+    dt : datetime.datetime
+        Datetime stamp from line in out file.
     '''
-    node_counts = []
-    # Reverse order of lines to get the most recent status of the dagman
-    lines = lines[::-1]
-    for idx, line in enumerate(lines):
-        if 'Done     Pre   Queued    Post   Ready   Un-Ready   Failed' in line:
-            num_line = lines[idx-2]
-            node_counts = [i for i in num_line.split(' ')
-                           if i != '' and ':' not in i and '/' not in i]
-            node_counts = map(int, node_counts)
-            break
+    date_str = line.split(' ')[0]
+    time_str = line.split(' ')[1]
+    month, day, year = map(int, date_str.split('/'))
+    hour, minute, second = map(int, time_str.split(':'))
+    dt = datetime(year, month, day, hour, minute, second)
 
-    if node_counts:
-        status = Status(*node_counts)
-    else:
-        status = Status(*[0]*len(_states))
-
-    return status
+    return dt
 
 
-def status_genreator(dag_out_file):
+def status_generator(dag_out_file):
     '''Generator to yield dagman status
 
     Parameters
@@ -56,15 +45,40 @@ def status_genreator(dag_out_file):
     -------
     status : Status
         Status namedtuple that contains the current number of jobs that are
-        done, queued, ready, failed, etc.
+        done, queued, ready, failed, etc. If no line is found indicating the
+        current dagman status, an empty Status object is returned.
+    datetime_current : datetime.datetime
+        Current datetime. If
     '''
+    status_str = 'Done     Pre   Queued    Post   Ready   Un-Ready   Failed'
     with open(dag_out_file, 'r') as file_object:
         while True:
-            status = _parse_lines(file_object.readlines())
-            yield status
+            lines = file_object.readlines()
+            node_counts = []
+            datetime_current = None
+            # Reverse order of lines to get most recent status of the dagman
+            lines = lines[::-1]
+            for idx, line in enumerate(lines):
+                if idx == 0:
+                    datetime_current = line_to_datetime(line)
+                if status_str in line:
+                    num_line = lines[idx-2]
+                    node_counts = [i for i in num_line.split(' ') if i != ''
+                                   and ':' not in i and '/' not in i]
+                    node_counts = map(int, node_counts)
+                    break
+
+            if node_counts:
+                status = Status(*node_counts)
+            else:
+                status = Status(*[0]*len(_states))
+                datetime_current = datetime.now()
+
+            yield status, datetime_current
 
 
-def progress_bar_str(status, length=30, prog_char='#'):
+def progress_bar_str(status, datetime_start, datetime_current, length=30,
+                     prog_char='#'):
     '''Function to convert a Status object into a progress bar string
 
     Parameters
@@ -72,6 +86,10 @@ def progress_bar_str(status, length=30, prog_char='#'):
     status : Status
         Status namedtuple that contains the current number of jobs that are
         done, queued, ready, failed, etc.
+    datetime_start : datetime.datetime
+        Datetime for the first line of the dagman out file.
+    datetime_current : datetime.datetime
+        Datetime for the current line of the dagman out file.
     length : int, optional
         Width of the progress bar (default is 30).
     prog_char : str, optional
@@ -84,16 +102,24 @@ def progress_bar_str(status, length=30, prog_char='#'):
     '''
     n_total = sum(status)
     n_done = status.Done
-    frac_done = n_done / n_total
+    try:
+        frac_done = n_done / n_total
+    except ZeroDivisionError:
+        frac_done = 0
     width = int(frac_done * length)
 
-    bar_str = '\r[{0:<{1}}] | {2:0.0%} done'.format(prog_char*width,
-                                                    length,
-                                                    frac_done)
-    count_str = '({} done, {} queued, {} ready, {} unready, {} failed)'.format(
+    bar_str = '\r[{0:<{1}}] {2:0.0%} Done'.format(prog_char*width,
+                                                  length,
+                                                  frac_done)
+    count_str = '{} done, {} queued, {} ready, {} unready, {} failed'.format(
             status.Done, status.Queued, status.Ready,
             status.UnReady, status.Failed)
-    prog_bar_str = bar_str + ' ' + count_str
+
+    dt = datetime_current - datetime_start
+    time_str = '{:0.1f}m'.format(dt.seconds / 60)
+
+    prog_bar_str = ' | '.join([bar_str, count_str, time_str])
+
     return prog_bar_str
 
 
@@ -103,7 +129,7 @@ def dagman_progress():
 
     parser = argparse.ArgumentParser(description='Prints dagman progress bar')
     parser.add_argument('file', help='Dagman submit file')
-    parser.add_argument('-t', '--time', dest='time', default=10, type=float,
+    parser.add_argument('-t', '--time', dest='time', default=30, type=float,
                         help='Time (in seconds) in between log checks')
     parser.add_argument('-l', '--length', dest='length', default=30, type=int,
                         help='Length of the progress bar')
@@ -123,16 +149,27 @@ def dagman_progress():
         sys.stdout.flush()
         time.sleep(args.time)
 
-    for status in status_genreator(dag_out_file):
-        # If no line with dagman status is found, wait and try again
-        if sum(status) == 0:
-            time.sleep(args.time)
-            continue
-        prog_str = progress_bar_str(status, length=args.length,
-                                    prog_char=args.prog_char)
-        sys.stdout.write(prog_str)
-        sys.stdout.flush()
-        # If all jobs are either Done or Failed, exit
-        if status.Done + status.Failed == sum(status):
-            sys.exit()
-        time.sleep(args.time)
+    datetime_start = line_to_datetime(open(dag_out_file, 'r').readline())
+    current_status = Status(*[0]*len(_states))
+    try:
+        for status, datetime_current in status_generator(dag_out_file):
+            # If no line with dagman status is found, wait and try again
+            if sum(status) != 0:
+                current_status = status
+
+            prog_str = progress_bar_str(current_status,
+                                        datetime_start=datetime_start,
+                                        datetime_current=datetime_current,
+                                        length=args.length,
+                                        prog_char=args.prog_char)
+            sys.stdout.write(prog_str)
+            sys.stdout.flush()
+            # Exit if all jobs are either Done or Failed
+            n_finished = current_status.Done + current_status.Failed
+            if n_finished == sum(current_status) and sum(current_status) != 0:
+                sys.exit()
+            else:
+                time.sleep(args.time)
+    except KeyboardInterrupt:
+        print('\nExiting dagman_progress...')
+        sys.exit()
