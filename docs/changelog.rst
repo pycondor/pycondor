@@ -6,32 +6,36 @@
 Release Notes
 *************
 
-Version 0.1.5
--------------
+Version 0.1.5 (TBD)
+-------------------
+
+**New Features**:
+
+* Added ``dagman_progress`` command line tool for displaying a progress bar for Dagman jobs. (See `PR #45 <https://github.com/jrbourbeau/pycondor/pull/45>`_)
+
+**Bug Fixes**:
+
+* Fixed bug where the queue parameter for a Job was not written to the job submit file when the Job was built by a Dagman. (See `PR #42 <https://github.com/jrbourbeau/pycondor/pull/42>`_)
+
+
+Version 0.1.4 (2017-06-08)
+--------------------------
 
 **Changes**:
 
-* Fixes bug where the queue parameter for a Job was not written to the job submit file when the Job was built by a Dagman. (See `issue #38 <https://github.com/jrbourbeau/pycondor/issues/38>`_ )
+* Fixes bug where Jobs that have no arguments, when submitted from a Dagman, were not included in the dag submit file. (See `issue #33 <https://github.com/jrbourbeau/pycondor/issues/33>`_)
 
 
-Version 0.1.4
--------------
-
-**Changes**:
-
-* Fixes bug where Jobs that have no arguments, when submitted from a Dagman, were not included in the dag submit file. (See `issue #33 <https://github.com/jrbourbeau/pycondor/issues/33>`_ )
-
-
-Version 0.1.3
--------------
+Version 0.1.3 (2017-06-07)
+--------------------------
 
 **Changes**:
 
 * Adds subdag support. Now Dagman objects can be added to other Dagman object with the new ``add_subdag`` class method.
 
 
-Version 0.1.2
--------------
+Version 0.1.2 (2017-05-26)
+--------------------------
 
 **Changes**:
 
@@ -40,8 +44,8 @@ Version 0.1.2
 * Adds ``tests`` directory in ``pycondor``!
 
 
-Version 0.1.1
--------------
+Version 0.1.1 (2017-05-10)
+--------------------------
 
 **Changes**:
 
@@ -50,8 +54,8 @@ Version 0.1.1
 * Replaces all occurances of ``os.system()`` with ``subprocess.Popen()``. This won't affect anything the user touches, just modernizing under-the-hood stuff.
 
 
-Version 0.1.0
--------------
+Version 0.1.0 (2017-04-19)
+--------------------------
 
 **Changes**:
 

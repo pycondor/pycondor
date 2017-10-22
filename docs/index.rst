@@ -12,6 +12,7 @@
 
    api
    examples
+   monitoring
    changelog
    contributing
 
@@ -36,9 +37,6 @@ PyCondor Documentation
 .. image:: https://img.shields.io/pypi/v/pycondor.svg
     :target: https://pypi.python.org/pypi/PyCondor/
 
-.. image:: https://img.shields.io/pypi/status/pycondor.svg
-    :target: https://pypi.python.org/pypi/PyCondor/
-
 .. image:: https://img.shields.io/pypi/l/pycondor.svg
     :target: https://pypi.python.org/pypi/PyCondor/
 
@@ -49,10 +47,9 @@ With just a couple lines of code, you can get PyCondor up and running!
 
 .. code-block:: python
 
-    import pycondor
-
-    job = pycondor.Job('examplejob', '/path/to/my_script.py')
-    job.build_submit()
+    >>> import pycondor
+    >>> job = pycondor.Job('examplejob', '/path/to/my_script.py')
+    >>> job.build_submit()
 
 
 ==========
@@ -67,13 +64,13 @@ Installation
 
 For the current release version of PyCondor
 
-.. code-block:: bash
+.. code-block:: shell
 
     $ pip install pycondor
 
 For the latest development version, ``pip`` install directly from GitHub
 
-.. code-block:: bash
+.. code-block:: shell
 
     $ pip install git+https://github.com/jrbourbeau/pycondor.git
 
@@ -84,5 +81,6 @@ User Guide
 
 * :doc:`api`
 * :doc:`examples`
+* :doc:`monitoring`
 * :doc:`changelog`
 * :doc:`contributing`
