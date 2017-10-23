@@ -100,6 +100,8 @@ def progress_bar_str(status, datetime_start, datetime_current, length=30,
     prog_bar_str : str
         Progress bar string.
     '''
+    if not isinstance(status, Status):
+        raise TypeError('status must be of type Status')
     n_total = sum(status)
     n_done = status.Done
     try:
