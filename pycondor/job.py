@@ -165,11 +165,11 @@ class Job(BaseNode):
         """
         # Validate user input
         if not isinstance(arg, str):
-            raise ValueError('arg must be a string')
+            raise TypeError('arg must be a string')
         elif name and not isinstance(name, str):
-            raise ValueError('name must be a string')
+            raise TypeError('name must be a string')
         elif retry and not isinstance(retry, int):
-            raise ValueError('retry must be an int')
+            raise TypeError('retry must be an int')
 
         job_arg = JobArg(arg=arg, name=name, retry=retry)
         self.args.append(job_arg)
@@ -192,12 +192,14 @@ class Job(BaseNode):
             Returns self.
 
         """
-        try:
+        # Check that args is a list/tuple of str arguments
+        if (isinstance(args, (list, tuple)) and
+                all([isinstance(arg, str) for arg in args])):
             for arg in args:
                 self.add_arg(arg)
-        except:
-            raise TypeError(
-                'add_args() is expecting an iterable of argument strings')
+        else:
+            raise TypeError('add_args() is expecting an iterable of '
+                            'argument strings')
 
         return self
 

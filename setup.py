@@ -1,7 +1,7 @@
 '''
 James Bourbeau 2017
 PyCondor
-Author: James Bourbeau <jamesbourbeau.com>
+Author: James Bourbeau <jrbourbeau.github.io>
 
 License: MIT
 Code repository: https://github.com/jrbourbeau/pycondor
@@ -30,6 +30,9 @@ setup(
     ],
     keywords='python condor htcondor high-throughput computing utility tool',
     packages=find_packages(),
+    entry_points = {
+        'console_scripts': ['dagman_progress=pycondor.command_line:dagman_progress'],
+    },
     package_data={'': ['LICENSE',
                        'README.md'],
                   'examples': ['examples/savelist.py',

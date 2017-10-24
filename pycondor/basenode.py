@@ -54,10 +54,9 @@ class BaseNode(object):
             Returns self.
 
         """
-
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
-            raise ValueError(
+            raise TypeError(
                     'add_parent() is expecting a Job or Dagman instance.'
                     ' Got an object of type {}'.format(type(node)))
 
@@ -75,12 +74,12 @@ class BaseNode(object):
 
         return self
 
-    def add_parents(self, node_list):
+    def add_parents(self, nodes):
         """Adds nodes to the parents list
 
         Parameters
         ----------
-        args : list or tuple
+        nodes : list or tuple
             List of nodes to append to the parents list
 
         Returns
@@ -89,11 +88,12 @@ class BaseNode(object):
             Returns self.
 
         """
-
-        try:
-            for node in node_list:
+        # Check that nodes is a list/tuple of BaseNode objects
+        if (isinstance(nodes, (list, tuple)) and
+                all([isinstance(node, BaseNode) for node in nodes])):
+            for node in nodes:
                 self.add_parent(node)
-        except:
+        else:
             raise TypeError('add_parents() is expecting an iterable of '
                             'Job and/or Dagman objects')
 
@@ -116,10 +116,9 @@ class BaseNode(object):
             Returns self.
 
         """
-
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
-            raise ValueError(
+            raise TypeError(
                     'add_child() is expecting a Job or Dagman instance.'
                     ' Got an object of type {}'.format(type(node)))
 
@@ -141,7 +140,7 @@ class BaseNode(object):
 
         Parameters
         ----------
-        args : list or tuple
+        nodes : list or tuple
             List of nodes to append to the children list
 
         Returns
@@ -150,14 +149,14 @@ class BaseNode(object):
             Returns self.
 
         """
-
-        # Ensure that nodes is an iterable of type Job
-        try:
+        # Check that nodes is a list/tuple of BaseNode objects
+        if (isinstance(nodes, (list, tuple)) and
+                all([isinstance(node, BaseNode) for node in nodes])):
             for node in nodes:
                 self.add_child(node)
-        except:
-            raise TypeError('add_children() is expecting a list of '
-                            'Jobs or Dagmans')
+        else:
+            raise TypeError('add_children() is expecting an iterable of '
+                            'Job and/or Dagman objects')
 
         return self
 
