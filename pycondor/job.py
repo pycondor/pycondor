@@ -298,6 +298,7 @@ class Job(BaseNode):
 
         # Add submit_file data member to job for later use
         self.submit_file = submit_file
+        self.submit_name = name
 
         return
 

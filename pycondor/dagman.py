@@ -9,7 +9,7 @@ from .job import Job
 def _get_subdag_string(dagman):
 
     if not isinstance(dagman, Dagman):
-        raise ValueError(
+        raise TypeError(
                 'Expecting a Dagman object, got {}'.format(type(dagman)))
 
     subdag_string = 'SUBDAG EXTERNAL {} {}'.format(dagman.name,
@@ -21,7 +21,10 @@ def _get_subdag_string(dagman):
 def _get_job_arg_lines(job, fancyname):
 
     if not isinstance(job, Job):
-        raise ValueError('Expecting a Job object, got {}'.format(type(job)))
+        raise TypeError('Expecting a Job object, got {}'.format(type(job)))
+    if not job._built:
+        raise ValueError('Job {} must be built before adding it '
+                         'to a Dagman'.format(job.name))
 
     job_arg_lines = []
     if len(job) == 0:
@@ -37,13 +40,13 @@ def _get_job_arg_lines(job, fancyname):
             if not job._has_arg_names:
                 pass
             elif name is not None:
-                job_name = job._get_fancyname() if fancyname else job.name
+                job_name = job.submit_name
                 job_name += '_{}'.format(name)
                 job_name = utils.string_rep(job_name, quotes=True)
                 job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(
                     job.name, idx, job_name))
             else:
-                job_name = job._get_fancyname() if fancyname else job.name
+                job_name = job.submit_name
                 job_name = utils.string_rep(job_name, quotes=True)
                 job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(
                     job.name, idx, job_name))
@@ -244,6 +247,7 @@ class Dagman(BaseNode):
                              node_index, len(self.nodes)))
             # Build the BaseNode submit file
             if isinstance(node, Job):
+                # node must be built before _get_job_arg_lines is called
                 node._build_from_dag(makedirs, fancyname)
                 # Add Job variables to Dagman submit file
                 job_arg_lines = _get_job_arg_lines(node, fancyname)

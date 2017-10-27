@@ -16,6 +16,7 @@ Version 0.1.5 (TBD)
 **Bug Fixes**:
 
 * Fixed bug where the queue parameter for a Job was not written to the job submit file when the Job was built by a Dagman. (See `PR #42 <https://github.com/jrbourbeau/pycondor/pull/42>`_)
+* Fixed bug that caused a filename mismatch between a ``Job`` submit file and the error/log/output files when a named argument is added to a ``Job``, and the ``Job`` is built with ``fancyname=True``. (See `PR #45 <https://github.com/jrbourbeau/pycondor/pull/48>`_)
 
 
 Version 0.1.4 (2017-06-08)
