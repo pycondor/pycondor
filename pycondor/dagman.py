@@ -1,4 +1,5 @@
 
+import os
 import subprocess
 
 from . import utils
@@ -231,10 +232,20 @@ class Dagman(BaseNode):
                     'Skipping the build process...'.format(self.name))
             return self
 
-        # Create DAG submit file path
         name = self._get_fancyname() if fancyname else self.name
-        submit_file = '{}/{}.submit'.format(self.submit, name)
+        # Get Dagman submit file directory
+        path = None
+        dir_env_var = os.getenv('PYCONDOR_SUBMIT_DIR')
+        if self.submit is not None:
+            path = self.submit
+        elif dir_env_var:
+            path = dir_env_var
+        # Create Dagman submit file path
+        submit_file = os.path.join(path if path else '',
+                                   '{}.submit'.format(name))
+        # submit_file = '{}/{}.submit'.format(self.submit, name)
         self.submit_file = submit_file
+        self.submit_name = name
         utils.checkdir(self.submit_file, makedirs)
 
         # Write dag submit file

@@ -1,5 +1,4 @@
 
-import os
 import time
 import glob
 
@@ -17,7 +16,7 @@ class BaseNode(object):
             extra_lines = [extra_lines]
 
         self.name = utils.string_rep(name)
-        self.submit = submit if submit is not None else os.getcwd()
+        self.submit = submit
         self.extra_lines = extra_lines
         self._built = False
 
