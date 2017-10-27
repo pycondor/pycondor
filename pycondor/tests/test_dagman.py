@@ -3,6 +3,9 @@ import os
 import filecmp
 import pytest
 import pycondor
+from .utils import clear_pycondor_environment_variables
+
+clear_pycondor_environment_variables()
 
 
 def test_add_job_int_fail():
@@ -21,12 +24,12 @@ def test_job_dag_submit_file_same(tmpdir):
     example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
     # Build Job object that will be built outside of a Dagman
-    job_outside_dag = pycondor.Job('job_outside_dag', example_script,
+    job_outside_dag = pycondor.Job('test_job', example_script,
                                    submit=submit_dir, queue=5)
     job_outside_dag.build(fancyname=False)
 
     # Build Job object that will be built inside of a Dagman
-    job_inside_dag = pycondor.Job('job_inside_dag', example_script,
+    job_inside_dag = pycondor.Job('test_job', example_script,
                                   submit=submit_dir, queue=5)
     dagman = pycondor.Dagman('exampledagman', submit=submit_dir)
     dagman.add_job(job_inside_dag)
