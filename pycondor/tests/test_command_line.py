@@ -23,8 +23,8 @@ def test_progress_bar_str_type_fail():
 def test_progress_bar():
     # Test to check the output of progress_bar_str
 
-    # Create status that is 99.5% done (want to make sure this is displayed
-    # as 99% done, not 100% done).
+    # Create status that is 99.5% done. Want to make sure this is displayed
+    # as 99% done, not 100% done. See issue #51.
     jobs = [0]*len(_states)
     jobs[0], jobs[2] = 199, 1
     status = Status(*jobs)
