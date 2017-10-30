@@ -10,30 +10,42 @@ JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
 
 
 class Job(BaseNode):
-    """Job object
+    """
+    Job object consisting of an executable to be run, potentially with a
+    series of different command-line arguments.
+
+    Note that the ``submit``, ``error``, ``log``, and ``output`` parameters
+    can be explicitly given or configured by setting ``PYCONDOR_SUBMIT_DIR``,
+    ``PYCONDOR_ERROR_DIR``, ``PYCONDOR_LOG_DIR``, and ``PYCONDOR_OUTPUT_DIR``
+    environment variables. An explicitly given value will be used over an
+    environment variable, while an environment variable will be used over a
+    default value.
 
     Parameters
     ----------
     name : str
         Name of the Job instance. This will also be the name of the
         corresponding error, log, output, and submit files associated with
-        this job.
+        this Job.
 
     executable : str
         Path to corresponding executable for Job.
 
     error : str or None, optional
-        Path to directory where condor job error files will be written.
+        Path to directory where condor Job error files will be written (default
+        is None, will not be included in Job submit file).
 
     log : str or None, optional
-        Path to directory where condor job log files will be written.
+        Path to directory where condor Job log files will be written (default
+        is None, will not be included in Job submit file).
 
     output : str or None, optional
-        Path to directory where condor job output files will be written.
+        Path to directory where condor Job output files will be written
+        (default is None, will not be included in Job submit file).
 
     submit : str, optional
-        Path to directory where condor job submit files will be written.
-        (Defaults to the directory was the job was submitted from).
+        Path to directory where condor Job submit files will be written
+        (defaults to the directory was the Job was submitted from).
 
     request_memory : str or None, optional
         Memory request to be included in submit file.
@@ -72,7 +84,7 @@ class Job(BaseNode):
 
     verbose : int
         Level of logging verbosity option are 0-warning, 1-info,
-        2-debugging(default is 0).
+        2-debugging (default is 0).
 
     Attributes
     ----------
@@ -80,15 +92,20 @@ class Job(BaseNode):
         The list of arguments for this Job instance.
 
     parents : list
-        Only applies when Job is in a Dagman. List of parent Jobs and Dagmans.
-        Ensures that Jobs and other Dagmans in the parents list will complete
+        Only set when included in a Dagman. List of parent Jobs and Dagmans.
+        Ensures that Jobs and Dagmans in the parents list will complete
         before this Job is submitted to HTCondor.
 
     children : list
-        Only applies when Job is in a Dagman. List of child Jobs and Dagmans.
-        Ensures that Jobs and other Dagmans in the children list will be
-        submitted after this Job is has completed.
+        Only set when included in a Dagman. List of child Jobs and Dagmans.
+        Ensures that Jobs and Dagmans in the children list will be
+        submitted only after this Job has completed.
 
+    Examples
+    --------
+    >>> import pycondor
+    >>> job = pycondor.Job('myjob', 'myscript.py')
+    >>> job.build_submit()
 
     """
 
@@ -215,13 +232,11 @@ class Job(BaseNode):
 
         # Check that paths/files exist
         if not os.path.exists(self.executable):
-            raise IOError('The path {} does not exist'.format(self.executable))
+            raise IOError(
+                'The executable {} does not exist'.format(self.executable))
         for directory in [self.submit, self.log, self.output, self.error]:
             if directory is not None:
                 utils.checkdir(directory + '/', makedirs)
-
-        name = self._get_fancyname() if fancyname else self.name
-        submit_file = '{}/{}.submit'.format(self.submit, name)
 
         # Start constructing lines to go into job submit file
         lines = []
@@ -233,20 +248,37 @@ class Job(BaseNode):
                 attr_str = utils.string_rep(getattr(self, attr))
                 lines.append('{} = {}'.format(attr, attr_str))
 
-        # Set up log, output, and error files paths
+        # Set up submit, log, output, and error files paths
+        name = self._get_fancyname() if fancyname else self.name
+        self.submit_name = name
         self._has_arg_names = any([arg.name for arg in self.args])
-        for attr in ['log', 'output', 'error']:
+        for attr in ['submit', 'log', 'output', 'error']:
+            dir_path = ''
+            dir_env_var = os.getenv('PYCONDOR_{}_DIR'.format(attr.upper()))
+            # Check if directory is provided
             if getattr(self, attr) is not None:
-                path = getattr(self, attr)
-                # If path has trailing '/', then it it removed.
-                # Else, path is unmodified
-                path = path.rstrip('/')
+                dir_path = getattr(self, attr)
+            # If not, check if directory environment variable is set
+            elif dir_env_var:
+                dir_path = dir_env_var
+
+            if attr == 'submit':
+                submit_file = os.path.join(dir_path, '{}.submit'.format(name))
+                # Add submit_file data member to job for later use
+                self.submit_file = submit_file
+                utils.checkdir(submit_file, makedirs)
+                continue
+            # Add log/output/error files to submit file lines
+            if dir_path:
                 if self._has_arg_names:
-                    lines.append('{} = {}/$(job_name).{}'.format(
-                                 attr, path, attr))
+                    file_path = os.path.join(dir_path,
+                                             '$(job_name).{}'.format(attr))
                 else:
-                    lines.append('{} = {}/{}.{}'.format(attr, path,
-                                 name, attr))
+                    file_path = os.path.join(dir_path,
+                                             '{}.{}'.format(name, attr))
+                lines.append('{} = {}'.format(attr, file_path))
+                setattr(self, '{}_file'.format(attr), file_path)
+                utils.checkdir(file_path, makedirs)
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
@@ -295,10 +327,6 @@ class Job(BaseNode):
 
         with open(submit_file, 'w') as f:
             f.writelines('\n'.join(lines))
-
-        # Add submit_file data member to job for later use
-        self.submit_file = submit_file
-        self.submit_name = name
 
         return
 

@@ -2,6 +2,9 @@
 import os
 import pytest
 import pycondor
+from .utils import clear_pycondor_environment_variables
+
+clear_pycondor_environment_variables()
 
 
 def test_add_arg_type_fail():
@@ -63,7 +66,7 @@ def test_build_executeable_not_found_fail():
         ex = '/path/to/executable'
         job = pycondor.Job('jobname', ex)
         job.build(makedirs=False)
-    error = 'The path {} does not exist'.format(ex)
+    error = 'The executable {} does not exist'.format(ex)
     assert error == str(excinfo.value)
 
 
@@ -85,3 +88,18 @@ def test_queue_written_to_submit_file(tmpdir):
     with open(job.submit_file, 'r') as f:
         lines = f.readlines()
     assert 'queue 5' in lines
+
+
+def test_job_env_variable_dir(tmpdir):
+    # Set pycondor environment variables
+    for dir_name in ['submit', 'output', 'error', 'log']:
+        dir_path = str(tmpdir.mkdir(dir_name))
+        os.environ['PYCONDOR_{}_DIR'.format(dir_name.upper())] = dir_path
+
+    example_script = os.path.join('examples/savelist.py')
+    job = pycondor.Job('jobname', example_script)
+    job.build()
+    for dir_name in ['submit', 'output', 'error', 'log']:
+        tmpdir_path = os.path.join(str(tmpdir), dir_name)
+        job_path = os.path.dirname(getattr(job, '{}_file'.format(dir_name)))
+        assert tmpdir_path == job_path

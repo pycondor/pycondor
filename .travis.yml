@@ -13,8 +13,8 @@ install:
   - pip install -r requirements-dev.txt
 # command to run tests
 script:
-    - make tests
-    - flake8 --exclude pycondor/__init__.py pycondor
+    - pytest pycondor
+    - flake8 pycondor
     - travis-sphinx --nowarn --source=docs build
 
 after_success:

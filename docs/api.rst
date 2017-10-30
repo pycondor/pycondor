@@ -13,8 +13,6 @@ The main functionality of PyCondor is contained within the ``Job`` and ``Dagman`
 Job object
 ==========
 
-Stuff about the Job object.
-
 .. autoclass:: Job
     :members:
     :inherited-members:
@@ -24,8 +22,6 @@ Stuff about the Job object.
 =============
 Dagman object
 =============
-
-Stuff about the Job object.
 
 .. autoclass:: Dagman
     :members:
