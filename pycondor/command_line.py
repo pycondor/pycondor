@@ -110,9 +110,8 @@ def progress_bar_str(status, datetime_start, datetime_current, length=30,
         frac_done = 0
     width = int(frac_done * length)
 
-    bar_str = '\r[{0:<{1}}] {2:0.0%} Done'.format(prog_char*width,
-                                                  length,
-                                                  frac_done)
+    bar_str = '\r[{0:<{1}}] {2}% Done'.format(prog_char*width, length,
+                                              int(100*frac_done))
     count_str = '{} done, {} queued, {} ready, {} unready, {} failed'.format(
             status.Done, status.Queued, status.Ready,
             status.UnReady, status.Failed)
