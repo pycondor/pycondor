@@ -12,28 +12,41 @@ JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
 class Job(BaseNode):
     """Job object
 
+    Job object consisting of an executable to be run, potentially with a
+    series of different command-line arguments.
+
+    Note that the ``submit``, ``error``, ``log``, and ``output`` directories
+    can be explicitly given or configured by setting ``PYCONDOR_SUBMIT_DIR``,
+    ``PYCONDOR_ERROR_DIR``, ``PYCONDOR_LOG_DIR``, and ``PYCONDOR_OUTPUT_DIR``
+    environment variables. An explicitly given value will be used over an
+    environment variable, while an environment variable will be used over a
+    default value.
+
     Parameters
     ----------
     name : str
         Name of the Job instance. This will also be the name of the
         corresponding error, log, output, and submit files associated with
-        this job.
+        this Job.
 
     executable : str
         Path to corresponding executable for Job.
 
     error : str or None, optional
-        Path to directory where condor job error files will be written.
+        Path to directory where condor Job error files will be written (default
+        is None, will not be included in Job submit file).
 
     log : str or None, optional
-        Path to directory where condor job log files will be written.
+        Path to directory where condor Job log files will be written (default
+        is None, will not be included in Job submit file).
 
     output : str or None, optional
-        Path to directory where condor job output files will be written.
+        Path to directory where condor Job output files will be written
+        (default is None, will not be included in Job submit file).
 
     submit : str, optional
-        Path to directory where condor job submit files will be written.
-        (Defaults to the directory was the job was submitted from).
+        Path to directory where condor Job submit files will be written
+        (defaults to the directory was the Job was submitted from).
 
     request_memory : str or None, optional
         Memory request to be included in submit file.
@@ -72,7 +85,7 @@ class Job(BaseNode):
 
     verbose : int
         Level of logging verbosity option are 0-warning, 1-info,
-        2-debugging(default is 0).
+        2-debugging (default is 0).
 
     Attributes
     ----------
@@ -80,15 +93,20 @@ class Job(BaseNode):
         The list of arguments for this Job instance.
 
     parents : list
-        Only applies when Job is in a Dagman. List of parent Jobs and Dagmans.
-        Ensures that Jobs and other Dagmans in the parents list will complete
+        Only set when included in a Dagman. List of parent Jobs and Dagmans.
+        Ensures that Jobs and Dagmans in the parents list will complete
         before this Job is submitted to HTCondor.
 
     children : list
-        Only applies when Job is in a Dagman. List of child Jobs and Dagmans.
-        Ensures that Jobs and other Dagmans in the children list will be
-        submitted after this Job is has completed.
+        Only set when included in a Dagman. List of child Jobs and Dagmans.
+        Ensures that Jobs and Dagmans in the children list will be
+        submitted only after this Job has completed.
 
+    Examples
+    --------
+    >>> import pycondor
+    >>> job = pycondor.Job('myjob', 'myscript.py')
+    >>> job.build_submit()
 
     """
 

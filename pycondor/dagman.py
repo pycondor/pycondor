@@ -89,6 +89,13 @@ def _get_parent_child_string(node):
 class Dagman(BaseNode):
     """Dagman object
 
+    Dagman object consisting of a series of Jobs and sub-Dagmans to manage.
+
+    Note that the ``submit`` directory can be explicitly given or configured
+    by setting the ``PYCONDOR_SUBMIT_DIR`` environment variable. An explicitly
+    given value for ``submit`` will be used over the environment variable,
+    while the environment variable will be used over a default value.
+
     Parameters
     ----------
     name : str
@@ -97,8 +104,8 @@ class Dagman(BaseNode):
         this Dagman.
 
     submit : str
-        Path to directory where condor dagman submit files will be written.
-        (Defaults to the directory was the job was submitted from).
+        Path to directory where condor dagman submit files will be written
+        (defaults to the directory was the Dagman was submitted from).
 
     extra_lines : list or None, optional
         List of additional lines to be added to submit file.
@@ -115,14 +122,12 @@ class Dagman(BaseNode):
         The list of jobs for this Dagman instance to manage.
 
     parents : list
-        List of parent Jobs and Dagmans. Ensures that Jobs and other
-        Dagmans in the parents list will complete before this Dagman
-        is submitted to HTCondor.
+        List of parent Jobs and Dagmans. Ensures that Jobs and Dagmans in the
+        parents list will complete before this Dagman is submitted to HTCondor.
 
     children : list
-        List of child Jobs and Dagmans. Ensures that Jobs and other
-        Dagmans in the children list will be submitted after this Dagman
-        is has completed.
+        List of child Jobs and Dagmans. Ensures that Jobs and Dagmans in the
+        children list will be submitted only after this Dagman has completed.
 
     """
 
