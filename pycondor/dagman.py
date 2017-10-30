@@ -87,11 +87,10 @@ def _get_parent_child_string(node):
 
 
 class Dagman(BaseNode):
-    """Dagman object
-
+    """
     Dagman object consisting of a series of Jobs and sub-Dagmans to manage.
 
-    Note that the ``submit`` directory can be explicitly given or configured
+    Note that the ``submit`` parameter can be explicitly given or configured
     by setting the ``PYCONDOR_SUBMIT_DIR`` environment variable. An explicitly
     given value for ``submit`` will be used over the environment variable,
     while the environment variable will be used over a default value.

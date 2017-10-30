@@ -10,12 +10,11 @@ JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
 
 
 class Job(BaseNode):
-    """Job object
-
+    """
     Job object consisting of an executable to be run, potentially with a
     series of different command-line arguments.
 
-    Note that the ``submit``, ``error``, ``log``, and ``output`` directories
+    Note that the ``submit``, ``error``, ``log``, and ``output`` parameters
     can be explicitly given or configured by setting ``PYCONDOR_SUBMIT_DIR``,
     ``PYCONDOR_ERROR_DIR``, ``PYCONDOR_LOG_DIR``, and ``PYCONDOR_OUTPUT_DIR``
     environment variables. An explicitly given value will be used over an
