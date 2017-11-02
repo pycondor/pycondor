@@ -7,15 +7,19 @@ python:
   - "3.6-dev" # 3.6 development branch
   - "3.7-dev" # 3.7 development branch
   - "nightly" # currently points to 3.7-dev
-# command to install dependencies
 install:
   - pip install .
   - pip install -r requirements-dev.txt
-# command to run tests
 script:
-    - pytest pycondor
-    - flake8 pycondor
-    - travis-sphinx --nowarn --source=docs build
-
-after_success:
-    - travis-sphinx deploy
+  - pytest pycondor
+  - flake8 pycondor
+  - bash ci/build_docs.sh
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: docs/_build/html
+  target_branch: gh-pages
+  email: "github-pages-deploy@travis-ci.org"
+  on:
+    branch: master
