@@ -19,6 +19,7 @@ Version 0.1.5 (TBD)
 * Fixed bug where the queue parameter for a Job was not written to the job submit file when the Job was built by a Dagman. (See `PR #42 <https://github.com/jrbourbeau/pycondor/pull/42>`_)
 * Fixed bug that caused a filename mismatch between a ``Job`` submit file and the error/log/output files when a named argument is added to a Job, and the Job is built with ``fancyname=True``. (See `PR #48 <https://github.com/jrbourbeau/pycondor/pull/48>`_)
 * Fixed issue that caused ``dagman_progress`` to round up the percentage of jobs that were marked as done. (See `PR #52 <https://github.com/jrbourbeau/pycondor/pull/52>`_)
+* Fixed the Dagman submit file build procedure to include the name of Job named arguments in the Dagman node name (See `PR #53 <https://github.com/jrbourbeau/pycondor/pull/53>`_)
 
 
 Version 0.1.4 (2017-06-08)

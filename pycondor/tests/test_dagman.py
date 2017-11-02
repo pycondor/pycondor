@@ -2,15 +2,16 @@
 import os
 import filecmp
 import pytest
-import pycondor
-from .utils import clear_pycondor_environment_variables
+from pycondor import Job, Dagman
+from pycondor.dagman import _iter_job_args
+from pycondor.tests.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
 
 
 def test_add_job_int_fail():
     with pytest.raises(TypeError) as excinfo:
-        dag = pycondor.Dagman('dagname')
+        dag = Dagman('dagname')
         dag.add_job(50)
     error = 'Expecting a Job or Dagman. ' + \
             'Got an object of type {}'.format(type(50))
@@ -24,14 +25,14 @@ def test_job_dag_submit_file_same(tmpdir):
     example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
     # Build Job object that will be built outside of a Dagman
-    job_outside_dag = pycondor.Job('test_job', example_script,
-                                   submit=submit_dir, queue=5)
+    job_outside_dag = Job('test_job', example_script, submit=submit_dir,
+                          queue=5)
     job_outside_dag.build(fancyname=False)
 
     # Build Job object that will be built inside of a Dagman
-    job_inside_dag = pycondor.Job('test_job', example_script,
-                                  submit=submit_dir, queue=5)
-    dagman = pycondor.Dagman('exampledagman', submit=submit_dir)
+    job_inside_dag = Job('test_job', example_script, submit=submit_dir,
+                         queue=5)
+    dagman = Dagman('exampledagman', submit=submit_dir)
     dagman.add_job(job_inside_dag)
     dagman.build(fancyname=False)
 
@@ -49,22 +50,52 @@ def test_job_arg_name_files(tmpdir):
     example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
-    job = pycondor.Job('testjob', example_script, submit=submit_dir)
-    job.add_arg('arg', name='argname')
-    dagman = pycondor.Dagman('testdagman', submit=submit_dir)
-    dagman.add_job(job)
-    dagman.build(fancyname=True)
+    for fancyname in [True, False]:
+        job = Job('testjob', example_script, submit=submit_dir)
+        job.add_arg('arg', name='argname')
+        dagman = Dagman('testdagman', submit=submit_dir)
+        dagman.add_job(job)
+        dagman.build(fancyname=fancyname)
 
-    with open(dagman.submit_file, 'r') as dagman_submit_file:
-        dagman_submit_lines = dagman_submit_file.readlines()
+        with open(dagman.submit_file, 'r') as dagman_submit_file:
+            dagman_submit_lines = dagman_submit_file.readlines()
 
-    # Get root of the dagman submit file (submit file basename without .submit)
-    submit_file_line = dagman_submit_lines[0]
-    submit_file_basename = submit_file_line.split('/')[-1].rstrip()
-    submit_file_root = os.path.splitext(submit_file_basename)[0]
-    # Get job_name variable (used to built error/log/output file basenames)
-    jobname_line = dagman_submit_lines[2]
-    jobname = jobname_line.split('"')[-2]
-    other_file_root = '_'.join(jobname.split('_')[:-1])
+        # Get root of the dagman submit file (submit file basename w/o .submit)
+        submit_file_line = dagman_submit_lines[0]
+        submit_file_basename = submit_file_line.split('/')[-1].rstrip()
+        submit_file_root = os.path.splitext(submit_file_basename)[0]
+        # Get job_name variable (used to built error/log/output file basenames)
+        jobname_line = dagman_submit_lines[2]
+        jobname = jobname_line.split('"')[-2]
+        other_file_root = '_'.join(jobname.split('_')[:-1])
 
-    assert submit_file_root == other_file_root
+        assert submit_file_root == other_file_root
+
+
+def test_iter_job_args(tmpdir):
+    # Check node names yielded by _iter_job_args
+    example_script = os.path.join('examples/savelist.py')
+    submit_dir = str(tmpdir.mkdir('submit'))
+
+    job = Job('testjob', example_script, submit=submit_dir)
+    job.add_arg('argument1', name='arg1')
+    job.add_arg('argument2')
+    job.build()
+    for idx, (node_name, jobarg) in enumerate(_iter_job_args(job)):
+        if jobarg.name is not None:
+            assert node_name == '{}_{}'.format(job.submit_name, jobarg.name)
+        else:
+            assert node_name == '{}_arg_{}'.format(job.submit_name, idx)
+
+
+def test_iter_job_args_raises(tmpdir):
+    # Check _iter_job_args raises a StopIteration exception on a Job w/o args
+    example_script = os.path.join('examples/savelist.py')
+    submit_dir = str(tmpdir.mkdir('submit'))
+
+    job = Job('testjob', example_script, submit=submit_dir)
+    job.build()
+    i = _iter_job_args(job)
+    with pytest.raises(StopIteration):
+        i = _iter_job_args(job)
+        node_name, arg = next(i)
