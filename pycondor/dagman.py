@@ -13,53 +13,89 @@ def _get_subdag_string(dagman):
         raise TypeError(
                 'Expecting a Dagman object, got {}'.format(type(dagman)))
 
-    subdag_string = 'SUBDAG EXTERNAL {} {}'.format(dagman.name,
+    subdag_string = 'SUBDAG EXTERNAL {} {}'.format(dagman.submit_name,
                                                    dagman.submit_file)
 
     return subdag_string
 
 
+def _iter_job_args(job):
+    """
+    Iterates over Job args list. Yields the name (and JobArg) for each node
+    to be used when adding job to a Dagman (i.e. the name in the
+    'JOB name job_submit_file' line).
+
+    Parameters
+    ----------
+    job : Job
+        Job to iterate over. Note that the submit file for job must be built
+        prior to using _iter_job_args.
+
+    Yields
+    ------
+    node_name : str
+        Node name to use in Dagman object.
+    job_arg : JobArg namedtuple
+        Job argument object (``arg``, ``name``, ``retry`` attributes).
+    """
+    if not isinstance(job, Job):
+        raise TypeError('Expecting a Job object, got {}'.format(type(job)))
+    if not getattr(job, '_built', False):
+        raise ValueError('Job {} must be built before adding it '
+                         'to a Dagman'.format(job.name))
+
+    if len(job.args) == 0:
+        raise StopIteration
+    else:
+        for idx, job_arg in enumerate(job):
+            arg, name, retry = job_arg
+            if name is not None:
+                node_name = '{}_{}'.format(job.submit_name, name)
+            else:
+                node_name = '{}_arg_{}'.format(job.submit_name, idx)
+            yield node_name, job_arg
+
+
 def _get_job_arg_lines(job, fancyname):
+    """Constructs the lines to be added to a Dagman related to job
+    """
 
     if not isinstance(job, Job):
         raise TypeError('Expecting a Job object, got {}'.format(type(job)))
-    if not job._built:
+    if not getattr(job, '_built', False):
         raise ValueError('Job {} must be built before adding it '
                          'to a Dagman'.format(job.name))
 
     job_arg_lines = []
-    if len(job) == 0:
-        job_arg_lines.append('JOB {} '.format(job.name) + job.submit_file)
+    if len(job.args) == 0:
+        job_line = 'JOB {} {}'.format(job.submit_name, job.submit_file)
+        job_arg_lines.append(job_line)
     else:
-        for idx, job_arg in enumerate(job):
+        for node_name, job_arg in _iter_job_args(job):
             arg, name, retry = job_arg
-            job_arg_lines.append('JOB {}_arg_{} {}'.format(job.name, idx,
-                                 job.submit_file))
-            job_arg_lines.append('VARS {}_arg_{} ARGS={}'.format(job.name, idx,
-                                 utils.string_rep(arg, quotes=True)))
+            # Add JOB line with Job submit file
+            job_line = 'JOB {} {}'.format(node_name, job.submit_file)
+            job_arg_lines.append(job_line)
+            # Add job ARGS line for command line arguments
+            arg_line = 'VARS {} ARGS="{}"'.format(node_name, arg)
+            job_arg_lines.append(arg_line)
             # Define job_name variable if there are arg_names present for job
-            if not job._has_arg_names:
-                pass
-            elif name is not None:
-                job_name = job.submit_name
-                job_name += '_{}'.format(name)
-                job_name = utils.string_rep(job_name, quotes=True)
-                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(
-                    job.name, idx, job_name))
-            else:
-                job_name = job.submit_name
-                job_name = utils.string_rep(job_name, quotes=True)
-                job_arg_lines.append('VARS {}_arg_{} job_name={}'.format(
-                    job.name, idx, job_name))
-            # Add retry option for Job
+            if job._has_arg_names:
+                job_name = node_name if name is not None else job.submit_name
+                job_name_line = 'VARS {} job_name="{}"'.format(node_name,
+                                                               job_name)
+                job_arg_lines.append(job_name_line)
+            # Add retry line for Job
             if retry is not None:
-                job_arg_lines.append('Retry {}_arg_{} {}'.format(job.name, idx,
-                                                                 retry))
+                retry_line = 'Retry {} {}'.format(node_name, retry)
+                job_arg_lines.append(retry_line)
 
     return job_arg_lines
 
 
 def _get_parent_child_string(node):
+    """Constructs the parent/child line for node to be added to a Dagman
+    """
 
     if not isinstance(node, BaseNode):
         raise ValueError('Expecting a Job or Dagman object, '
@@ -68,18 +104,17 @@ def _get_parent_child_string(node):
     parent_string = 'Parent'
     for parent_node in node.parents:
         if isinstance(parent_node, Job) and len(parent_node) > 0:
-            for parent_arg_idx in range(len(parent_node)):
-                parent_string += ' {}_arg_{}'.format(parent_node.name,
-                                                     parent_arg_idx)
+            for node_name, job_arg in _iter_job_args(parent_node):
+                parent_string += ' {}'.format(node_name)
         else:
-            parent_string += ' {}'.format(parent_node.name)
+            parent_string += ' {}'.format(parent_node.submit_name)
 
     child_string = 'Child'
     if isinstance(node, Job) and len(node) > 0:
-        for node_arg_idx in range(len(node)):
-            child_string += ' {}_arg_{}'.format(node.name, node_arg_idx)
+        for node_name, job_arg in _iter_job_args(node):
+            child_string += ' {}'.format(node_name)
     else:
-        child_string += ' {}'.format(node.name)
+        child_string += ' {}'.format(node.submit_name)
 
     parent_child_string = parent_string + ' ' + child_string
 
@@ -127,9 +162,7 @@ class Dagman(BaseNode):
     children : list
         List of child Jobs and Dagmans. Ensures that Jobs and Dagmans in the
         children list will be submitted only after this Dagman has completed.
-
     """
-
     def __init__(self, name, submit=None, extra_lines=None, verbose=0):
 
         super(Dagman, self).__init__(name, submit, extra_lines, verbose)
@@ -184,7 +217,6 @@ class Dagman(BaseNode):
         -------
         self : object
             Returns self.
-
         """
         self._add_node(job)
 
@@ -203,7 +235,6 @@ class Dagman(BaseNode):
         -------
         self : object
             Returns self.
-
         """
         self._add_node(dag)
 
@@ -229,8 +260,7 @@ class Dagman(BaseNode):
         self : object
             Returns self.
         """
-
-        if self._built:
+        if getattr(self, '_built', False):
             self.logger.warning(
                     '{} submit file has already been built. '
                     'Skipping the build process...'.format(self.name))
@@ -247,7 +277,6 @@ class Dagman(BaseNode):
         # Create Dagman submit file path
         submit_file = os.path.join(path if path else '',
                                    '{}.submit'.format(name))
-        # submit_file = '{}/{}.submit'.format(self.submit, name)
         self.submit_file = submit_file
         self.submit_name = name
         utils.checkdir(self.submit_file, makedirs)

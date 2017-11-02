@@ -49,22 +49,23 @@ def test_job_arg_name_files(tmpdir):
     example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
-    job = pycondor.Job('testjob', example_script, submit=submit_dir)
-    job.add_arg('arg', name='argname')
-    dagman = pycondor.Dagman('testdagman', submit=submit_dir)
-    dagman.add_job(job)
-    dagman.build(fancyname=True)
+    for fancyname in [True, False]:
+        job = pycondor.Job('testjob', example_script, submit=submit_dir)
+        job.add_arg('arg', name='argname')
+        dagman = pycondor.Dagman('testdagman', submit=submit_dir)
+        dagman.add_job(job)
+        dagman.build(fancyname=fancyname)
 
-    with open(dagman.submit_file, 'r') as dagman_submit_file:
-        dagman_submit_lines = dagman_submit_file.readlines()
+        with open(dagman.submit_file, 'r') as dagman_submit_file:
+            dagman_submit_lines = dagman_submit_file.readlines()
 
-    # Get root of the dagman submit file (submit file basename without .submit)
-    submit_file_line = dagman_submit_lines[0]
-    submit_file_basename = submit_file_line.split('/')[-1].rstrip()
-    submit_file_root = os.path.splitext(submit_file_basename)[0]
-    # Get job_name variable (used to built error/log/output file basenames)
-    jobname_line = dagman_submit_lines[2]
-    jobname = jobname_line.split('"')[-2]
-    other_file_root = '_'.join(jobname.split('_')[:-1])
+        # Get root of the dagman submit file (submit file basename w/o .submit)
+        submit_file_line = dagman_submit_lines[0]
+        submit_file_basename = submit_file_line.split('/')[-1].rstrip()
+        submit_file_root = os.path.splitext(submit_file_basename)[0]
+        # Get job_name variable (used to built error/log/output file basenames)
+        jobname_line = dagman_submit_lines[2]
+        jobname = jobname_line.split('"')[-2]
+        other_file_root = '_'.join(jobname.split('_')[:-1])
 
-    assert submit_file_root == other_file_root
+        assert submit_file_root == other_file_root

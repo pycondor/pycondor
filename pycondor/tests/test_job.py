@@ -103,3 +103,5 @@ def test_job_env_variable_dir(tmpdir):
         tmpdir_path = os.path.join(str(tmpdir), dir_name)
         job_path = os.path.dirname(getattr(job, '{}_file'.format(dir_name)))
         assert tmpdir_path == job_path
+
+    clear_pycondor_environment_variables()
