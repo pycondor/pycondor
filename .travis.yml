@@ -1,25 +1,25 @@
 language: python
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.6-dev" # 3.6 development branch
-  - "3.7-dev" # 3.7 development branch
-  - "nightly" # currently points to 3.7-dev
+    - "2.7"
+    - "3.4"
+    - "3.5"
+    - "3.6"
+    - "3.6-dev" # 3.6 development branch
+    - "nightly" # currently points to 3.7-dev
 install:
-  - pip install .
-  - pip install -r requirements-dev.txt
+    - pip install .
+    - pip install -r requirements-dev.txt
 script:
-  - pytest pycondor
-  - flake8 pycondor
-  - bash ci/build_docs.sh
+    - pytest pycondor
+    - flake8 pycondor
+    - bash ci/build_docs.sh
 deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  local_dir: docs/_build/html
-  target_branch: gh-pages
-  email: "github-pages-deploy@travis-ci.org"
-  on:
-    branch: master
+    provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    local_dir: docs/_build/html
+    target_branch: gh-pages
+    email: "github-pages-deploy@travis-ci.org"
+    on:
+        branch: master
+        python: "2.7"
