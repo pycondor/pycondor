@@ -1,10 +1,17 @@
-'''
-James Bourbeau 2017
-PyCondor
-Author: James Bourbeau <jrbourbeau.github.io>
+#!/usr/bin/env python
 
-License: MIT
-Code repository: https://github.com/jrbourbeau/pycondor
+DISTNAME = 'PyCondor'
+DESCRIPTION = 'Python utility for HTCondor'
+MAINTAINER = 'James Bourbeau'
+MAINTAINER_EMAIL = 'jbourbeau@wisc.edu'
+URL = 'https://github.com/jrbourbeau/pycondor'
+LICENSE = 'MIT'
+LONG_DESCRIPTION = '''Python utility for HTCondor
+
+Helps construct submit files for submitting jobs and dagmans to HTCondor
+
+Please refer to the online documentation at
+https://jrbourbeau.github.io/pycondor/
 '''
 
 from setuptools import setup, find_packages
@@ -12,33 +19,39 @@ import pycondor
 
 VERSION = pycondor.__version__
 
+with open('requirements/default.txt') as fid:
+    INSTALL_REQUIRES = [l.strip() for l in fid.readlines() if l]
+
 setup(
-    name='PyCondor',
+    name=DISTNAME,
     version=VERSION,
-    description='Python utility for HTCondor',
-    url='https://github.com/jrbourbeau/pycondor',
-    author='James Bourbeau',
-    author_email='jbourbeau@wisc.edu',
-    license='MIT',
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    url=URL,
+    author=MAINTAINER,
+    author_email=MAINTAINER_EMAIL,
+    license=LICENSE,
     classifiers=[
         'Development Status :: 4 - Beta',
+        'Environment :: Console',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3'
     ],
     keywords='python condor htcondor high-throughput computing utility tool',
     packages=find_packages(),
+    install_requires=INSTALL_REQUIRES,
     entry_points = {
         'console_scripts': ['dagman_progress=pycondor.command_line:dagman_progress'],
     },
     package_data={'': ['LICENSE',
                        'README.md'],
                   'examples': ['examples/savelist.py',
-                  'examples/job_example.py',
-                  'examples/job_arguments_example.py',
-                  'examples/dagman_example.py',
-                  'examples/dagman_parentchild_example.py',
-                  'examples/subdag_example.py']}
+                               'examples/job_example.py',
+                               'examples/job_arguments_example.py',
+                               'examples/dagman_example.py',
+                               'examples/dagman_parentchild_example.py',
+                               'examples/subdag_example.py']}
 )
