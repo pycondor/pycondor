@@ -1,5 +1,6 @@
 
 import os
+from collections import Counter
 import filecmp
 import pytest
 from pycondor import Job, Dagman
@@ -99,3 +100,39 @@ def test_iter_job_args_raises(tmpdir):
     with pytest.raises(StopIteration):
         i = _iter_job_args(job)
         node_name, arg = next(i)
+
+
+def test_dagman_job_order(tmpdir):
+    # Test to check that the order in which Jobs are added to a Dagman doesn't
+    # change the Dagman submit file that is built. See issue #57.
+    example_script = os.path.join('examples/savelist.py')
+    submit_dir = str(tmpdir.mkdir('submit'))
+
+    dag_submit_lines = []
+    for order_idx in range(2):
+        dagman = Dagman('testdagman', submit=submit_dir)
+        job_child = Job('childjob', example_script, submit=submit_dir)
+        job_child.add_arg('--length 200', name='200jobname')
+        job_child.add_arg('--length 400', retry=3)
+
+        job_parent = Job('parentjob', example_script, submit=submit_dir)
+        job_parent.add_arg('--length 100')
+        job_parent.add_child(job_child)
+
+        if order_idx == 0:
+            # Add job_parent to dagman first
+            dagman.add_job(job_parent)
+            dagman.add_job(job_child)
+        else:
+            # Add job_child to dagman first
+            dagman.add_job(job_child)
+            dagman.add_job(job_parent)
+
+        dagman.build(fancyname=False)
+        # Append submit file lines to dag_submit_lines
+        with open(dagman.submit_file, 'r') as dag_submit_file:
+            dag_submit_lines.append(dag_submit_file.readlines())
+
+    # Test that the same lines occur in the Dagman submit file for
+    # adding the parent/child jobs in either order
+    assert Counter(dag_submit_lines[0]) == Counter(dag_submit_lines[1])
