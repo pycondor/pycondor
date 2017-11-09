@@ -15,6 +15,7 @@ script:
     - flake8 pycondor
     - bash ci/build_docs.sh
 after_success:
+    - pip install codecov
     - codecov
 deploy:
     provider: pages
