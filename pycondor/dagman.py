@@ -281,23 +281,30 @@ class Dagman(BaseNode):
         self.submit_name = name
         utils.checkdir(self.submit_file, makedirs)
 
+        # Build submit files for all nodes in self.nodes
+        # Note: nodes must be built before the submit file for self is built
+        for node_index, node in enumerate(self.nodes, start=1):
+            if isinstance(node, Job):
+                node._build_from_dag(makedirs, fancyname)
+            elif isinstance(node, Dagman):
+                node.build(makedirs, fancyname)
+            else:
+                raise TypeError('Nodes must be either a Job or Dagman object')
+
         # Write dag submit file
         self.logger.info('Building DAG submission file {}...'.format(
             self.submit_file))
         lines = []
         parent_child_lines = []
-        for node_index, node in enumerate(self, start=1):
+        for node_index, node in enumerate(self.nodes, start=1):
             self.logger.info('Working on {} [{} of {}]'.format(node.name,
                              node_index, len(self.nodes)))
             # Build the BaseNode submit file
             if isinstance(node, Job):
-                # node must be built before _get_job_arg_lines is called
-                node._build_from_dag(makedirs, fancyname)
                 # Add Job variables to Dagman submit file
                 job_arg_lines = _get_job_arg_lines(node, fancyname)
                 lines.extend(job_arg_lines)
             elif isinstance(node, Dagman):
-                node.build(makedirs, fancyname)
                 subdag_string = _get_subdag_string(node)
                 lines.append(subdag_string)
             else:
