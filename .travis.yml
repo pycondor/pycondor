@@ -11,12 +11,11 @@ install:
     - pip install -r requirements/docs.txt
     - pip install -r requirements/test.txt
 script:
-    - pytest --cov=./ pycondor
+    - pytest --cov=pycondor pycondor
     - flake8 pycondor
     - bash ci/build_docs.sh
 after_success:
     - pip install codecov
-    - coverage combine
     - codecov
 deploy:
     provider: pages
