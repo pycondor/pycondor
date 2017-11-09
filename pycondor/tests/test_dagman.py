@@ -5,7 +5,7 @@ import filecmp
 import pytest
 from pycondor import Job, Dagman
 from pycondor.dagman import _iter_job_args
-from pycondor.tests.utils import clear_pycondor_environment_variables
+from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
 

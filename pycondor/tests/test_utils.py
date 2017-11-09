@@ -2,8 +2,7 @@
 import os
 import pytest
 import pycondor
-
-from utils import clear_pycondor_environment_variables
+from pycondor.utils import clear_pycondor_environment_variables
 
 
 def test_string_rep_None_fail():
