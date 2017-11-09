@@ -3,7 +3,7 @@
 set -e
 
 echo "Building documentation..."
-pip install -r requirements-dev.txt
+pip install -r requirements/docs.txt
 cd docs
 make clean
 make html
