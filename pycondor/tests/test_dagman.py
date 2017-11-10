@@ -4,7 +4,7 @@ from collections import Counter
 import filecmp
 import pytest
 from pycondor import Job, Dagman
-from pycondor.dagman import _iter_job_args
+from pycondor.dagman import _iter_job_args, _get_subdag_string
 from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
@@ -73,6 +73,14 @@ def test_job_arg_name_files(tmpdir):
         assert submit_file_root == other_file_root
 
 
+def test_get_subdag_string_fail():
+    with pytest.raises(TypeError) as excinfo:
+        not_dagman = 'thisisastring'
+        _get_subdag_string(not_dagman)
+    error = 'Expecting a Dagman object, got {}'.format(type(not_dagman))
+    assert error == str(excinfo.value)
+
+
 def test_iter_job_args(tmpdir):
     # Check node names yielded by _iter_job_args
     example_script = os.path.join('examples/savelist.py')
@@ -89,17 +97,32 @@ def test_iter_job_args(tmpdir):
             assert node_name == '{}_arg_{}'.format(job.submit_name, idx)
 
 
-def test_iter_job_args_raises(tmpdir):
-    # Check _iter_job_args raises a StopIteration exception on a Job w/o args
+def test_iter_job_args_fail(tmpdir):
     example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
+    # Check _iter_job_args raises a ValueError if input Job is not built
     job = Job('testjob', example_script, submit=submit_dir)
+    with pytest.raises(ValueError) as excinfo:
+        i = _iter_job_args(job)
+        node_name, arg = next(i)
+    error = ('Job {} must be built before adding it to a '
+             'Dagman'.format(job.name))
+    assert error == str(excinfo.value)
+
+    # Check _iter_job_args raises a StopIteration exception on a Job w/o args
     job.build()
-    i = _iter_job_args(job)
     with pytest.raises(StopIteration):
         i = _iter_job_args(job)
         node_name, arg = next(i)
+
+    # Check _iter_job_args raises a TypeError when input is not a Job
+    with pytest.raises(TypeError) as excinfo:
+        not_job = 'thisisastring'
+        i = _iter_job_args(not_job)
+        node_name, arg = next(i)
+    error = 'Expecting a Job object, got {}'.format(type(not_job))
+    assert error == str(excinfo.value)
 
 
 def test_dagman_job_order(tmpdir):
