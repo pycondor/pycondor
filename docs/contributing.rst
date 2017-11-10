@@ -147,20 +147,35 @@ Once your contribution has been added, you'll want to run the tests for this pro
 
 .. code-block:: bash
 
-    pip install -r requirements-dev.txt
+    pip install -r requirements/test.txt
 
 
 Now the tests can be run by going to the root directory of your pycondor repository and executing
 
 .. code-block:: bash
 
-    make tests
+    pytest pycondor
+
+To run with code coverage use ``pytest --cov pycondor``
 
 =====================
 Step 8: Documentation
 =====================
 
-If necessary for your contribution, add the appropriate documentation to the files in the ``docs/docs`` directory
+If necessary for your contribution, add the appropriate documentation to the files in the ``docs/docs`` directory. To install the dependencies needed to build the documentation run the following
+
+.. code-block:: bash
+
+    pip install -r requirements/docs.txt
+
+The documentation can be build via
+
+.. code-block:: bash
+
+    cd docs
+    make html
+
+The built documentation will be placed in the ``_build/html`` directory.
 
 ========================================
 Step 9: Committing and uploading changes

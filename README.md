@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master)](https://travis-ci.org/jrbourbeau/pycondor)
+[![codecov](https://codecov.io/gh/jrbourbeau/pycondor/branch/master/graph/badge.svg)](https://codecov.io/gh/jrbourbeau/pycondor)
 ![pypi version](https://img.shields.io/pypi/v/pycondor.svg 'pypi version')
 ![license](https://img.shields.io/pypi/l/pycondor.svg 'license')
 

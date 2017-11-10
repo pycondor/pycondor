@@ -2,7 +2,7 @@
 import os
 import pytest
 from pycondor import Job
-from pycondor.tests.utils import clear_pycondor_environment_variables
+from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
 

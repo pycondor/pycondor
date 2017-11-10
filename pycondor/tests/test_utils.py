@@ -1,6 +1,8 @@
 
+import os
 import pytest
 import pycondor
+from pycondor.utils import clear_pycondor_environment_variables
 
 
 def test_string_rep_None_fail():
@@ -23,3 +25,10 @@ def test_setup_logger_noname_fail():
         pycondor.utils._setup_logger('string_has_no_name')
     error = 'Input must have a "name" attribute.'
     assert error == str(excinfo.value)
+
+
+def test_clear_pycondor_environment_variables():
+    # Test that environment variables are cleared
+    clear_pycondor_environment_variables()
+    for i in ['submit', 'output', 'error', 'log']:
+        assert os.environ['PYCONDOR_{}_DIR'.format(i.upper())] == ''
