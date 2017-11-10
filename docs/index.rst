@@ -34,6 +34,9 @@ PyCondor Documentation
 .. image:: https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master
     :target: https://travis-ci.org/jrbourbeau/pycondor
 
+.. image:: https://codecov.io/gh/jrbourbeau/pycondor/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/jrbourbeau/pycondor
+
 .. image:: https://img.shields.io/pypi/v/pycondor.svg
     :target: https://pypi.python.org/pypi/PyCondor/
 
