@@ -70,4 +70,4 @@ def test_dagman_progress_raises():
                             stderr=subprocess.PIPE, shell=True)
     _, err = proc.communicate()
 
-    assert 'IOError: Dagman submit file file.submit doesn\'t exist' in err
+    assert b'Dagman submit file file.submit doesn\'t exist' in err
