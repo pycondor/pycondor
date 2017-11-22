@@ -170,7 +170,7 @@ def test_add_args():
     for i in range(10):
         job_1.add_arg('file_{}.hdf'.format(i))
 
-    job_2 = Job('job1', example_script)
+    job_2 = Job('job2', example_script)
     job_2.add_args(['file_{}.hdf'.format(i) for i in range(10)])
 
     assert job_1.args == job_2.args
