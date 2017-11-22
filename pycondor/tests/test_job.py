@@ -109,14 +109,13 @@ def test_repr():
     default_job = Job('jobname', example_script)
     job_repr = repr(default_job)
     expected_repr = ('Job(name=jobname, executable=savelist.py, '
-                     'universe=vanilla, getenv=True, notification=never)')
+                     'getenv=True, notification=never, universe=vanilla)')
     assert job_repr == expected_repr
 
     job_non_default = Job('jobname', example_script, queue=2)
     job_repr = repr(job_non_default)
-    expected_repr = ('Job(name=jobname, executable=savelist.py, '
-                     'universe=vanilla, queue=2, getenv=True, '
-                     'notification=never)')
+    expected_repr = ('Job(name=jobname, executable=savelist.py, getenv=True, '
+                     'notification=never, queue=2, universe=vanilla)')
     assert job_repr == expected_repr
 
 

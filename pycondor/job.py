@@ -138,7 +138,7 @@ class Job(BaseNode):
     def __repr__(self):
         nondefaults = ''
         default_attr = ['name', 'executable', 'logger']
-        for attr in vars(self):
+        for attr in sorted(vars(self)):
             if getattr(self, attr) and attr not in default_attr:
                 nondefaults += ', {}={}'.format(attr, getattr(self, attr))
         output = 'Job(name={}, executable={}{})'.format(
