@@ -394,14 +394,12 @@ class Job(BaseNode):
             raise ValueError('build() must be called before submit()')
         # Ensure that there are no parent relationships
         if len(self.parents) != 0:
-            raise ValueError('Attempting to submit a Job with the following'
-                             ' parents:\n\t{}\nInterjob relationships requires'
-                             ' Dagman.'.format(self.parents))
+            raise ValueError('Attempting to submit a Job with parents. '
+                             'Interjob relationships requires Dagman.')
         # Ensure that there are no child relationships
         if len(self.children) != 0:
-            raise ValueError('Attempting to submit a Job with the following'
-                             ' children:\n\t{}\nInterjob relationships'
-                             ' requires Dagman.'.format(self.children))
+            raise ValueError('Attempting to submit a Job with children. '
+                             'Interjob relationships requires Dagman.')
 
         if len(self.args) > 20:
             self.logger.warning('You are submitting a Job with {} arguments. '

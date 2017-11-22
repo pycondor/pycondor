@@ -159,3 +159,16 @@ def test_dagman_job_order(tmpdir):
     # Test that the same lines occur in the Dagman submit file for
     # adding the parent/child jobs in either order
     assert Counter(dag_submit_lines[0]) == Counter(dag_submit_lines[1])
+
+
+def test_repr():
+    default_dagman = Dagman('dagname')
+    dag_repr = repr(default_dagman)
+    expected_repr = 'Dagman(name=dagname, n_nodes=0)'
+    assert dag_repr == expected_repr
+
+    dag_non_default = Dagman('dagname', submit='/submit_dir')
+    dag_non_default.add_subdag(default_dagman)
+    dag_repr = repr(dag_non_default)
+    expected_repr = 'Dagman(name=dagname, n_nodes=1, submit=/submit_dir)'
+    assert dag_repr == expected_repr

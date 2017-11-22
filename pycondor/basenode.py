@@ -11,7 +11,7 @@ class BaseNode(object):
 
         # Validate user input
         if extra_lines and not isinstance(extra_lines, (str, list, tuple)):
-            raise ValueError('extra_lines must be of type str, list, or tuple')
+            raise TypeError('extra_lines must be of type str, list, or tuple')
         elif extra_lines and isinstance(extra_lines, str):
             extra_lines = [extra_lines]
 
