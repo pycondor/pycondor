@@ -172,7 +172,7 @@ class Dagman(BaseNode):
 
     def __repr__(self):
         nondefaults = ''
-        for attr in vars(self):
+        for attr in sorted(vars(self)):
             if getattr(self, attr) and attr not in ['name', 'nodes', 'logger']:
                 nondefaults += ', {}={}'.format(attr, getattr(self, attr))
         output = 'Dagman(name={}, n_nodes={}{})'.format(self.name,

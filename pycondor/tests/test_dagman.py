@@ -4,10 +4,13 @@ from collections import Counter
 import filecmp
 import pytest
 from pycondor import Job, Dagman
-from pycondor.dagman import _iter_job_args, _get_subdag_string
+from pycondor.dagman import (_iter_job_args, _get_subdag_string,
+                             _get_job_arg_lines)
 from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
+
+example_script = os.path.join('examples/savelist.py')
 
 
 def test_add_job_int_fail():
@@ -159,3 +162,33 @@ def test_dagman_job_order(tmpdir):
     # Test that the same lines occur in the Dagman submit file for
     # adding the parent/child jobs in either order
     assert Counter(dag_submit_lines[0]) == Counter(dag_submit_lines[1])
+
+
+def test_repr():
+    default_dagman = Dagman('dagname')
+    dag_repr = repr(default_dagman)
+    expected_repr = 'Dagman(name=dagname, n_nodes=0)'
+    assert dag_repr == expected_repr
+
+    dag_non_default = Dagman('dagname', submit='/submit_dir')
+    dag_non_default.add_subdag(default_dagman)
+    dag_repr = repr(dag_non_default)
+    expected_repr = 'Dagman(name=dagname, n_nodes=1, submit=/submit_dir)'
+    assert dag_repr == expected_repr
+
+
+def test_get_job_arg_lines_non_job_raises():
+    not_job = 'not a job'
+    with pytest.raises(TypeError) as excinfo:
+        _get_job_arg_lines(not_job, fancyname=True)
+    error = 'Expecting a Job object, got {}'.format(type(not_job))
+    assert error == str(excinfo.value)
+
+
+def test_get_job_arg_lines_not_built_raises():
+    job = Job('testjob', example_script)
+    with pytest.raises(ValueError) as excinfo:
+        _get_job_arg_lines(job, fancyname=True)
+    error = ('Job {} must be built before adding it to a '
+             'Dagman'.format(job.name))
+    assert error == str(excinfo.value)

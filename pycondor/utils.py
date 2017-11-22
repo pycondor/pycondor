@@ -59,7 +59,7 @@ def checkdir(path, makedirs):
                   + 'creating it...')
             os.makedirs(outdir)
         else:
-            raise OSError('The directory {} doesn\'t exist'.format(outdir))
+            raise IOError('The directory {} doesn\'t exist'.format(outdir))
     return
 
 
