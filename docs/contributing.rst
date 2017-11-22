@@ -143,7 +143,7 @@ Now add your feature, bug fix, typo fix, etc.
 Step 7: Running tests with the new code
 =======================================
 
-Once your contribution has been added, you'll want to run the tests for this project to ensure that none of the code you added broke any tests. If you haven't already, make sure you have the necessary software installed for running the tests (``pytest``) via
+Once your contributions have been added, you'll want to run the tests for this project to ensure that none of the new code breaks any existing tests. If you haven't already, make sure you have the necessary software installed for running the tests (``pytest``) via
 
 .. code-block:: bash
 
@@ -162,8 +162,7 @@ To run with code coverage use ``pytest --cov pycondor``
 Step 8: Documentation
 =====================
 
-If necessary for your contribution, add the appropriate documentation to the files in the ``docs/docs`` directory. To install the dependencies needed to build the documentation run the following
-
+If necessary for your contribution, add the appropriate documentation to the files in the ``docs/`` directory. The dependencies needed to build the documentation can be installed by running
 .. code-block:: bash
 
     pip install -r requirements/docs.txt
