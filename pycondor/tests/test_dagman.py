@@ -4,8 +4,7 @@ from collections import Counter
 import filecmp
 import pytest
 from pycondor import Job, Dagman
-from pycondor.dagman import (_iter_job_args, _get_subdag_string,
-                             _get_job_arg_lines)
+from pycondor.dagman import _iter_job_args, _get_subdag_string
 from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
@@ -26,7 +25,6 @@ def test_job_dag_submit_file_same(tmpdir):
     # Test to check that the submit file for a Job with no arguments is the
     # same whether built from a Dagman or not. See issue #38.
 
-    example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
     # Build Job object that will be built outside of a Dagman
     job_outside_dag = Job('test_job', example_script, submit=submit_dir,
@@ -51,7 +49,6 @@ def test_job_arg_name_files(tmpdir):
     # error/log/output files for the argument start with the same index.
     # E.g. job_(date)_01.submit, job_(date)_01.error, etc.
     # Regression test for issue #47
-    example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
     for fancyname in [True, False]:
@@ -86,7 +83,6 @@ def test_get_subdag_string_fail():
 
 def test_iter_job_args(tmpdir):
     # Check node names yielded by _iter_job_args
-    example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
     job = Job('testjob', example_script, submit=submit_dir)
@@ -101,7 +97,6 @@ def test_iter_job_args(tmpdir):
 
 
 def test_iter_job_args_fail(tmpdir):
-    example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
     # Check _iter_job_args raises a ValueError if input Job is not built
@@ -131,7 +126,6 @@ def test_iter_job_args_fail(tmpdir):
 def test_dagman_job_order(tmpdir):
     # Test to check that the order in which Jobs are added to a Dagman doesn't
     # change the Dagman submit file that is built. See issue #57.
-    example_script = os.path.join('examples/savelist.py')
     submit_dir = str(tmpdir.mkdir('submit'))
 
     dag_submit_lines = []
@@ -180,7 +174,7 @@ def test_repr():
 def test_get_job_arg_lines_non_job_raises():
     not_job = 'not a job'
     with pytest.raises(TypeError) as excinfo:
-        _get_job_arg_lines(not_job, fancyname=True)
+        Dagman('dag_name')._get_job_arg_lines(not_job, fancyname=True)
     error = 'Expecting a Job object, got {}'.format(type(not_job))
     assert error == str(excinfo.value)
 
@@ -188,7 +182,7 @@ def test_get_job_arg_lines_non_job_raises():
 def test_get_job_arg_lines_not_built_raises():
     job = Job('testjob', example_script)
     with pytest.raises(ValueError) as excinfo:
-        _get_job_arg_lines(job, fancyname=True)
+        Dagman('dag_name')._get_job_arg_lines(job, fancyname=True)
     error = ('Job {} must be built before adding it to a '
              'Dagman'.format(job.name))
     assert error == str(excinfo.value)

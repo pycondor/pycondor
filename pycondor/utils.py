@@ -1,7 +1,11 @@
 
 import os
+import re
+import sys
 import subprocess
 import logging
+import shutil
+import distutils
 
 
 # Specify logging settings
@@ -95,3 +99,41 @@ def clear_pycondor_environment_variables():
     # Unset any pycondor directory environment variables
     for i in ['submit', 'output', 'error', 'log']:
         os.environ['PYCONDOR_{}_DIR'.format(i.upper())] = ''
+
+
+def assert_command_exists(cmd):
+    version_major = sys.version_info.major
+    version_minor = sys.version_info.minor
+    if (version_major, version_minor) >= (3, 3):
+        cmd_path = shutil.which(cmd)
+    else:
+        cmd_path = distutils.spawn.find_executable(cmd)
+
+    if cmd_path is None:
+        raise OSError(
+            'The command \'{}\' was not found on this machine.'.format(cmd))
+
+
+def get_condor_version():
+    """Should only be called on a submit machine
+    """
+    condor_info_str = None
+    try:
+        import htcondor
+        condor_info_str = htcondor.version()
+    except ImportError:
+        assert_command_exists('condor_version')
+        proc = subprocess.Popen(['condor_version'], stdout=subprocess.PIPE,
+                                shell=True)
+        out, err = proc.communicate()
+        condor_info_str = out
+    finally:
+        if condor_info_str is None:
+            raise OSError('Could not find HTCondor version.')
+
+    condor_version_str = re.search(r'CondorVersion: \s*([\d.]+)',
+                                   condor_info_str).group(1)
+
+    condor_version = tuple(map(int, condor_version_str.split('.')))
+
+    return condor_version
