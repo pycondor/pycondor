@@ -2,7 +2,8 @@
 import os
 import pytest
 import pycondor
-from pycondor.utils import clear_pycondor_environment_variables, checkdir
+from pycondor.utils import (clear_pycondor_environment_variables, checkdir,
+                            assert_command_exists, get_condor_version)
 
 
 def test_string_rep_None_fail():
@@ -47,3 +48,24 @@ def test_checkdir(tmpdir):
     # Test that when makedirs=True, the proper directory is created
     checkdir(test_file, makedirs=True)
     assert os.path.exists(outdir)
+
+
+def test_assert_command_exists():
+    # Check that ls exists
+    assert_command_exists('ls')
+
+    # Check that a non-existant command raises an OSError
+    with pytest.raises(OSError) as excinfo:
+        cmd = 'not_an_existing_command'
+        assert_command_exists(cmd)
+    error = 'The command \'{}\' was not found on this machine.'.format(cmd)
+    assert error == str(excinfo.value)
+
+
+@pytest.mark.skipif(os.getenv('CONTINUOUS_INTEGRATION') is None,
+                    reason='Travis does not have HTCondor installed')
+def test_get_condor_version_raises():
+    with pytest.raises(OSError) as excinfo:
+        get_condor_version()
+    error = 'Could not find HTCondor version.'
+    assert error == str(excinfo.value)

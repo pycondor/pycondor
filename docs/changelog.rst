@@ -6,8 +6,24 @@
 Release Notes
 *************
 
-Version 0.2.0 (2017-11-22)
+Version 0.2.1 (TBD)
 -------------------
+
+**New Features**:
+
+* 
+
+**Changes**:
+
+* Adds a check for illegal characters in Dagman submit file node names when running HTCondor version 8.7.2 or newer. (See `PR #66 <https://github.com/jrbourbeau/pycondor/pull/66>`_)
+
+**Bug Fixes**:
+
+*
+
+
+Version 0.2.0 (2017-11-22)
+--------------------------
 
 **New Features**:
 

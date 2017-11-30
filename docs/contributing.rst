@@ -163,6 +163,7 @@ Step 8: Documentation
 =====================
 
 If necessary for your contribution, add the appropriate documentation to the files in the ``docs/`` directory. The dependencies needed to build the documentation can be installed by running
+
 .. code-block:: bash
 
     pip install -r requirements/docs.txt

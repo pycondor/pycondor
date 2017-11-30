@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-from . import utils
+from .utils import checkdir, assert_command_exists, get_condor_version
 from .basenode import BaseNode
 from .job import Job
 
@@ -54,43 +54,6 @@ def _iter_job_args(job):
             else:
                 node_name = '{}_arg_{}'.format(job.submit_name, idx)
             yield node_name, job_arg
-
-
-def _get_job_arg_lines(job, fancyname):
-    """Constructs the lines to be added to a Dagman related to job
-    """
-
-    if not isinstance(job, Job):
-        raise TypeError('Expecting a Job object, got {}'.format(type(job)))
-    if not getattr(job, '_built', False):
-        raise ValueError('Job {} must be built before adding it '
-                         'to a Dagman'.format(job.name))
-
-    job_arg_lines = []
-    if len(job.args) == 0:
-        job_line = 'JOB {} {}'.format(job.submit_name, job.submit_file)
-        job_arg_lines.append(job_line)
-    else:
-        for node_name, job_arg in _iter_job_args(job):
-            arg, name, retry = job_arg
-            # Add JOB line with Job submit file
-            job_line = 'JOB {} {}'.format(node_name, job.submit_file)
-            job_arg_lines.append(job_line)
-            # Add job ARGS line for command line arguments
-            arg_line = 'VARS {} ARGS="{}"'.format(node_name, arg)
-            job_arg_lines.append(arg_line)
-            # Define job_name variable if there are arg_names present for job
-            if job._has_arg_names:
-                job_name = node_name if name is not None else job.submit_name
-                job_name_line = 'VARS {} job_name="{}"'.format(node_name,
-                                                               job_name)
-                job_arg_lines.append(job_name_line)
-            # Add retry line for Job
-            if retry is not None:
-                retry_line = 'Retry {} {}'.format(node_name, retry)
-                job_arg_lines.append(retry_line)
-
-    return job_arg_lines
 
 
 def _get_parent_child_string(node):
@@ -168,6 +131,7 @@ class Dagman(BaseNode):
         super(Dagman, self).__init__(name, submit, extra_lines, verbose)
 
         self.nodes = []
+        self._has_bad_node_names = False
         self.logger.debug('{} initialized'.format(self.name))
 
     def __repr__(self):
@@ -240,6 +204,49 @@ class Dagman(BaseNode):
 
         return self
 
+    def _get_job_arg_lines(self, job, fancyname):
+        """Constructs the lines to be added to a Dagman related to job
+        """
+
+        if not isinstance(job, Job):
+            raise TypeError('Expecting a Job object, got {}'.format(type(job)))
+        if not getattr(job, '_built', False):
+            raise ValueError('Job {} must be built before adding it '
+                             'to a Dagman'.format(job.name))
+
+        job_arg_lines = []
+        if len(job.args) == 0:
+            job_line = 'JOB {} {}'.format(job.submit_name, job.submit_file)
+            job_arg_lines.append(job_line)
+        else:
+            for node_name, job_arg in _iter_job_args(job):
+                # Check that '.' or '+' are not in node_name
+                if '.' in node_name or '+' in node_name:
+                    self._has_bad_node_names = True
+
+                arg, name, retry = job_arg
+                # Add JOB line with Job submit file
+                job_line = 'JOB {} {}'.format(node_name, job.submit_file)
+                job_arg_lines.append(job_line)
+                # Add job ARGS line for command line arguments
+                arg_line = 'VARS {} ARGS="{}"'.format(node_name, arg)
+                job_arg_lines.append(arg_line)
+                # Define job_name variable if there are arg_names for job
+                if job._has_arg_names:
+                    if name is not None:
+                        job_name = node_name
+                    else:
+                        job_name = job.submit_name
+                    job_name_line = 'VARS {} job_name="{}"'.format(node_name,
+                                                                   job_name)
+                    job_arg_lines.append(job_name_line)
+                # Add retry line for Job
+                if retry is not None:
+                    retry_line = 'Retry {} {}'.format(node_name, retry)
+                    job_arg_lines.append(retry_line)
+
+        return job_arg_lines
+
     def build(self, makedirs=True, fancyname=True):
         """Build and saves the submit file for Dagman
 
@@ -279,7 +286,7 @@ class Dagman(BaseNode):
                                    '{}.submit'.format(name))
         self.submit_file = submit_file
         self.submit_name = name
-        utils.checkdir(self.submit_file, makedirs)
+        checkdir(self.submit_file, makedirs)
 
         # Build submit files for all nodes in self.nodes
         # Note: nodes must be built before the submit file for self is built
@@ -302,7 +309,7 @@ class Dagman(BaseNode):
             # Build the BaseNode submit file
             if isinstance(node, Job):
                 # Add Job variables to Dagman submit file
-                job_arg_lines = _get_job_arg_lines(node, fancyname)
+                job_arg_lines = self._get_job_arg_lines(node, fancyname)
                 lines.extend(job_arg_lines)
             elif isinstance(node, Dagman):
                 subdag_string = _get_subdag_string(node)
@@ -351,13 +358,27 @@ class Dagman(BaseNode):
         self : object
             Returns self.
         """
-        # Construct and execute condor_submit_dag command
-        command = 'condor_submit_dag -maxjobs {} {}'.format(
-            maxjobs, self.submit_file)
+        # Construct condor_submit_dag command
+        assert_command_exists('condor_submit_dag')
+        command = 'condor_submit_dag -maxjobs {} {}'.format(maxjobs,
+                                                            self.submit_file)
         for option in kwargs:
             command += ' {} {}'.format(option, kwargs[option])
-        proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
-        out, err = proc.communicate()
+        submit_dag_proc = subprocess.Popen([command], stdout=subprocess.PIPE,
+                                           shell=True)
+        # Check that there are no illegal node names for newer condor versions
+        condor_version = get_condor_version()
+        if condor_version >= (8, 7, 2) and self._has_bad_node_names:
+            err = ("Found an illegal character (either '+' or '.') in the "
+                   "name for a node in Dagman {}. As of HTCondor version "
+                   "8.7.2, '+' and  '.' are prohibited in Dagman node names. "
+                   "This means a '+' or '.' character is in a Job name, "
+                   "Dagman name, or the name for a Job argument.".format(
+                        self.name))
+            raise RuntimeError(err)
+
+        # Execute condor_submit_dag command
+        out, err = submit_dag_proc.communicate()
         print(out)
 
         return
