@@ -11,11 +11,12 @@ Version 0.2.1 (TBD)
 
 **New Features**:
 
-* 
+* Added ``dag`` parameter to ``Job`` and ``Dagman`` object initializations. (See `PR #67 <https://github.com/jrbourbeau/pycondor/pull/67>`_)
+
 
 **Changes**:
 
-* Adds a check for illegal characters in Dagman submit file node names when running HTCondor version 8.7.2 or newer. (See `PR #66 <https://github.com/jrbourbeau/pycondor/pull/66>`_)
+* Added a check for illegal characters in Dagman submit file node names when running HTCondor version 8.7.2 or newer. (See `PR #66 <https://github.com/jrbourbeau/pycondor/pull/66>`_)
 
 **Bug Fixes**:
 
