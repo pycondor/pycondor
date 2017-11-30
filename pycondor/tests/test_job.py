@@ -1,7 +1,7 @@
 
 import os
 import pytest
-from pycondor import Job
+from pycondor import Job, Dagman
 from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
@@ -185,3 +185,22 @@ def test_retry_job_raises():
     error = ('Retrying failed Jobs is only available when submitting '
              'from a Dagman.')
     assert error == str(excinfo.value)
+
+
+def test_job_dag_parameter(tmpdir):
+    # Test that a Job is added to a Dagman when dag parameter given
+    submit_dir = str(tmpdir.join('submit'))
+    dag = Dagman('dagman', submit=submit_dir)
+    job = Job('job', example_script, dag=dag)
+
+    assert job in dag
+
+
+def test_add_job_dag_parameter_equality(tmpdir):
+    submit_dir = str(tmpdir.join('submit'))
+    dag = Dagman('dagman', submit=submit_dir)
+    job_1 = Job('job_1', example_script, dag=dag)
+    job_2 = Job('job_2', example_script)
+    dag.add_job(job_2)
+
+    assert dag.nodes == [job_1, job_2]

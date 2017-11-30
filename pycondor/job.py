@@ -82,7 +82,10 @@ class Job(BaseNode):
     extra_lines : list or None, optional
         List of additional lines to be added to submit file.
 
-    verbose : int
+    dag : Dagman, optional
+        If specified, Job will be added to dag (default is None).
+
+    verbose : int, optional
         Level of logging verbosity option are 0-warning, 1-info,
         2-debugging (default is 0).
 
@@ -113,9 +116,9 @@ class Job(BaseNode):
                  submit=None, request_memory=None, request_disk=None,
                  request_cpus=None, getenv=True, universe='vanilla',
                  initialdir=None, notification='never', requirements=None,
-                 queue=None, extra_lines=None, verbose=0):
+                 queue=None, extra_lines=None, dag=None, verbose=0):
 
-        super(Job, self).__init__(name, submit, extra_lines, verbose)
+        super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
 
         self.executable = utils.string_rep(executable)
         self.error = error

@@ -234,3 +234,22 @@ def test_dagman_env_variable_dir(tmpdir):
     assert submit_dir == submit_path
 
     clear_pycondor_environment_variables()
+
+
+def test_dagman_dag_parameter(tmpdir):
+    # Test that a Dagman is added to a Dagman (as a subdag) when dag is given
+    submit_dir = str(tmpdir.join('submit'))
+    dag = Dagman('dagman', submit=submit_dir)
+    subdag = Dagman('subdag', submit=submit_dir, dag=dag)
+
+    assert subdag in dag
+
+
+def test_add_subdag_dag_parameter_equality(tmpdir):
+    submit_dir = str(tmpdir.join('submit'))
+    dag = Dagman('dagman', submit=submit_dir)
+    subdag_1 = Dagman('subdag_1', submit=submit_dir, dag=dag)
+    subdag_2 = Dagman('subdag_2', submit=submit_dir)
+    dag.add_subdag(subdag_2)
+
+    assert dag.nodes == [subdag_1, subdag_2]
