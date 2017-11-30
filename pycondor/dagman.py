@@ -370,10 +370,11 @@ class Dagman(BaseNode):
         condor_version = get_condor_version()
         if condor_version >= (8, 7, 2) and self._has_bad_node_names:
             err = ("Found an illegal character (either '+' or '.') in the "
-                   "name for a node. As of HTCondor version 8.7.2, '+' and  "
-                   "'.' are prohibited in Dagman node names. This means a '+' "
-                   "or '.' character is in a Job name, Dagman name, or the "
-                   "name for a Job argument.")
+                   "name for a node in Dagman {}. As of HTCondor version "
+                   "8.7.2, '+' and  '.' are prohibited in Dagman node names. "
+                   "This means a '+' or '.' character is in a Job name, "
+                   "Dagman name, or the name for a Job argument.".format(
+                        self.name))
             raise RuntimeError(err)
 
         # Execute condor_submit_dag command

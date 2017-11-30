@@ -81,6 +81,19 @@ def test_get_subdag_string_fail():
     assert error == str(excinfo.value)
 
 
+def test_get_subdag_string(tmpdir):
+    submit_dir = str(tmpdir.mkdir('submit'))
+    dag_name = 'example_dag'
+    dag = Dagman(dag_name, submit=submit_dir)
+    dag.build(fancyname=False)
+    subdag_str = _get_subdag_string(dag)
+
+    expected_str = 'SUBDAG EXTERNAL {} {}'.format(
+        dag_name, os.path.join(submit_dir, dag_name+'.submit'))
+
+    assert subdag_str == expected_str
+
+
 def test_iter_job_args(tmpdir):
     # Check node names yielded by _iter_job_args
     submit_dir = str(tmpdir.mkdir('submit'))
@@ -186,3 +199,38 @@ def test_get_job_arg_lines_not_built_raises():
     error = ('Job {} must be built before adding it to a '
              'Dagman'.format(job.name))
     assert error == str(excinfo.value)
+
+
+def test_dagman_has_bad_node_names(tmpdir):
+    submit_dir = str(tmpdir.mkdir('submit'))
+
+    # Test all combinations
+    jobs_names = ['testjob', 'testjob.', 'testjob', 'testjob+']
+    arg_names = ['argname', 'argname', 'argname+', 'argname.']
+    has_bad_node_names = [False, True, True, True]
+    for job_name, arg_name, bad_node_names in zip(jobs_names,
+                                                  arg_names,
+                                                  has_bad_node_names):
+        job = Job(job_name, example_script, submit=submit_dir)
+        job.add_arg('arg', name=arg_name)
+        dagman = Dagman('testdagman', submit=submit_dir)
+        dagman.add_job(job)
+        dagman.build()
+        assert dagman._has_bad_node_names == bad_node_names
+
+
+def test_dagman_env_variable_dir(tmpdir):
+
+    # Set pycondor environment variable
+    submit_dir = str(tmpdir.mkdir('submit'))
+    os.environ['PYCONDOR_SUBMIT_DIR'] = submit_dir
+
+    dagman = Dagman('testdagman', submit=submit_dir)
+    job = Job('jobname', example_script)
+    dagman.add_job(job)
+    dagman.build()
+
+    submit_path = os.path.dirname(dagman.submit_file)
+    assert submit_dir == submit_path
+
+    clear_pycondor_environment_variables()
