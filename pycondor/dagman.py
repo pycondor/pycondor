@@ -109,6 +109,10 @@ class Dagman(BaseNode):
 
         .. versionadded:: 0.1.1
 
+    dag : Dagman, optional
+        If specified, Dagman will be added to dag as a subdag
+        (default is None).
+
     verbose : int, optional
         Level of logging verbosity option are 0-warning, 1-info,
         2-debugging (default is 0).
@@ -126,9 +130,10 @@ class Dagman(BaseNode):
         List of child Jobs and Dagmans. Ensures that Jobs and Dagmans in the
         children list will be submitted only after this Dagman has completed.
     """
-    def __init__(self, name, submit=None, extra_lines=None, verbose=0):
+    def __init__(self, name, submit=None, extra_lines=None, dag=None,
+                 verbose=0):
 
-        super(Dagman, self).__init__(name, submit, extra_lines, verbose)
+        super(Dagman, self).__init__(name, submit, extra_lines, dag, verbose)
 
         self.nodes = []
         self._has_bad_node_names = False
@@ -150,6 +155,9 @@ class Dagman(BaseNode):
 
     def __len__(self):
         return len(self.nodes)
+
+    def __contains__(self, item):
+        return item in self.nodes
 
     def _hasnode(self, node):
         return node in self.nodes

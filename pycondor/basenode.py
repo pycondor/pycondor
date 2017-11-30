@@ -7,7 +7,8 @@ from . import utils
 
 class BaseNode(object):
 
-    def __init__(self, name, submit=None, extra_lines=None, verbose=0):
+    def __init__(self, name, submit=None, extra_lines=None, dag=None,
+                 verbose=0):
 
         # Validate user input
         if extra_lines and not isinstance(extra_lines, (str, list, tuple)):
@@ -18,6 +19,9 @@ class BaseNode(object):
         self.name = utils.string_rep(name)
         self.submit = submit
         self.extra_lines = extra_lines
+        self.dag = dag
+        if dag is not None:
+            dag._add_node(self)
         self._built = False
 
         self.parents = []
