@@ -10,9 +10,11 @@
    :caption: User Guide
    :hidden:
 
+   installation
+   tutorial
    api
-   examples
    monitoring
+   examples
    changelog
    contributing
 
@@ -44,15 +46,16 @@ PyCondor Documentation
     :target: https://pypi.python.org/pypi/PyCondor/
 
 `PyCondor
-<https://github.com/jrbourbeau/pycondor/>`_ (Python HTCondor) is a tool that helps build and submit HTCondor jobs in a straight-forward manner with minimal hassle.
+<https://github.com/jrbourbeau/pycondor/>`_ (Python HTCondor) is a tool to help build and submit HTCondor jobs in a straight-forward manner with minimal hassle.
 
-With just a couple lines of code, you can get PyCondor up and running!
+With just a few lines of code, you can get PyCondor up and running:
 
 .. code-block:: python
 
-    >>> import pycondor
-    >>> job = pycondor.Job('examplejob', '/path/to/my_script.py')
-    >>> job.build_submit()
+    import pycondor
+    job = pycondor.Job(name='examplejob',
+                       executable='my_script.py')
+    job.build_submit()
 
 
 ==========
@@ -69,21 +72,23 @@ For the current release version of PyCondor
 
 .. code-block:: shell
 
-    $ pip install pycondor
+    pip install pycondor
 
 For the latest development version, ``pip`` install directly from GitHub
 
 .. code-block:: shell
 
-    $ pip install git+https://github.com/jrbourbeau/pycondor.git
+    pip install git+https://github.com/jrbourbeau/pycondor.git
 
 
 ==========
 User Guide
 ==========
 
+* :doc:`installation`
+* :doc:`tutorial`
 * :doc:`api`
-* :doc:`examples`
 * :doc:`monitoring`
+* :doc:`examples`
 * :doc:`changelog`
 * :doc:`contributing`

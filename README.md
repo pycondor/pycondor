@@ -5,7 +5,7 @@
 
 # PyCondor (Python HTCondor)
 
-[HTCondor](https://research.cs.wisc.edu/htcondor/) is a an open-source workload management system for high throughput computing developed at the University of Wisconsin–Madison. PyCondor is a tool that helps **build and submit HTCondor submission files in a straight-forward manner with minimal hassle**.
+[HTCondor](https://research.cs.wisc.edu/htcondor/) is a an open-source workload management system for high throughput computing developed at the University of Wisconsin–Madison. PyCondor is a tool to help **build and submit HTCondor submission files in a straight-forward manner with minimal hassle**.
 
 
 ## Useful Links
@@ -18,7 +18,7 @@
 
 ## Installation
 
-### PyPI
+### Release version
 
 PyCondor can be easily installed via `pip`
 
@@ -26,7 +26,7 @@ PyCondor can be easily installed via `pip`
 pip install pycondor
 ```
 
-### Dev
+### Development version
 
 The latest development version of PyCondor can be install directly from GitHub
 
@@ -45,6 +45,11 @@ pip install pycondor
 ## Examples
 
 For example uses of PyCondor, please see the [examples page](https://jrbourbeau.github.io/pycondor/examples.html) in the documentation or the `examples/` directory in the project repository.
+
+
+## Contributing
+
+To contribute to PyCondor, please see the [contributing page](https://jrbourbeau.github.io/pycondor/contributing.html) in the documentation.
 
 
 ## License
