@@ -50,6 +50,10 @@ def test_checkdir(tmpdir):
     assert os.path.exists(outdir)
 
 
+def test_checkdir_cwd():
+    checkdir('local_file.txt', makedirs=False)
+
+
 def test_assert_command_exists():
     # Check that ls exists
     assert_command_exists('ls')

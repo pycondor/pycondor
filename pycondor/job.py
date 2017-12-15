@@ -212,14 +212,8 @@ class Job(BaseNode):
             Returns self.
 
         """
-        # Check that args is a list/tuple of str arguments
-        if (isinstance(args, (list, tuple)) and
-                all([isinstance(arg, str) for arg in args])):
-            for arg in args:
-                self.add_arg(arg)
-        else:
-            raise TypeError('add_args() is expecting an iterable of '
-                            'argument strings')
+        for arg in args:
+            self.add_arg(arg)
 
         return self
 
@@ -358,6 +352,11 @@ class Job(BaseNode):
             'Building submission file for Job {}...'.format(self.name))
         self._make_submit_script(makedirs, fancyname, indag=False)
         self._built = True
+        if len(self.args) >= 10:
+            self.logger.warning('You are submitting a Job with {} arguments. '
+                                'Consider using a Dagman in the future to '
+                                'help monitor jobs.'.format(len(self.args)))
+
         self.logger.info('Condor submission file for {} successfully '
                          'built!'.format(self.name))
 
@@ -403,11 +402,6 @@ class Job(BaseNode):
         if len(self.children) != 0:
             raise ValueError('Attempting to submit a Job with children. '
                              'Interjob relationships requires Dagman.')
-
-        if len(self.args) > 20:
-            self.logger.warning('You are submitting a Job with {} arguments. '
-                                'Consider using a Dagman in the future to '
-                                'help monitor jobs.'.format(len(self.args)))
 
         # Construct and execute condor_submit command
         command = 'condor_submit {}'.format(self.submit_file)

@@ -12,6 +12,13 @@ clear_pycondor_environment_variables()
 example_script = os.path.join('examples/savelist.py')
 
 
+@pytest.fixture()
+def dagman(tmpdir_factory):
+    submit_dir = str(tmpdir_factory.mktemp('submit'))
+    dagman = Dagman('exampledagman', submit=submit_dir)
+    return dagman
+
+
 def test_add_job_int_fail():
     with pytest.raises(TypeError) as excinfo:
         dag = Dagman('dagname')
@@ -21,7 +28,7 @@ def test_add_job_int_fail():
     assert error == str(excinfo.value)
 
 
-def test_job_dag_submit_file_same(tmpdir):
+def test_job_dag_submit_file_same(tmpdir, dagman):
     # Test to check that the submit file for a Job with no arguments is the
     # same whether built from a Dagman or not. See issue #38.
 
@@ -34,7 +41,6 @@ def test_job_dag_submit_file_same(tmpdir):
     # Build Job object that will be built inside of a Dagman
     job_inside_dag = Job('test_job', example_script, submit=submit_dir,
                          queue=5)
-    dagman = Dagman('exampledagman', submit=submit_dir)
     dagman.add_job(job_inside_dag)
     dagman.build(fancyname=False)
 
@@ -43,7 +49,8 @@ def test_job_dag_submit_file_same(tmpdir):
                        shallow=False)
 
 
-def test_job_arg_name_files(tmpdir):
+@pytest.mark.parametrize('fancyname', [True, False])
+def test_job_arg_name_files(tmpdir, fancyname):
     # Test to check that when a named argument is added to a Job, and the Job
     # is built with fancyname=True, the Job submit file and the
     # error/log/output files for the argument start with the same index.
@@ -51,26 +58,25 @@ def test_job_arg_name_files(tmpdir):
     # Regression test for issue #47
     submit_dir = str(tmpdir.mkdir('submit'))
 
-    for fancyname in [True, False]:
-        job = Job('testjob', example_script, submit=submit_dir)
-        job.add_arg('arg', name='argname')
-        dagman = Dagman('testdagman', submit=submit_dir)
-        dagman.add_job(job)
-        dagman.build(fancyname=fancyname)
+    job = Job('testjob', example_script, submit=submit_dir)
+    job.add_arg('arg', name='argname')
+    dagman = Dagman('exampledagman', submit=submit_dir)
+    dagman.add_job(job)
+    dagman.build(fancyname=fancyname)
 
-        with open(dagman.submit_file, 'r') as dagman_submit_file:
-            dagman_submit_lines = dagman_submit_file.readlines()
+    with open(dagman.submit_file, 'r') as dagman_submit_file:
+        dagman_submit_lines = dagman_submit_file.readlines()
 
-        # Get root of the dagman submit file (submit file basename w/o .submit)
-        submit_file_line = dagman_submit_lines[0]
-        submit_file_basename = submit_file_line.split('/')[-1].rstrip()
-        submit_file_root = os.path.splitext(submit_file_basename)[0]
-        # Get job_name variable (used to built error/log/output file basenames)
-        jobname_line = dagman_submit_lines[2]
-        jobname = jobname_line.split('"')[-2]
-        other_file_root = '_'.join(jobname.split('_')[:-1])
+    # Get root of the dagman submit file (submit file basename w/o .submit)
+    submit_file_line = dagman_submit_lines[0]
+    submit_file_basename = submit_file_line.split('/')[-1].rstrip()
+    submit_file_root = os.path.splitext(submit_file_basename)[0]
+    # Get job_name variable (used to built error/log/output file basenames)
+    jobname_line = dagman_submit_lines[2]
+    jobname = jobname_line.split('"')[-2]
+    other_file_root = '_'.join(jobname.split('_')[:-1])
 
-        assert submit_file_root == other_file_root
+    assert submit_file_root == other_file_root
 
 
 def test_get_subdag_string_fail():
@@ -81,15 +87,14 @@ def test_get_subdag_string_fail():
     assert error == str(excinfo.value)
 
 
-def test_get_subdag_string(tmpdir):
-    submit_dir = str(tmpdir.mkdir('submit'))
-    dag_name = 'example_dag'
-    dag = Dagman(dag_name, submit=submit_dir)
-    dag.build(fancyname=False)
-    subdag_str = _get_subdag_string(dag)
+def test_get_subdag_string(tmpdir, dagman):
+    dagman.build(fancyname=False)
+    submit_dir = os.path.dirname(dagman.submit_file)
+    subdag_str = _get_subdag_string(dagman)
 
-    expected_str = 'SUBDAG EXTERNAL {} {}'.format(
-        dag_name, os.path.join(submit_dir, dag_name+'.submit'))
+    expected_str = 'SUBDAG EXTERNAL {} {}.submit'.format(
+                        dagman.name,
+                        os.path.join(submit_dir, dagman.name))
 
     assert subdag_str == expected_str
 
@@ -219,21 +224,19 @@ def test_dagman_has_bad_node_names(tmpdir):
         assert dagman._has_bad_node_names == bad_node_names
 
 
-def test_dagman_env_variable_dir(tmpdir):
+def test_dagman_env_variable_dir(tmpdir, monkeypatch):
 
     # Set pycondor environment variable
     submit_dir = str(tmpdir.mkdir('submit'))
-    os.environ['PYCONDOR_SUBMIT_DIR'] = submit_dir
+    monkeypatch.setattr(os, 'getenv', lambda *args: submit_dir)
 
-    dagman = Dagman('testdagman', submit=submit_dir)
+    dagman = Dagman('testdagman')
     job = Job('jobname', example_script)
     dagman.add_job(job)
     dagman.build()
 
     submit_path = os.path.dirname(dagman.submit_file)
     assert submit_dir == submit_path
-
-    clear_pycondor_environment_variables()
 
 
 def test_dagman_dag_parameter(tmpdir):
@@ -253,3 +256,38 @@ def test_add_subdag_dag_parameter_equality(tmpdir):
     dag.add_subdag(subdag_2)
 
     assert dag.nodes == [subdag_1, subdag_2]
+
+
+def test_dagman_subdag_build(tmpdir):
+    submit_dir = str(tmpdir.join('submit'))
+
+    extra_lines = ['first extra line', 'second extra line']
+    dagman = Dagman('dagman', submit=submit_dir, extra_lines=extra_lines)
+    subdag = Dagman('subdag_1', submit=submit_dir, extra_lines=extra_lines)
+    dagman.add_subdag(subdag)
+    dagman.build()
+
+    with open(dagman.submit_file, 'r') as f:
+        assert set(extra_lines) <= set(line.rstrip('\n') for line in f)
+    with open(dagman.submit_file, 'r') as f:
+        assert set(extra_lines) <= set(line.rstrip('\n') for line in f)
+
+
+def test_dagman_len_initial(dagman):
+    assert len(dagman) == 0
+
+
+def test_dagman_len_single_job(tmpdir, dagman):
+    submit_dir = str(tmpdir.join('submit'))
+    job = Job('job', example_script, submit=submit_dir)
+    dagman.add_job(job)
+    assert len(dagman) == 1
+
+
+def test_dagman_add_node_ignores_duplicates(tmpdir, dagman):
+    submit_dir = str(tmpdir.join('submit'))
+    job = Job('job', example_script, submit=submit_dir)
+    dagman.add_job(job)
+    dagman.add_job(job)
+
+    assert dagman.nodes == [job]

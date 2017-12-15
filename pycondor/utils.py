@@ -56,7 +56,8 @@ def checkdir(path, makedirs):
     assert path is not None, 'path must be non-NoneType'
     outdir = os.path.dirname(path)
     if outdir == '':
-        outdir = os.getcwd()
+        # Current working directory exists
+        return
     if not os.path.isdir(outdir):
         if makedirs:
             print('The directory {} doesn\'t exist, '.format(outdir)
