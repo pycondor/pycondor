@@ -5,7 +5,9 @@ import sys
 import subprocess
 import logging
 import shutil
-import distutils
+# Note that spawn isn't in namespace if import distutils is used
+# Must use from distutils import spawn
+from distutils import spawn
 
 
 # Specify logging settings
@@ -108,7 +110,7 @@ def assert_command_exists(cmd):
     if (version_major, version_minor) >= (3, 3):
         cmd_path = shutil.which(cmd)
     else:
-        cmd_path = distutils.spawn.find_executable(cmd)
+        cmd_path = spawn.find_executable(cmd)
 
     if cmd_path is None:
         raise OSError(
