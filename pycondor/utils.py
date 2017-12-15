@@ -5,7 +5,9 @@ import sys
 import subprocess
 import logging
 import shutil
-import distutils
+# Note that spawn isn't in namespace if import distutils is used
+# Must use from distutils import spawn
+from distutils import spawn
 
 
 # Specify logging settings
@@ -56,7 +58,8 @@ def checkdir(path, makedirs):
     assert path is not None, 'path must be non-NoneType'
     outdir = os.path.dirname(path)
     if outdir == '':
-        outdir = os.getcwd()
+        # Current working directory exists
+        return
     if not os.path.isdir(outdir):
         if makedirs:
             print('The directory {} doesn\'t exist, '.format(outdir)
@@ -107,7 +110,7 @@ def assert_command_exists(cmd):
     if (version_major, version_minor) >= (3, 3):
         cmd_path = shutil.which(cmd)
     else:
-        cmd_path = distutils.spawn.find_executable(cmd)
+        cmd_path = spawn.find_executable(cmd)
 
     if cmd_path is None:
         raise OSError(
