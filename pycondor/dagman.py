@@ -1,6 +1,7 @@
 
 import os
 import subprocess
+import warnings
 
 from .utils import checkdir, assert_command_exists, get_condor_version
 from .basenode import BaseNode
@@ -344,22 +345,24 @@ class Dagman(BaseNode):
 
         return self
 
-    def submit_dag(self, maxjobs=3000, **kwargs):
+    def submit_dag(self, submit_options=None, maxjobs=3000, **kwargs):
         """Submits Dagman to condor
 
         Parameters
         ----------
+        submit_options : str, optional
+            Options to be passed to ``condor_submit_dag`` for this Dagman
+            (see the `condor_submit_dag documentation
+            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html>`_
+            for possible options).
+
         maxjobs : int, optional
-            Maximum number of jobs to have running at a single time
-            (default is 3000).
+            .. deprecated:: 0.2.1
+               Use ``submit_options`` instead.
 
         kwargs : dict, optional
-            Any additional options you would like specified when
-            ``condor_submit`` is called (see `HTCondor documentation
-            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
-            for possible options). For example, if you would like to add
-            ``-maxjobs 1000`` to the ``condor_submit`` command, then
-            ``kwargs = {'-maxjobs': 1000}``.
+            .. deprecated:: 0.2.1
+               Use ``submit_options`` instead.
 
         Returns
         -------
@@ -368,10 +371,25 @@ class Dagman(BaseNode):
         """
         # Construct condor_submit_dag command
         assert_command_exists('condor_submit_dag')
-        command = 'condor_submit_dag -maxjobs {} {}'.format(maxjobs,
-                                                            self.submit_file)
-        for option in kwargs:
-            command += ' {} {}'.format(option, kwargs[option])
+        warnings.simplefilter("always", DeprecationWarning)
+        command = 'condor_submit_dag'
+        if submit_options is not None:
+            command += ' {}'.format(submit_options)
+        if maxjobs:
+            maxjobs_dep_mes = ('maxjobs for submit_dag is deprecated. Use '
+                               'the submit_options parameter instead. '
+                               'maxjobs parameter will be removed in version '
+                               '0.2.2.')
+            warnings.warn(maxjobs_dep_mes, DeprecationWarning)
+            command += ' -maxjobs {}'.format(maxjobs)
+        if kwargs:
+            kwargs_dep_mes = ('kwargs for submit_dag are deprecated. Use the '
+                              'submit_options parameter instead. kwargs will '
+                              'be removed in version 0.2.2.')
+            warnings.warn(kwargs_dep_mes, DeprecationWarning)
+            for option in kwargs:
+                command += ' {} {}'.format(option, kwargs[option])
+        command += ' {}'.format(self.submit_file)
         submit_dag_proc = subprocess.Popen([command], stdout=subprocess.PIPE,
                                            shell=True)
         # Check that there are no illegal node names for newer condor versions
@@ -389,10 +407,10 @@ class Dagman(BaseNode):
         out, err = submit_dag_proc.communicate()
         print(out)
 
-        return
+        return self
 
-    def build_submit(self, makedirs=True, fancyname=True, maxjobs=3000,
-                     **kwargs):
+    def build_submit(self, makedirs=True, fancyname=True, submit_options=None,
+                     maxjobs=3000, **kwargs):
         """Calls build and submit sequentially
 
         Parameters
@@ -407,17 +425,20 @@ class Dagman(BaseNode):
             file becomes ``dagname_YYYYMMD_id``. This is useful when running
             several Dags/Jobs of the same name (default is ``True``).
 
+        submit_options : str, optional
+            Options to be passed to ``condor_submit_dag`` for this Dagman
+            (see the `condor_submit_dag documentation
+            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html>`_
+            for possible options).
+
         maxjobs : int, optional
-            Maximum number of jobs to have running at a single time
-            (default is 3000).
+            .. deprecated:: 0.2.1
+               Use ``submit_options`` instead.
 
         kwargs : dict, optional
-            Any additional options you would like specified when
-            ``condor_submit`` is called (see `HTCondor documentation
-            <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
-            for possible options). For example, if you would like to add
-            ``-maxjobs 1000`` to the ``condor_submit`` command, then
-            ``kwargs = {'-maxjobs': 1000}``.
+
+            .. deprecated:: 0.2.1
+               Use ``submit_options`` instead.
 
         Returns
         -------
@@ -425,6 +446,7 @@ class Dagman(BaseNode):
             Returns self.
         """
         self.build(makedirs, fancyname)
-        self.submit_dag(maxjobs, **kwargs)
+        self.submit_dag(maxjobs=maxjobs, submit_options=submit_options,
+                        **kwargs)
 
-        return
+        return self
