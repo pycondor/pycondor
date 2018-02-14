@@ -6,6 +6,7 @@ import time
 from collections import namedtuple
 import argparse
 from datetime import datetime
+from .job import Job
 
 _states = ['Done', 'Pre', 'Queued', 'Post', 'Ready', 'UnReady', 'Failed']
 Status = namedtuple('Status', _states)
@@ -127,7 +128,6 @@ def progress_bar_str(status, datetime_start, datetime_current, length=30,
 def dagman_progress():
     '''Function to print Dagman progress bar to stdout
     '''
-
     parser = argparse.ArgumentParser(description='Prints dagman progress bar')
     parser.add_argument('file', help='Dagman submit file')
     parser.add_argument('-t', '--time', dest='time', default=30, type=float,
@@ -174,3 +174,59 @@ def dagman_progress():
     except KeyboardInterrupt:
         print('\nExiting dagman_progress...')
         sys.exit()
+
+
+def pycondor_submit():
+    '''Function to quickly submit a Job from the command line
+    '''
+    parser = argparse.ArgumentParser(description='Submits executable to HTCondor')
+    parser.add_argument('command')
+    parser.add_argument('--submit', dest='submit',
+                        help='Directory to store submit files')
+    parser.add_argument('--log', dest='log',
+                        help='Directory to store log files')
+    parser.add_argument('--output', dest='output',
+                        help='Directory to store output files')
+    parser.add_argument('--error', dest='error',
+                        help='Directory to store error files')
+    parser.add_argument('--request_memory', dest='request_memory',
+                        help='Memory request to be included in submit file')
+    parser.add_argument('--request_disk', dest='request_disk',
+                        help='Disk request to be included in submit file')
+    parser.add_argument('--request_cpus', dest='request_cpus',
+                        help='Number of CPUs to request in submit file')
+    parser.add_argument('--universe', dest='universe',
+                        default='vanilla',
+                        help=('Universe execution environment to be specified '
+                              'in submit file (default is \'vanilla\')'))
+    parser.add_argument('--no-getenv', dest='no_getenv',
+                        action='store_true',
+                        default=False,
+                        help='Set getenv equal to False')
+    args = parser.parse_args()
+
+    if ' ' not in args.command:
+        executable = args.command
+        arguments = None
+    else:
+        executable = args.command.split(' ')[0]
+        arguments = args.command.replace(executable + ' ', '')
+
+    basename = os.path.basename(executable)
+    name, _ = os.path.splitext(basename)
+
+    job = Job(name=name,
+              executable=executable,
+              submit=args.submit,
+              log=args.log,
+              output=args.output,
+              error=args.error,
+              request_memory=args.request_memory,
+              request_disk=args.request_disk,
+              request_cpus=args.request_cpus,
+              universe=args.universe,
+              getenv=not args.no_getenv,
+              )
+    if arguments is not None:
+        job.add_arg(arguments)
+    job.build_submit()

@@ -44,7 +44,9 @@ setup(
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
     entry_points = {
-        'console_scripts': ['dagman_progress=pycondor.command_line:dagman_progress'],
+        'console_scripts': ['dagman_progress=pycondor.command_line:dagman_progress',
+                            'pycondor_submit=pycondor.command_line:pycondor_submit',
+                            ],
     },
     package_data={'': ['LICENSE',
                        'README.md'],
