@@ -93,7 +93,7 @@ def test_queue_written_to_submit_file(tmpdir):
 def test_job_env_variable_dir(tmpdir, monkeypatch, env_var):
     # Use monkeypatch fixture to set pycondor environment variable
     dir_path = str(tmpdir.mkdir(env_var))
-    monkeypatch.setattr(os, 'getenv', lambda *args: dir_path)
+    monkeypatch.setenv('PYCONDOR_{}_DIR'.format(env_var.upper()), dir_path)
 
     job = Job('jobname', example_script)
     job.build()
