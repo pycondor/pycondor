@@ -179,7 +179,8 @@ def test_dagman_job_order(tmpdir):
 def test_repr():
     default_dagman = Dagman('dagname')
     dag_repr = repr(default_dagman)
-    expected_repr = 'Dagman(name=dagname, n_nodes=0)'
+    expected_repr = ('Dagman(name=dagname, n_nodes=0, '
+                     'submit={})'.format(os.getcwd()))
     assert dag_repr == expected_repr
 
     dag_non_default = Dagman('dagname', submit='/submit_dir')

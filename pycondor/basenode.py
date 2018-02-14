@@ -1,4 +1,5 @@
 
+import os
 import time
 import glob
 
@@ -17,7 +18,12 @@ class BaseNode(object):
             extra_lines = [extra_lines]
 
         self.name = utils.string_rep(name)
-        self.submit = submit
+        if submit is not None:
+            self.submit = submit
+        elif os.getenv('PYCONDOR_SUBMIT_DIR'):
+            self.submit = os.getenv('PYCONDOR_SUBMIT_DIR')
+        else:
+            self.submit = os.getcwd()
         self.extra_lines = extra_lines
         self.dag = dag
         if dag is not None:
@@ -33,8 +39,8 @@ class BaseNode(object):
     def _get_fancyname(self):
 
         date = time.strftime('%Y%m%d')
-        file_pattern = '{}/{}_{}_??.submit'.format(self.submit, self.name,
-                                                   date)
+        file_pattern = os.path.join(self.submit,
+                                    '{}_{}_??.submit'.format(self.name, date))
         submit_number = len(glob.glob(file_pattern)) + 1
         fancyname = self.name + '_{}_{:02d}'.format(date, submit_number)
 

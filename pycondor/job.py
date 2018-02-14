@@ -236,47 +236,43 @@ class Job(BaseNode):
             if directory is not None:
                 utils.checkdir(directory + '/', makedirs)
 
-        # Start constructing lines to go into job submit file
         lines = []
         submit_attrs = ['universe', 'executable', 'request_memory',
                         'request_disk', 'request_cpus', 'getenv',
                         'initialdir', 'notification', 'requirements']
-        for attr in submit_attrs:
-            if getattr(self, attr) is not None:
-                attr_str = utils.string_rep(getattr(self, attr))
-                lines.append('{} = {}'.format(attr, attr_str))
+        for submit_attr in submit_attrs:
+            if getattr(self, submit_attr) is not None:
+                submit_attr_str = utils.string_rep(getattr(self, submit_attr))
+                lines.append('{} = {}'.format(submit_attr, submit_attr_str))
 
-        # Set up submit, log, output, and error files paths
         name = self._get_fancyname() if fancyname else self.name
         self.submit_name = name
+        submit_file = os.path.join(self.submit, '{}.submit'.format(name))
+        utils.checkdir(submit_file, makedirs)
+        # Add submit_file data member to job for later use
+        self.submit_file = submit_file
+
+        # Set up log, output, and error files paths
         self._has_arg_names = any([arg.name for arg in self.args])
-        for attr in ['submit', 'log', 'output', 'error']:
-            dir_path = ''
+        for attr in ['log', 'output', 'error']:
             dir_env_var = os.getenv('PYCONDOR_{}_DIR'.format(attr.upper()))
-            # Check if directory is provided
             if getattr(self, attr) is not None:
                 dir_path = getattr(self, attr)
-            # If not, check if directory environment variable is set
-            elif dir_env_var:
+            elif dir_env_var is not None:
                 dir_path = dir_env_var
-
-            if attr == 'submit':
-                submit_file = os.path.join(dir_path, '{}.submit'.format(name))
-                # Add submit_file data member to job for later use
-                self.submit_file = submit_file
-                utils.checkdir(submit_file, makedirs)
+            else:
                 continue
+
             # Add log/output/error files to submit file lines
-            if dir_path:
-                if self._has_arg_names:
-                    file_path = os.path.join(dir_path,
-                                             '$(job_name).{}'.format(attr))
-                else:
-                    file_path = os.path.join(dir_path,
-                                             '{}.{}'.format(name, attr))
-                lines.append('{} = {}'.format(attr, file_path))
-                setattr(self, '{}_file'.format(attr), file_path)
-                utils.checkdir(file_path, makedirs)
+            if self._has_arg_names:
+                file_path = os.path.join(dir_path,
+                                         '$(job_name).{}'.format(attr))
+            else:
+                file_path = os.path.join(dir_path,
+                                         '{}.{}'.format(name, attr))
+            lines.append('{} = {}'.format(attr, file_path))
+            setattr(self, '{}_file'.format(attr), file_path)
+            utils.checkdir(file_path, makedirs)
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
