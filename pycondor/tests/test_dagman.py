@@ -229,7 +229,7 @@ def test_dagman_env_variable_dir(tmpdir, monkeypatch):
 
     # Set pycondor environment variable
     submit_dir = str(tmpdir.mkdir('submit'))
-    monkeypatch.setattr(os, 'getenv', lambda *args: submit_dir)
+    monkeypatch.setenv('PYCONDOR_SUBMIT_DIR', submit_dir)
 
     dagman = Dagman('testdagman')
     job = Job('jobname', example_script)
