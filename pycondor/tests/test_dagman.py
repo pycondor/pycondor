@@ -307,3 +307,7 @@ def test_submit_dag_kwargs_deprecation_message(dagman):
     with pytest.deprecated_call():
         kwargs = {'-config': '/path/to/file'}
         dagman.submit_dag(maxjobs=0, **kwargs)
+
+
+def test_dagman_context_manager_enter(dagman):
+    assert dagman.__enter__() is dagman

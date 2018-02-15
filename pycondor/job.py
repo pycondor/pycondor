@@ -107,10 +107,20 @@ class Job(BaseNode):
 
     Examples
     --------
+    Basic usage:
+
     >>> import pycondor
-    >>> job = pycondor.Job('myjob', 'myscript.py')
+    >>> job = pycondor.Job('job_name', 'my_script.py')
     >>> job.build_submit()
 
+    Or as a context manager:
+
+    >>> import pycondor
+    >>> with pycondor.Job('job_name', 'my_script.py') as job:
+    >>>     job.add_arg('--option1 --option2')
+
+    When using a ``Job`` as a context manager, the ``build_submit`` method
+    will be called automatically upon exiting the ``with`` block.
     """
 
     def __init__(self, name, executable, error=None, log=None, output=None,
@@ -154,6 +164,12 @@ class Job(BaseNode):
 
     def __len__(self):
         return len(self.args)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.build_submit()
 
     def add_arg(self, arg, name=None, retry=None):
         """Add argument to Job

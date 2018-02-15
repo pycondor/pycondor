@@ -6,7 +6,7 @@ from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
 
-example_script = os.path.join('examples/savelist.py')
+example_script = os.path.join('examples', 'savelist.py')
 
 
 @pytest.fixture()
@@ -63,10 +63,11 @@ def test_add_parents_type_fail(job):
         job.add_parents([1, 2, 3, 4])
 
 
-def test_build_executeable_not_found_fail():
+def test_build_executeable_not_found_fail(tmpdir):
+    submit_dir = str(tmpdir.join('submit'))
     with pytest.raises(IOError) as excinfo:
         ex = '/path/to/executable'
-        job = Job('jobname', ex)
+        job = Job('jobname', ex, submit=submit_dir)
         job.build(makedirs=False)
     error = 'The executable {} does not exist'.format(ex)
     assert error == str(excinfo.value)
@@ -89,16 +90,30 @@ def test_queue_written_to_submit_file(tmpdir):
     assert 'queue 5' in lines
 
 
-@pytest.mark.parametrize('env_var', ['submit', 'output', 'error', 'log'])
+@pytest.mark.parametrize('env_var', ['output', 'error', 'log'])
 def test_job_env_variable_dir(tmpdir, monkeypatch, env_var):
     # Use monkeypatch fixture to set pycondor environment variable
     dir_path = str(tmpdir.mkdir(env_var))
     monkeypatch.setenv('PYCONDOR_{}_DIR'.format(env_var.upper()), dir_path)
 
-    job = Job('jobname', example_script)
+    submit_dir = str(tmpdir.join('submit'))
+
+    job = Job('jobname', example_script, submit=submit_dir)
     job.build()
     tmpdir_path = os.path.join(str(tmpdir), env_var)
     job_path = os.path.dirname(getattr(job, '{}_file'.format(env_var)))
+    assert tmpdir_path == job_path
+
+
+def test_job_submit_env_variable(tmpdir, monkeypatch):
+    # Use monkeypatch fixture to set pycondor environment variable
+    dir_path = str(tmpdir.mkdir('submit'))
+    monkeypatch.setenv('PYCONDOR_SUBMIT_DIR', dir_path)
+
+    job = Job('jobname', example_script)
+    job.build()
+    tmpdir_path = os.path.join(str(tmpdir), 'submit')
+    job_path = os.path.dirname(getattr(job, 'submit_file'))
     assert tmpdir_path == job_path
 
 
@@ -188,10 +203,8 @@ def test_retry_job_raises(job):
     assert error == str(excinfo.value)
 
 
-def test_job_dag_parameter(tmpdir):
-    # Test that a Job is added to a Dagman when dag parameter given
-    submit_dir = str(tmpdir.join('submit'))
-    dag = Dagman('dagman', submit=submit_dir)
+def test_job_dag_parameter():
+    dag = Dagman('dagman')
     job = Job('job', example_script, dag=dag)
 
     assert job in dag
@@ -248,3 +261,7 @@ def test_job_args_warning(caplog, job):
     job.build()
     log_message = 'Consider using a Dagman in the future to help monitor jobs'
     assert log_message in caplog.text
+
+
+def test_job_context_manager_enter(job):
+    assert job.__enter__() is job

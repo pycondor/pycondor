@@ -130,6 +130,24 @@ class Dagman(BaseNode):
     children : list
         List of child Jobs and Dagmans. Ensures that Jobs and Dagmans in the
         children list will be submitted only after this Dagman has completed.
+
+    Examples
+    --------
+    Basic usage:
+
+    >>> import pycondor
+    >>> dagman = pycondor.Dagman('dag_name')
+    >>> job = pycondor.Job('job_name', 'my_script.py', dag=dagman)
+    >>> dagman.build_submit()
+
+    Or as a context manager:
+
+    >>> import pycondor
+    >>> with pycondor.Dagman('dag_name') as dagman:
+    >>>     job = pycondor.Job('job_name', 'my_script.py', dag=dagman)
+
+    When using a ``Dagman`` as a context manager, the ``build_submit`` method
+    will be called automatically upon exiting the ``with`` block.
     """
     def __init__(self, name, submit=None, extra_lines=None, dag=None,
                  verbose=0):
@@ -159,6 +177,12 @@ class Dagman(BaseNode):
 
     def __contains__(self, item):
         return item in self.nodes
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.build_submit()
 
     def _hasnode(self, node):
         return node in self.nodes
