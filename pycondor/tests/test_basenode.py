@@ -1,4 +1,5 @@
 
+import os
 import pytest
 
 from pycondor.basenode import BaseNode
@@ -33,3 +34,18 @@ def test_BaseNode_hasparents():
     parent_node = BaseNode('parent_basenode')
     basenode.add_parent(parent_node)
     assert basenode.hasparents() is True
+
+
+def test_BaseNode_submit_default():
+    basenode = BaseNode('test_basenode')
+
+    assert basenode.submit == os.getcwd()
+
+
+def test_BaseNode_submit_environment_variable(tmpdir, monkeypatch):
+    # Use monkeypatch fixture to set pycondor environment variable
+    tmp_submit_dir = str(tmpdir.mkdir('submit'))
+    monkeypatch.setenv('PYCONDOR_SUBMIT_DIR', tmp_submit_dir)
+    basenode = BaseNode('test_basenode')
+
+    assert basenode.submit == tmp_submit_dir

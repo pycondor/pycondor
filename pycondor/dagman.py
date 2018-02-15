@@ -283,16 +283,7 @@ class Dagman(BaseNode):
             return self
 
         name = self._get_fancyname() if fancyname else self.name
-        # Get Dagman submit file directory
-        path = None
-        dir_env_var = os.getenv('PYCONDOR_SUBMIT_DIR')
-        if self.submit is not None:
-            path = self.submit
-        elif dir_env_var:
-            path = dir_env_var
-        # Create Dagman submit file path
-        submit_file = os.path.join(path if path else '',
-                                   '{}.submit'.format(name))
+        submit_file = os.path.join(self.submit, '{}.submit'.format(name))
         self.submit_file = submit_file
         self.submit_name = name
         checkdir(self.submit_file, makedirs)

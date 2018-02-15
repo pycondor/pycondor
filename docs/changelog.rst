@@ -21,7 +21,7 @@ Version 0.2.1 (TBD)
 
 **Bug Fixes**:
 
-*
+* Fixed bug so that ``BaseNode`` objects set their submit attribute to the current working directory if not provided directly or set via an environment variable. (See `PR #75 <https://github.com/jrbourbeau/pycondor/pull/75>`_)
 
 
 Version 0.2.0 (2017-11-22)
