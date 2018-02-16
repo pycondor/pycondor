@@ -1,4 +1,7 @@
+sudo: required
+
 language: python
+
 python:
     - "2.7"
     - "3.4"
@@ -6,36 +9,20 @@ python:
     - "3.6"
 
 install:
-    - sudo apt-get update
-    # We do this conditionally because it saves us some downloading if the
-    # version is the same.
-    - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    - hash -r
-    - conda config --set always_yes yes --set changeps1 no
-    - conda update -q conda
-    # Useful for debugging any issues with conda
-    - conda info -a
-    - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
-    - source activate test-environment
-
-    - pip install .
-    - pip install -r requirements/docs.txt
-    - pip install -r requirements/test.txt
+    - docker build -t pycondor_docker -f ci/Dockerfile --build-arg python_version=${TRAVIS_PYTHON_VERSION} .
+    - docker run -d --name test_container pycondor_docker
+    - docker ps -a
 
 script:
-    - pytest --cov=pycondor -m "not needs_condor" pycondor
-    - flake8 pycondor
+    - docker exec test_container pytest --cov=pycondor pycondor
+    - docker exec test_container flake8 pycondor
+    - pip install .
     - bash ci/build_docs.sh
 
 after_success:
-    - pip install codecov
-    - codecov
+    - docker exec test_container pip install codecov
+    - ci_env=`bash <(curl -s https://codecov.io/env)`
+    - docker exec test_container $ci_env; bash <(curl -s https://codecov.io/bash)
 
 deploy:
     provider: pages
