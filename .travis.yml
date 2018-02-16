@@ -2,6 +2,9 @@ sudo: required
 
 language: python
 
+services:
+    - docker
+
 python:
     - "2.7"
     - "3.4"
@@ -20,9 +23,7 @@ script:
     - bash ci/build_docs.sh
 
 after_success:
-    - docker exec test_container pip install codecov
-    - ci_env=`bash <(curl -s https://codecov.io/env)`
-    - docker exec test_container $ci_env; bash <(curl -s https://codecov.io/bash)
+    - docker exec test_container bash ci/run_coverage.sh
 
 deploy:
     provider: pages

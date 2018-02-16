@@ -2,8 +2,6 @@ FROM andypohl/htcondor
 
 MAINTAINER James Bourbeau <james@jamesbourbeau.com>
 
-RUN echo $HISTFILE
-
 ARG python_version
 
 # Install wget
@@ -21,7 +19,8 @@ ENV PATH /opt/conda/bin:$PATH
 
 # Create testing conda environment
 RUN conda create -y -n test_env python=$python_version && \
-    source activate test_env
+    source activate test_env && \
+    echo `python --version` 
 
 # Copy project repo into container and install pycondor + testing dependencies
 COPY . /home/${SUBMIT_USER}/pycondor
