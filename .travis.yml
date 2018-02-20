@@ -17,7 +17,7 @@ install:
     - docker ps -a
 
 script:
-    - docker exec test_container pytest --cov=pycondor pycondor
+    - docker exec --user 1000:1000 test_container pytest --cov=pycondor pycondor
     - docker exec test_container flake8 pycondor
     - pip install .
     - bash ci/build_docs.sh

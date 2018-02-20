@@ -17,7 +17,7 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 
 ENV PATH /opt/conda/bin:$PATH
 
-# Create testing conda environment
+# Create testing conda environment (makes it easy to install different Python versions)
 RUN conda create -y -n test_env python=$python_version && \
     source activate test_env && \
     which python && \
@@ -30,8 +30,6 @@ WORKDIR /home/${SUBMIT_USER}/pycondor
 RUN pip install -e /home/${SUBMIT_USER}/pycondor && \
     pip install -r /home/${SUBMIT_USER}/pycondor/requirements/test.txt && \
     pip install -r /home/${SUBMIT_USER}/pycondor/requirements/docs.txt
-
-USER ${SUBMIT_USER}
 
 # Use this if you're not going to restart HTCondor in the container.
 # If you do need to do that, you're better off running the condor_master
