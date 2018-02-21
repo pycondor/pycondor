@@ -12,9 +12,9 @@ python:
     - "3.6"
 
 install:
-    - docker build -t pycondor_docker -f ci/Dockerfile --build-arg python_version=${TRAVIS_PYTHON_VERSION} .
     # From https://docs.codecov.io/docs/testing-with-docker
     - mkdir shared
+    - docker build -t pycondor_docker -f ci/Dockerfile --build-arg python_version=${TRAVIS_PYTHON_VERSION} .
     - docker run -d --name test_container -v "$PWD/shared:/shared" pycondor_docker
     - docker ps -a
 
