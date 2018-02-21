@@ -17,7 +17,8 @@ RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
 
 ENV PATH /opt/conda/bin:$PATH
 
-# Create testing conda environment (makes it easy to install different Python versions)
+# Using conda to create testing environment because it makes it easy to
+# install different versions of Python
 RUN conda create -y -n test_env python=$python_version && \
     source activate test_env && \
     which python && \
