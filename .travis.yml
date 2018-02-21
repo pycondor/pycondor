@@ -20,6 +20,7 @@ install:
 
 script:
     - docker exec --user 1000:1000 test_container bash ci/run_tests.sh
+    - docker exec test_container mv .coverage /shared
     - bash <(curl -s https://codecov.io/bash)
     # Want to make sure documentation can be successfully built
     - pip install .

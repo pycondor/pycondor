@@ -19,7 +19,7 @@ ENV PATH /opt/conda/bin:$PATH
 
 # Using conda to create testing environment because it makes it easy to
 # install different versions of Python
-RUN conda create -y -n test_env python=$python_version && \
+RUN conda create --yes --quiet --name test_env python=$python_version && \
     source activate test_env && \
     which python && \
     python --version
