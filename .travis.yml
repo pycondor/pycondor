@@ -11,16 +11,17 @@ python:
     - "3.5"
     - "3.6"
 
-install:
+install: []
+
+script:
     # From https://docs.codecov.io/docs/testing-with-docker
     - mkdir shared
     - docker build -t pycondor_docker -f ci/Dockerfile --build-arg python_version=${TRAVIS_PYTHON_VERSION} .
     - docker run -d --name test_container -v "$PWD/shared:/shared" pycondor_docker
     - docker ps -a
-
-script:
     - docker exec --user 1000:1000 test_container bash ci/run_tests.sh
     - docker exec test_container mv .coverage /shared
+    - mv shared/.coverage .
     - bash <(curl -s https://codecov.io/bash)
     # Want to make sure documentation can be successfully built
     - pip install .
