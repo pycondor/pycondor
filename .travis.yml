@@ -11,8 +11,6 @@ python:
     - "3.5"
     - "3.6"
 
-install: []
-
 script:
     # From https://docs.codecov.io/docs/testing-with-docker
     - mkdir shared
@@ -23,6 +21,11 @@ script:
     - docker exec test_container mv .coverage /shared
     - mv shared/.coverage .
     - bash <(curl -s https://codecov.io/bash)
+    # Debugging
+    - docker exec test_container condor_status
+    - docker exec test_container ps -ef | grep condor
+    - docker exec test_container condor_config_val -config -verbose LOG
+    - docker exec test_container condor_config_val -verbose COLLECTOR_HOST
     # Want to make sure documentation can be successfully built
     - pip install .
     - bash ci/build_docs.sh
