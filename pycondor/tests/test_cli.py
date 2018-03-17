@@ -3,8 +3,8 @@ import pytest
 from datetime import datetime
 import subprocess
 
-from pycondor.command_line import (line_to_datetime, progress_bar_str,
-                                   Status, _states, status_generator)
+from pycondor.cli import (line_to_datetime, progress_bar_str, Status, _states,
+                          status_generator)
 
 
 def test_line_to_datetime():

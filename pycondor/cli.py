@@ -5,8 +5,12 @@ import sys
 import time
 from collections import namedtuple
 import argparse
+import click
 from datetime import datetime
+
 from .job import Job
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 _states = ['Done', 'Pre', 'Queued', 'Post', 'Ready', 'UnReady', 'Failed']
 Status = namedtuple('Status', _states)
@@ -176,57 +180,179 @@ def dagman_progress():
         sys.exit()
 
 
-def pycondor_submit():
-    '''Function to quickly submit a Job from the command line
+@click.group(
+    context_settings=CONTEXT_SETTINGS,
+)
+def cli():
+    '''PyCondor command line tool'''
+    pass
+
+
+@cli.command(
+    context_settings=CONTEXT_SETTINGS,
+    short_help='Monitor Dagman progress',
+)
+# Using time_ variable name so no confusion with time module
+@click.option(
+    '-t',
+    '--time',
+    'time_',
+    default=30,
+    type=float,
+    show_default=True,
+    help='Time (in seconds) in between log checks',
+)
+@click.option(
+    '-l',
+    '--length',
+    default=30,
+    type=int,
+    show_default=True,
+    help='Length of the progress bar',
+)
+@click.option(
+    '--prog_char',
+    default='#',
+    show_default=True,
+    help='Progress bar character',
+)
+@click.argument(
+    'file',
+    type=click.Path(exists=True),
+)
+def monitor(time_, length, prog_char, file):
+    '''Prints Dagman progress bar to stdout
     '''
-    parser = argparse.ArgumentParser(description='Submits executable to HTCondor')
-    parser.add_argument('command')
-    parser.add_argument('--submit', dest='submit',
-                        help='Directory to store submit files')
-    parser.add_argument('--log', dest='log',
-                        help='Directory to store log files')
-    parser.add_argument('--output', dest='output',
-                        help='Directory to store output files')
-    parser.add_argument('--error', dest='error',
-                        help='Directory to store error files')
-    parser.add_argument('--request_memory', dest='request_memory',
-                        help='Memory request to be included in submit file')
-    parser.add_argument('--request_disk', dest='request_disk',
-                        help='Disk request to be included in submit file')
-    parser.add_argument('--request_cpus', dest='request_cpus',
-                        help='Number of CPUs to request in submit file')
-    parser.add_argument('--universe', dest='universe',
-                        default='vanilla',
-                        help=('Universe execution environment to be specified '
-                              'in submit file (default is \'vanilla\')'))
-    parser.add_argument('--no-getenv', dest='no_getenv',
-                        action='store_true',
-                        default=False,
-                        help='Set getenv equal to False')
-    args = parser.parse_args()
+    if not os.path.exists(file):
+        raise IOError('Dagman submit file {} doesn\'t exist'.format(file))
 
-    if ' ' not in args.command:
-        executable = args.command
-        arguments = None
-    else:
-        executable = args.command.split(' ')[0]
-        arguments = args.command.replace(executable + ' ', '')
+    dag_out_file = file + '.dagman.out'
+    # Make sure dagman out file exists
+    # It isn't created until the dagman beings running
+    while not os.path.exists(dag_out_file):
+        sys.stdout.write(
+            '\rWaiting for dagman {} to begin running...'.format(file))
+        sys.stdout.flush()
+        time.sleep(time_)
 
+    datetime_start = line_to_datetime(open(dag_out_file, 'r').readline())
+    current_status = Status(*[0]*len(_states))
+    try:
+        for status, datetime_current in status_generator(dag_out_file):
+            # If no line with dagman status is found, wait and try again
+            if sum(status) != 0:
+                current_status = status
+
+            prog_str = progress_bar_str(current_status,
+                                        datetime_start=datetime_start,
+                                        datetime_current=datetime_current,
+                                        length=length,
+                                        prog_char=prog_char)
+            sys.stdout.write(prog_str)
+            sys.stdout.flush()
+            # Exit if all jobs are either Done or Failed
+            n_finished = current_status.Done + current_status.Failed
+            if n_finished == sum(current_status) and sum(current_status) != 0:
+                sys.exit()
+            else:
+                time.sleep(time_)
+    except KeyboardInterrupt:
+        print('\nExiting dagman_progress...')
+        sys.exit()
+
+
+@cli.command(
+    context_settings=CONTEXT_SETTINGS,
+    short_help='Submit a Job',
+)
+@click.option(
+    '--submit',
+    default=None,
+    type=click.Path(),
+    show_default=True,
+    help='Directory to store submit files',
+)
+@click.option(
+    '--log',
+    default=None,
+    type=click.Path(),
+    show_default=True,
+    help='Directory to store log files',
+)
+@click.option(
+    '--output',
+    default=None,
+    type=click.Path(),
+    show_default=True,
+    help='Directory to store output files',
+)
+@click.option(
+    '--error',
+    default=None,
+    type=click.Path(),
+    show_default=True,
+    help='Directory to store error files',
+)
+@click.option(
+    '--request_memory',
+    default=None,
+    show_default=True,
+    help='Memory request to be included in submit file',
+)
+@click.option(
+    '--request_disk',
+    default=None,
+    show_default=True,
+    help='Disk request to be included in submit file',
+)
+@click.option(
+    '--request_cpus',
+    default=None,
+    show_default=True,
+    help='Number of CPUs to request in submit file',
+)
+@click.option(
+    '--universe',
+    default='vanilla',
+    show_default=True,
+    help='Universe execution environment to be specified in submit file',
+)
+@click.option(
+    '--getenv/--no-getenv',
+    default=True,
+    show_default=True,
+    help='Set getenv to True or False',
+)
+@click.argument(
+    'executable',
+    required=True,
+    nargs=1,
+    type=click.Path(exists=True),
+)
+@click.argument(
+    'args',
+    nargs=-1,
+)
+def submit(submit, log, output, error, request_memory, request_disk,
+           request_cpus, universe, getenv, executable, args):
+    '''Quickly submit a Job to HTCondor from the command line
+    '''
     basename = os.path.basename(executable)
     name, _ = os.path.splitext(basename)
 
     job = Job(name=name,
               executable=executable,
-              submit=args.submit,
-              log=args.log,
-              output=args.output,
-              error=args.error,
-              request_memory=args.request_memory,
-              request_disk=args.request_disk,
-              request_cpus=args.request_cpus,
-              universe=args.universe,
-              getenv=not args.no_getenv,
+              submit=submit,
+              log=log,
+              output=output,
+              error=error,
+              request_memory=request_memory,
+              request_disk=request_disk,
+              request_cpus=request_cpus,
+              universe=universe,
+              getenv=getenv,
               )
-    if arguments is not None:
+    if args:
+        arguments = str(' '.join(args))
         job.add_arg(arguments)
     job.build_submit()

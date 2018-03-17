@@ -3,7 +3,7 @@
 DISTNAME = 'PyCondor'
 DESCRIPTION = 'Python utility for HTCondor'
 MAINTAINER = 'James Bourbeau'
-MAINTAINER_EMAIL = 'jbourbeau@wisc.edu'
+MAINTAINER_EMAIL = 'james@jamesbourbeau.com'
 URL = 'https://github.com/jrbourbeau/pycondor'
 LICENSE = 'MIT'
 LONG_DESCRIPTION = '''Python utility for HTCondor
@@ -44,8 +44,8 @@ setup(
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
     entry_points = {
-        'console_scripts': ['dagman_progress=pycondor.command_line:dagman_progress',
-                            'pycondor_submit=pycondor.command_line:pycondor_submit',
+        'console_scripts': ['dagman_progress=pycondor.cli:dagman_progress',
+                            'pycondor=pycondor.cli:cli',
                             ],
     },
     package_data={'': ['LICENSE',
