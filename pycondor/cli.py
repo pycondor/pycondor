@@ -4,9 +4,9 @@ import os
 import sys
 import time
 from collections import namedtuple
-import argparse
 import click
 from datetime import datetime
+import warnings
 
 from .job import Job
 
@@ -132,52 +132,12 @@ def progress_bar_str(status, datetime_start, datetime_current, length=30,
 def dagman_progress():
     '''Function to print Dagman progress bar to stdout
     '''
-    parser = argparse.ArgumentParser(description='Prints dagman progress bar')
-    parser.add_argument('file', help='Dagman submit file')
-    parser.add_argument('-t', '--time', dest='time', default=30, type=float,
-                        help='Time (in seconds) in between log checks')
-    parser.add_argument('-l', '--length', dest='length', default=30, type=int,
-                        help='Length of the progress bar')
-    parser.add_argument('--prog_char', dest='prog_char', default='#',
-                        help='Progress bar character')
-    args = parser.parse_args()
-
-    if not os.path.exists(args.file):
-        raise IOError('Dagman submit file {} doesn\'t exist'.format(args.file))
-
-    dag_out_file = args.file + '.dagman.out'
-    # Make sure dagman out file exists
-    # It isn't created until the dagman beings running
-    while not os.path.exists(dag_out_file):
-        sys.stdout.write(
-            '\rWaiting for dagman {} to begin running...'.format(args.file))
-        sys.stdout.flush()
-        time.sleep(args.time)
-
-    datetime_start = line_to_datetime(open(dag_out_file, 'r').readline())
-    current_status = Status(*[0]*len(_states))
-    try:
-        for status, datetime_current in status_generator(dag_out_file):
-            # If no line with dagman status is found, wait and try again
-            if sum(status) != 0:
-                current_status = status
-
-            prog_str = progress_bar_str(current_status,
-                                        datetime_start=datetime_start,
-                                        datetime_current=datetime_current,
-                                        length=args.length,
-                                        prog_char=args.prog_char)
-            sys.stdout.write(prog_str)
-            sys.stdout.flush()
-            # Exit if all jobs are either Done or Failed
-            n_finished = current_status.Done + current_status.Failed
-            if n_finished == sum(current_status) and sum(current_status) != 0:
-                sys.exit()
-            else:
-                time.sleep(args.time)
-    except KeyboardInterrupt:
-        print('\nExiting dagman_progress...')
-        sys.exit()
+    warnings.simplefilter("always", DeprecationWarning)
+    dep_mes = ('The dagman_progress command is now depreciated and '
+               'will be removed in version 0.2.2. Please use the new '
+               '"pycondor monitor" command instead.')
+    warnings.warn(dep_mes, DeprecationWarning)
+    sys.exit(0)
 
 
 @click.group(
@@ -248,12 +208,12 @@ def monitor(time_, length, prog_char, file):
                                         datetime_current=datetime_current,
                                         length=length,
                                         prog_char=prog_char)
-            sys.stdout.write(prog_str)
             sys.stdout.flush()
+            sys.stdout.write(prog_str)
             # Exit if all jobs are either Done or Failed
             n_finished = current_status.Done + current_status.Failed
             if n_finished == sum(current_status) and sum(current_status) != 0:
-                sys.exit()
+                sys.exit(0)
             else:
                 time.sleep(time_)
     except KeyboardInterrupt:

@@ -1,10 +1,18 @@
 
 import pytest
+import os
 from datetime import datetime
 import subprocess
+from click.testing import CliRunner
 
+import pycondor
 from pycondor.cli import (line_to_datetime, progress_bar_str, Status, _states,
-                          status_generator)
+                          status_generator, monitor, submit)
+
+pycondor_dir = os.path.dirname(pycondor.__file__)
+example_dagman_submit = os.path.join(pycondor_dir,
+                                     'tests',
+                                     'test_dagman.submit')
 
 
 def test_line_to_datetime():
@@ -51,7 +59,9 @@ def test_progress_bar_str_null_status():
 
 
 def test_status_generator():
-    dag_out_file = 'pycondor/tests/test_dagman.submit.dagman.out'
+    dag_out_file = os.path.join(pycondor_dir,
+                                'tests',
+                                'exampledagman.submit.dagman.out')
 
     status_gen = status_generator(dag_out_file)
     status, datetime_current = next(status_gen)
@@ -64,10 +74,49 @@ def test_status_generator():
     assert datetime_current == test_datetime
 
 
-def test_dagman_progress_raises():
+def test_monitor_pass():
+    runner = CliRunner()
+    result = runner.invoke(monitor, [example_dagman_submit])
+    assert result.exit_code == 0
+    expected_output = ('\r[##############################] 100% Done | '
+                       '3 done, 0 queued, 0 ready, 0 unready, 0 failed | 1.2m')
+    assert result.output == expected_output
 
-    proc = subprocess.Popen(['dagman_progress file.submit'],
-                            stderr=subprocess.PIPE, shell=True)
+
+def test_monitor_file_raises():
+    non_exist_file = 'file.submit'
+
+    runner = CliRunner()
+    result = runner.invoke(monitor, [non_exist_file])
+    assert result.exit_code == 2
+    expected_output = ('Usage: monitor [OPTIONS] FILE\n\nError: Invalid '
+                       'value for "file": Path "{}" does not '
+                       'exist.\n'.format(non_exist_file))
+    assert result.output.replace('\r', '') == expected_output
+
+
+def test_dagman_progress_deprecation_message():
+    command = 'dagman_progress {}'.format(example_dagman_submit)
+    proc = subprocess.Popen([command],
+                            stderr=subprocess.PIPE,
+                            shell=True)
     _, err = proc.communicate()
 
-    assert b'Dagman submit file file.submit doesn\'t exist' in err
+    deprecation_message = ('DeprecationWarning: The dagman_progress command '
+                           'is now depreciated and will be removed in version '
+                           '0.2.2. Please use the new "pycondor monitor" '
+                           'command instead.')
+
+    assert deprecation_message in err
+
+
+def test_submit_file_raises():
+    non_exist_executable = '/this/does/not/exist.py'
+
+    runner = CliRunner()
+    result = runner.invoke(submit, [non_exist_executable])
+    assert result.exit_code == 2
+    expected_output = ('Usage: submit [OPTIONS] EXECUTABLE [ARGS]'
+                       '...\n\nError: Invalid value for "executable": Path '
+                       '"{}" does not exist.\n'.format(non_exist_executable))
+    assert result.output.replace('\r', '') == expected_output
