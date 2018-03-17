@@ -107,7 +107,7 @@ def test_dagman_progress_deprecation_message():
                            '0.2.2. Please use the new "pycondor monitor" '
                            'command instead.')
 
-    assert deprecation_message in err
+    assert deprecation_message in str(err)
 
 
 def test_submit_file_raises():
