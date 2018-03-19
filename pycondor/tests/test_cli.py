@@ -6,13 +6,20 @@ import subprocess
 from click.testing import CliRunner
 
 import pycondor
+from pycondor.utils import clear_pycondor_environment_variables
 from pycondor.cli import (line_to_datetime, progress_bar_str, Status, _states,
                           status_generator, monitor, submit)
+
+clear_pycondor_environment_variables()
 
 pycondor_dir = os.path.dirname(pycondor.__file__)
 example_dagman_submit = os.path.join(pycondor_dir,
                                      'tests',
                                      'test_dagman.submit')
+example_script = os.path.join(pycondor_dir,
+                              '..',
+                              'examples',
+                              'savelist.py')
 
 
 def test_line_to_datetime():
@@ -120,3 +127,44 @@ def test_submit_file_raises():
                        '...\n\nError: Invalid value for "executable": Path '
                        '"{}" does not exist.\n'.format(non_exist_executable))
     assert result.output.replace('\r', '') == expected_output
+
+
+def test_submit_equality(tmpdir):
+    executable = example_script
+    basename = os.path.basename(executable)
+    name, _ = os.path.splitext(basename)
+
+    # Create submit file using pycondor.Job
+    job = pycondor.Job(name=name,
+                       executable=executable,
+                       submit=str(tmpdir),
+                       log=str(tmpdir),
+                       output=str(tmpdir),
+                       error=str(tmpdir),
+                       request_memory='3GB')
+    job.build(fancyname=False)
+
+    with open(job.submit_file, 'r') as f:
+        submit_file_1 = f.readlines()
+
+    # Create submit file using pycondor submit
+    runner = CliRunner()
+    args = ['--submit', str(tmpdir),
+            '--output', str(tmpdir),
+            '--error', str(tmpdir),
+            '--log', str(tmpdir),
+            '--request_memory', '3GB',
+            # Don't want to actually submit job
+            '--dryrun',
+            executable,
+            ]
+    result = runner.invoke(submit, args)
+    assert result.exit_code == 0
+
+    submit_file_2 = os.path.join(str(tmpdir),
+                                 '{}.submit'.format(name))
+    with open(submit_file_2, 'r') as f:
+        submit_file_2 = f.readlines()
+
+    # Make sure the two submit files are the same
+    assert submit_file_1 == submit_file_2

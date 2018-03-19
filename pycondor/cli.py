@@ -129,17 +129,6 @@ def progress_bar_str(status, datetime_start, datetime_current, length=30,
     return prog_bar_str
 
 
-def dagman_progress():
-    '''Function to print Dagman progress bar to stdout
-    '''
-    warnings.simplefilter("always", DeprecationWarning)
-    dep_mes = ('The dagman_progress command is now depreciated and '
-               'will be removed in version 0.2.2. Please use the new '
-               '"pycondor monitor" command instead.')
-    warnings.warn(dep_mes, DeprecationWarning)
-    sys.exit(0)
-
-
 @click.group(
     context_settings=CONTEXT_SETTINGS,
 )
@@ -223,6 +212,53 @@ def monitor(time_, length, prog_char, file):
 
 @cli.command(
     context_settings=CONTEXT_SETTINGS,
+    short_help='(Depreciated) Monitor Dagman progress',
+)
+# Using time_ variable name so no confusion with time module
+@click.option(
+    '-t',
+    '--time',
+    'time_',
+    default=30,
+    type=float,
+    show_default=True,
+    help='Time (in seconds) in between log checks',
+)
+@click.option(
+    '-l',
+    '--length',
+    default=30,
+    type=int,
+    show_default=True,
+    help='Length of the progress bar',
+)
+@click.option(
+    '--prog_char',
+    default='#',
+    show_default=True,
+    help='Progress bar character',
+)
+@click.argument(
+    'file',
+    type=click.Path(exists=True),
+)
+@click.pass_context
+def dagman_progress(ctx, time_, length, prog_char, file):
+    '''Prints Dagman progress bar to stdout
+
+    The dagman_progress command is now depreciated and will be removed in
+    version 0.2.2. Please use the new "pycondor monitor" command instead.
+    '''
+    warnings.simplefilter("always", DeprecationWarning)
+    dep_mes = ('The dagman_progress command is now depreciated and '
+               'will be removed in version 0.2.2. Please use the new '
+               '"pycondor monitor" command instead.')
+    warnings.warn(dep_mes, DeprecationWarning)
+    ctx.forward(monitor)
+
+
+@cli.command(
+    context_settings=CONTEXT_SETTINGS,
     short_help='Submit a Job',
 )
 @click.option(
@@ -278,10 +314,22 @@ def monitor(time_, length, prog_char, file):
     help='Universe execution environment to be specified in submit file',
 )
 @click.option(
+    '--verbose',
+    default=1,
+    show_default=True,
+    help='Level of logging verbosity option are 0-warning, 1-info, 2-debugging',
+)
+@click.option(
     '--getenv/--no-getenv',
     default=True,
     show_default=True,
     help='Set getenv to True or False',
+)
+@click.option(
+    '--dryrun',
+    is_flag=True,
+    show_default=True,
+    help='Only build submit file, but do not submit it for execution'
 )
 @click.argument(
     'executable',
@@ -294,7 +342,7 @@ def monitor(time_, length, prog_char, file):
     nargs=-1,
 )
 def submit(submit, log, output, error, request_memory, request_disk,
-           request_cpus, universe, getenv, executable, args):
+           request_cpus, universe, verbose, getenv, dryrun, executable, args):
     '''Quickly submit a Job to HTCondor from the command line
     '''
     basename = os.path.basename(executable)
@@ -311,8 +359,13 @@ def submit(submit, log, output, error, request_memory, request_disk,
               request_cpus=request_cpus,
               universe=universe,
               getenv=getenv,
+              verbose=verbose,
               )
     if args:
         arguments = str(' '.join(args))
         job.add_arg(arguments)
-    job.build_submit()
+
+    if dryrun:
+        job.build(fancyname=False)
+    else:
+        job.build_submit()
