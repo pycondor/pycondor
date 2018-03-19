@@ -13,7 +13,7 @@
    installation
    tutorial
    api
-   monitoring
+   cli
    examples
    changelog
    contributing
@@ -88,7 +88,7 @@ User Guide
 * :doc:`installation`
 * :doc:`tutorial`
 * :doc:`api`
-* :doc:`monitoring`
+* :doc:`cli`
 * :doc:`examples`
 * :doc:`changelog`
 * :doc:`contributing`

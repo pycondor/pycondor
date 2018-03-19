@@ -34,10 +34,11 @@ sys.path.insert(0, os.path.abspath('_themes'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-                'sphinx.ext.viewcode',
-                'sphinx.ext.autosummary',
-                'sphinx.ext.githubpages',
-                'numpydoc']
+              'sphinx.ext.viewcode',
+              'sphinx.ext.autosummary',
+              'sphinx.ext.githubpages',
+              'numpydoc',
+              ]
 
 # this is needed for some reason...
 # see https://github.com/numpy/numpydoc/issues/69
