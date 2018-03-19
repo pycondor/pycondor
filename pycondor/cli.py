@@ -314,12 +314,6 @@ def dagman_progress(ctx, time_, length, prog_char, file):
     help='Universe execution environment to be specified in submit file',
 )
 @click.option(
-    '--verbose',
-    default=1,
-    show_default=True,
-    help='Level of logging verbosity option are 0-warning, 1-info, 2-debugging',
-)
-@click.option(
     '--getenv/--no-getenv',
     default=True,
     show_default=True,
@@ -342,7 +336,7 @@ def dagman_progress(ctx, time_, length, prog_char, file):
     nargs=-1,
 )
 def submit(submit, log, output, error, request_memory, request_disk,
-           request_cpus, universe, verbose, getenv, dryrun, executable, args):
+           request_cpus, universe, getenv, dryrun, executable, args):
     '''Quickly submit a Job to HTCondor from the command line
     '''
     basename = os.path.basename(executable)
@@ -359,7 +353,6 @@ def submit(submit, log, output, error, request_memory, request_disk,
               request_cpus=request_cpus,
               universe=universe,
               getenv=getenv,
-              verbose=verbose,
               )
     if args:
         arguments = str(' '.join(args))
