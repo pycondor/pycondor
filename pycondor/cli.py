@@ -172,9 +172,6 @@ def cli():
 def monitor(time_, length, prog_char, file):
     '''Prints Dagman progress bar to stdout
     '''
-    if not os.path.exists(file):
-        raise IOError('Dagman submit file {} doesn\'t exist'.format(file))
-
     dag_out_file = file + '.dagman.out'
     # Make sure dagman out file exists
     # It isn't created until the dagman beings running
@@ -197,8 +194,8 @@ def monitor(time_, length, prog_char, file):
                                         datetime_current=datetime_current,
                                         length=length,
                                         prog_char=prog_char)
-            sys.stdout.flush()
             sys.stdout.write(prog_str)
+            sys.stdout.flush()
             # Exit if all jobs are either Done or Failed
             n_finished = current_status.Done + current_status.Failed
             if n_finished == sum(current_status) and sum(current_status) != 0:

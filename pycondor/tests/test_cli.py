@@ -168,3 +168,26 @@ def test_submit_equality(tmpdir):
 
     # Make sure the two submit files are the same
     assert submit_file_1 == submit_file_2
+
+
+def test_submit_args(tmpdir):
+    executable = example_script
+    basename = os.path.basename(executable)
+    name, _ = os.path.splitext(basename)
+
+    runner = CliRunner()
+    args = ['--submit', str(tmpdir),
+            executable,
+            '--dryrun',
+            '--',
+            '--option','value',
+            ]
+    result = runner.invoke(submit, args)
+    assert result.exit_code == 0
+
+    submit_file = os.path.join(str(tmpdir),
+                               '{}.submit'.format(name))
+    with open(submit_file, 'r') as f:
+        submit_file_lines = f.read().splitlines()
+
+    assert 'arguments = --option value' in submit_file_lines

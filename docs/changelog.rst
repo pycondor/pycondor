@@ -13,6 +13,7 @@ Version 0.2.1 (TBD)
 
 * Added ``dag`` parameter to ``Job`` and ``Dagman`` object initializations. (See `PR #67 <https://github.com/jrbourbeau/pycondor/pull/67>`_)
 * Added ``submit_options`` parameter to ``Job.submit_job`` and ``Dagman.submit_dag`` methods. ``kwargs`` and ``maxjobs`` parameters for these methods are deprecated in favor of ``submit_options``. (See `PR #71 <https://github.com/jrbourbeau/pycondor/pull/71>`_)
+* Adds ``pycondor submit`` command. Also adds replaces ``dagman_progress`` command with ``pycondor monitor``. (See `PR #73 <https://github.com/jrbourbeau/pycondor/pull/73>`_)
 
 **Changes**:
 
