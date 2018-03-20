@@ -58,7 +58,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'PyCondor'
-copyright = '2017, James Bourbeau'
+copyright = '2018, James Bourbeau'
 author = 'James Bourbeau'
 
 # The version info for the project you're documenting, acts as replacement for

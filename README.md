@@ -56,4 +56,4 @@ To contribute to PyCondor, please see the [contributing page](https://jrbourbeau
 
 [MIT License](LICENSE)
 
-Copyright (c) 2017 James Bourbeau
+Copyright (c) 2018 James Bourbeau
