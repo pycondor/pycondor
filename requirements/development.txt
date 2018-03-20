@@ -1,0 +1,4 @@
+-r requirements/default.txt
+-r requirements/docs.txt
+-r requirements/test.txt
+twine
