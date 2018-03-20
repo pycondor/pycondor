@@ -11,7 +11,7 @@
 ## Useful Links
 
 * Documentation: https://jrbourbeau.github.io/pycondor
-* PyPI: https://pypi.python.org/pypi/PyCondor
+* PyPI: https://pypi.org/project/PyCondor/
 * Release notes: https://jrbourbeau.github.io/pycondor/changelog.html
 * Contributing: https://jrbourbeau.github.io/pycondor/contributing.html
 

@@ -24,7 +24,7 @@
    :hidden:
 
    PyCondor @ GitHub <https://github.com/jrbourbeau/pycondor>
-   PyCondor @ PyPI <https://pypi.python.org/pypi/PyCondor>
+   PyCondor @ PyPI <https://pypi.org/project/PyCondor/>
    Issue tracker <https://github.com/jrbourbeau/pycondor/issues>
 
 
@@ -40,10 +40,10 @@ PyCondor Documentation
     :target: https://codecov.io/gh/jrbourbeau/pycondor
 
 .. image:: https://img.shields.io/pypi/v/pycondor.svg
-    :target: https://pypi.python.org/pypi/PyCondor/
+    :target: https://pypi.org/project/PyCondor/
 
 .. image:: https://img.shields.io/pypi/l/pycondor.svg
-    :target: https://pypi.python.org/pypi/PyCondor/
+    :target: https://pypi.org/project/PyCondor/
 
 `PyCondor
 <https://github.com/jrbourbeau/pycondor/>`_ (Python HTCondor) is a tool to help build and submit HTCondor jobs in a straight-forward manner with minimal hassle.
