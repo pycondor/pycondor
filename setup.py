@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 from shutil import rmtree
 from setuptools import setup, find_packages, Command
 
@@ -66,6 +67,7 @@ class UploadCommand(Command):
 
         sys.exit()
 
+
 setup(
     name=NAME,
     version=VERSION,
@@ -92,7 +94,7 @@ setup(
     keywords='python condor htcondor high-throughput computing utility tool',
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
-    entry_points = {
+    entry_points={
         'console_scripts': ['dagman_progress=pycondor.cli:dagman_progress',
                             'pycondor=pycondor.cli:cli',
                             ],
