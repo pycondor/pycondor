@@ -1,0 +1,8 @@
+JOB examplejob_20180316_02_arg_0 condor/submit/examplejob_20180316_02.submit
+VARS examplejob_20180316_02_arg_0 ARGS="--length 50"
+JOB examplejob_20180316_02_arg_1 condor/submit/examplejob_20180316_02.submit
+VARS examplejob_20180316_02_arg_1 ARGS="--length 100"
+JOB examplejob_20180316_02_arg_2 condor/submit/examplejob_20180316_02.submit
+VARS examplejob_20180316_02_arg_2 ARGS="--length 200"
+
+#Inter-job dependencies
