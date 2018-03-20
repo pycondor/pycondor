@@ -180,7 +180,7 @@ def test_submit_args(tmpdir):
             executable,
             '--dryrun',
             '--',
-            '--option','value',
+            '--option', 'value',
             ]
     result = runner.invoke(submit, args)
     assert result.exit_code == 0
