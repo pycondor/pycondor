@@ -203,7 +203,7 @@ def monitor(time_, length, prog_char, file):
             else:
                 time.sleep(time_)
     except KeyboardInterrupt:
-        print('\nExiting dagman_progress...')
+        print('\nExiting pycondor monitor...')
         sys.exit()
 
 
