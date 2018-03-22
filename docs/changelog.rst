@@ -20,7 +20,7 @@ Version 0.4.0.dev0 (TBD)
 
 **Bug Fixes**:
 
-- 
+- Fixes typo in ``pycondor monitor`` that was still referencing the old ``dagman_progress`` command. (See `PR #81 <https://github.com/jrbourbeau/pycondor/pull/81>`_)
 
 
 Version 0.3.0 (2018-03-20)
