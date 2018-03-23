@@ -16,6 +16,12 @@ def job(tmpdir_factory):
     return job
 
 
+@pytest.fixture()
+def monkeypatch_condor_submit(monkeypatch):
+    # Want to monkeypatch shutil.which to mimic condor_submit existing
+    monkeypatch.setattr('shutil.which', lambda x: 'submit_exists.exe')
+
+
 def test_add_arg_type_fail(job):
     with pytest.raises(TypeError) as excinfo:
         job.add_arg(50)
@@ -63,10 +69,11 @@ def test_add_parents_type_fail(job):
         job.add_parents([1, 2, 3, 4])
 
 
-def test_build_executeable_not_found_fail():
+def test_build_executeable_not_found_fail(tmpdir):
+    submit_dir = str(tmpdir.mkdir('submit'))
     with pytest.raises(IOError) as excinfo:
         ex = '/path/to/executable'
-        job = Job('jobname', ex)
+        job = Job('jobname', ex, submit=submit_dir)
         job.build(makedirs=False)
     error = 'The executable {} does not exist'.format(ex)
     assert error == str(excinfo.value)
@@ -89,13 +96,26 @@ def test_queue_written_to_submit_file(tmpdir):
     assert 'queue 5' in lines
 
 
-@pytest.mark.parametrize('env_var', ['submit', 'output', 'error', 'log'])
+def test_job_submit_env_variable_dir(tmpdir, monkeypatch):
+    # Use monkeypatch fixture to set pycondor environment variable
+    dir_path = str(tmpdir.mkdir('submit'))
+    monkeypatch.setenv('PYCONDOR_SUBMIT_DIR', dir_path)
+
+    job = Job('jobname', example_script)
+    job.build()
+    tmpdir_path = os.path.join(str(tmpdir), 'submit')
+    job_path = os.path.dirname(getattr(job, 'submit_file'))
+    assert tmpdir_path == job_path
+
+
+@pytest.mark.parametrize('env_var', ['output', 'error', 'log'])
 def test_job_env_variable_dir(tmpdir, monkeypatch, env_var):
+    submit_dir = str(tmpdir)
     # Use monkeypatch fixture to set pycondor environment variable
     dir_path = str(tmpdir.mkdir(env_var))
     monkeypatch.setenv('PYCONDOR_{}_DIR'.format(env_var.upper()), dir_path)
 
-    job = Job('jobname', example_script)
+    job = Job('jobname', example_script, submit=submit_dir)
     job.build()
     tmpdir_path = os.path.join(str(tmpdir), env_var)
     job_path = os.path.dirname(getattr(job, '{}_file'.format(env_var)))
@@ -118,14 +138,14 @@ def test_repr():
     assert job_repr == expected_repr
 
 
-def test_submit_job_not_built_raises(job):
+def test_submit_job_not_built_raises(monkeypatch_condor_submit, job):
     with pytest.raises(ValueError) as excinfo:
         job.submit_job()
     error = 'build() must be called before submit()'
     assert error == str(excinfo.value)
 
 
-def test_submit_job_parents_raises(tmpdir):
+def test_submit_job_parents_raises(tmpdir, monkeypatch_condor_submit):
     # Test submitting a Job with parents (not in a Dagman) raises an error
     submit = str(tmpdir)
     job = Job('jobname', example_script, submit=submit)
@@ -139,7 +159,7 @@ def test_submit_job_parents_raises(tmpdir):
     assert error == str(excinfo.value)
 
 
-def test_submit_job_children_raises(tmpdir, job):
+def test_submit_job_children_raises(tmpdir, job, monkeypatch_condor_submit):
     # Test submitting a Job with children (not in a Dagman) raises an error
     submit = str(tmpdir)
     child_job = Job('child_jobname', example_script, submit=submit)
@@ -152,7 +172,8 @@ def test_submit_job_children_raises(tmpdir, job):
     assert error == str(excinfo.value)
 
 
-def test_submit_job_kwargs_deprecation_message(tmpdir, job):
+def test_submit_job_kwargs_deprecation_message(tmpdir, job,
+                                               monkeypatch_condor_submit):
     job.build()
     with pytest.deprecated_call():
         kwargs = {'-maxjobs': 1000}

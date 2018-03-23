@@ -4,7 +4,7 @@ import subprocess
 from collections import namedtuple
 import warnings
 
-from . import utils
+from .utils import checkdir, string_rep, requires_command
 from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
@@ -121,7 +121,7 @@ class Job(BaseNode):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
 
-        self.executable = utils.string_rep(executable)
+        self.executable = string_rep(executable)
         self.error = error
         self.log = log
         self.output = output
@@ -234,7 +234,7 @@ class Job(BaseNode):
                 'The executable {} does not exist'.format(self.executable))
         for directory in [self.submit, self.log, self.output, self.error]:
             if directory is not None:
-                utils.checkdir(directory + '/', makedirs)
+                checkdir(directory + '/', makedirs)
 
         lines = []
         submit_attrs = ['universe', 'executable', 'request_memory',
@@ -242,13 +242,13 @@ class Job(BaseNode):
                         'initialdir', 'notification', 'requirements']
         for submit_attr in submit_attrs:
             if getattr(self, submit_attr) is not None:
-                submit_attr_str = utils.string_rep(getattr(self, submit_attr))
+                submit_attr_str = string_rep(getattr(self, submit_attr))
                 lines.append('{} = {}'.format(submit_attr, submit_attr_str))
 
         name = self._get_fancyname() if fancyname else self.name
         self.submit_name = name
         submit_file = os.path.join(self.submit, '{}.submit'.format(name))
-        utils.checkdir(submit_file, makedirs)
+        checkdir(submit_file, makedirs)
         # Add submit_file data member to job for later use
         self.submit_file = submit_file
 
@@ -272,7 +272,7 @@ class Job(BaseNode):
                                          '{}.{}'.format(name, attr))
             lines.append('{} = {}'.format(attr, file_path))
             setattr(self, '{}_file'.format(attr), file_path)
-            utils.checkdir(file_path, makedirs)
+            checkdir(file_path, makedirs)
 
         # Add any extra lines to submit file, if specified
         if self.extra_lines:
@@ -300,7 +300,7 @@ class Job(BaseNode):
                         'are only supported through Dagman')
                 else:
                     arg = self.args[0].arg
-                    lines.append('arguments = {}'.format(utils.string_rep(arg,
+                    lines.append('arguments = {}'.format(string_rep(arg,
                                                          quotes=True)))
                     lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
@@ -369,6 +369,7 @@ class Job(BaseNode):
 
         return
 
+    @requires_command('condor_submit')
     def submit_job(self, submit_options=None, **kwargs):
         """Submits Job to condor
 
@@ -427,6 +428,7 @@ class Job(BaseNode):
 
         return self
 
+    @requires_command('condor_submit')
     def build_submit(self, makedirs=True, fancyname=True, submit_options=None,
                      **kwargs):
         """Calls build and submit sequentially
