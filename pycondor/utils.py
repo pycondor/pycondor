@@ -5,6 +5,7 @@ import sys
 import subprocess
 import logging
 import shutil
+from functools import wraps
 # Note that spawn isn't in namespace if import distutils is used
 # Must use from distutils import spawn
 from distutils import spawn
@@ -115,6 +116,19 @@ def assert_command_exists(cmd):
     if cmd_path is None:
         raise OSError(
             'The command \'{}\' was not found on this machine.'.format(cmd))
+
+
+def requires_command(*commands):
+    """Decorator to wrap functions that require a specific set of commands
+    """
+    def real_decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for command in commands:
+                assert_command_exists(command)
+            return func(*args, **kwargs)
+        return wrapper
+    return real_decorator
 
 
 def get_condor_version():

@@ -3,7 +3,7 @@ import os
 import subprocess
 import warnings
 
-from .utils import checkdir, assert_command_exists, get_condor_version
+from .utils import checkdir, get_condor_version, requires_command
 from .basenode import BaseNode
 from .job import Job
 
@@ -336,6 +336,7 @@ class Dagman(BaseNode):
 
         return self
 
+    @requires_command('condor_submit_dag')
     def submit_dag(self, submit_options=None, maxjobs=3000, **kwargs):
         """Submits Dagman to condor
 
@@ -361,7 +362,6 @@ class Dagman(BaseNode):
             Returns self.
         """
         # Construct condor_submit_dag command
-        assert_command_exists('condor_submit_dag')
         warnings.simplefilter("always", DeprecationWarning)
         command = 'condor_submit_dag'
         if submit_options is not None:
@@ -400,6 +400,7 @@ class Dagman(BaseNode):
 
         return self
 
+    @requires_command('condor_submit_dag')
     def build_submit(self, makedirs=True, fancyname=True, submit_options=None,
                      maxjobs=3000, **kwargs):
         """Calls build and submit sequentially
