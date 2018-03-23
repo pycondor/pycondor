@@ -1,5 +1,8 @@
 
 import os
+import sys
+import shutil
+from distutils import spawn
 import pytest
 from pycondor import Job, Dagman
 from pycondor.utils import clear_pycondor_environment_variables
@@ -19,7 +22,14 @@ def job(tmpdir_factory):
 @pytest.fixture()
 def monkeypatch_condor_submit(monkeypatch):
     # Want to monkeypatch shutil.which to mimic condor_submit existing
-    monkeypatch.setattr('shutil.which', lambda x: 'submit_exists.exe')
+    version_major = sys.version_info.major
+    version_minor = sys.version_info.minor
+    if (version_major, version_minor) >= (3, 3):
+        monkeypatch.setattr(shutil, 'which',
+                            lambda x: 'submit_exists.exe')
+    else:
+        monkeypatch.setattr(spawn, 'find_executable',
+                            lambda x: 'submit_exists.exe')
 
 
 def test_add_arg_type_fail(job):
