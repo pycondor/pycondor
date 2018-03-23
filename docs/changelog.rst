@@ -15,7 +15,7 @@ Version 0.4.0.dev0 (TBD)
 
 **Changes**:
 
--
+- Adds informative error message when ``Job.submit_job`` is called on a machine where the ``condor_submit`` command isn't available. (See `PR #83 <https://github.com/jrbourbeau/pycondor/pull/83>`_)
 
 
 **Bug Fixes**:
