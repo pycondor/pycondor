@@ -2,7 +2,6 @@
 import pytest
 import os
 from datetime import datetime
-import subprocess
 from click.testing import CliRunner
 
 import pycondor
@@ -100,21 +99,6 @@ def test_monitor_file_raises():
                        'value for "file": Path "{}" does not '
                        'exist.\n'.format(non_exist_file))
     assert result.output.replace('\r', '') == expected_output
-
-
-def test_dagman_progress_deprecation_message():
-    command = 'dagman_progress {}'.format(example_dagman_submit)
-    proc = subprocess.Popen([command],
-                            stderr=subprocess.PIPE,
-                            shell=True)
-    _, err = proc.communicate()
-
-    deprecation_message = ('DeprecationWarning: The dagman_progress command '
-                           'is now depreciated and will be removed in version '
-                           '0.2.2. Please use the new "pycondor monitor" '
-                           'command instead.')
-
-    assert deprecation_message in str(err)
 
 
 def test_submit_file_raises():

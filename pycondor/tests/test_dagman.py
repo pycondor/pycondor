@@ -292,18 +292,3 @@ def test_dagman_add_node_ignores_duplicates(tmpdir, dagman):
     dagman.add_job(job)
 
     assert dagman.nodes == [job]
-
-
-@pytest.mark.needs_condor
-def test_submit_dag_maxjobs_deprecation_message(dagman):
-    dagman.build()
-    with pytest.deprecated_call():
-        dagman.submit_dag(maxjobs=1000)
-
-
-@pytest.mark.needs_condor
-def test_submit_dag_kwargs_deprecation_message(dagman):
-    dagman.build()
-    with pytest.deprecated_call():
-        kwargs = {'-config': '/path/to/file'}
-        dagman.submit_dag(maxjobs=0, **kwargs)
