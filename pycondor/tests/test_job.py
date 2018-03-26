@@ -182,14 +182,6 @@ def test_submit_job_children_raises(tmpdir, job, monkeypatch_condor_submit):
     assert error == str(excinfo.value)
 
 
-def test_submit_job_kwargs_deprecation_message(tmpdir, job,
-                                               monkeypatch_condor_submit):
-    job.build()
-    with pytest.deprecated_call():
-        kwargs = {'-maxjobs': 1000}
-        job.submit_job(**kwargs)
-
-
 def test_add_args_raises(job):
     # Test that add_args won't accept non-iterable argument inputs
     args = 10

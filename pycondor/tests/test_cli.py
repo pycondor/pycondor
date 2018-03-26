@@ -102,21 +102,6 @@ def test_monitor_file_raises():
     assert result.output.replace('\r', '') == expected_output
 
 
-def test_dagman_progress_deprecation_message():
-    command = 'dagman_progress {}'.format(example_dagman_submit)
-    proc = subprocess.Popen([command],
-                            stderr=subprocess.PIPE,
-                            shell=True)
-    _, err = proc.communicate()
-
-    deprecation_message = ('DeprecationWarning: The dagman_progress command '
-                           'is now depreciated and will be removed in version '
-                           '0.2.2. Please use the new "pycondor monitor" '
-                           'command instead.')
-
-    assert deprecation_message in str(err)
-
-
 def test_submit_file_raises():
     non_exist_executable = '/this/does/not/exist.py'
 

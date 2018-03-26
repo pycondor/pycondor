@@ -370,7 +370,7 @@ class Job(BaseNode):
         return
 
     @requires_command('condor_submit')
-    def submit_job(self, submit_options=None, **kwargs):
+    def submit_job(self, submit_options=None):
         """Submits Job to condor
 
         Parameters
@@ -380,10 +380,6 @@ class Job(BaseNode):
             (see the `condor_submit documentation
             <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
             for possible options).
-
-        kwargs : dict, optional
-            .. deprecated:: 0.2.1
-               Use ``submit_options`` instead.
 
         Returns
         -------
@@ -410,17 +406,9 @@ class Job(BaseNode):
                              'Interjob relationships requires Dagman.')
 
         # Construct and execute condor_submit command
-        warnings.simplefilter("always", DeprecationWarning)
         command = 'condor_submit'
         if submit_options is not None:
             command += ' {}'.format(submit_options)
-        if kwargs:
-            dep_mes = ('kwargs for submit_job are deprecated. Use the '
-                       'submit_options parameter instead. kwargs will '
-                       'be removed in version 0.2.2.')
-            warnings.warn(dep_mes, DeprecationWarning)
-            for option in kwargs:
-                command += ' {} {}'.format(option, kwargs[option])
         command += ' {}'.format(self.submit_file)
         proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
         out, err = proc.communicate()
@@ -429,8 +417,7 @@ class Job(BaseNode):
         return self
 
     @requires_command('condor_submit')
-    def build_submit(self, makedirs=True, fancyname=True, submit_options=None,
-                     **kwargs):
+    def build_submit(self, makedirs=True, fancyname=True, submit_options=None):
         """Calls build and submit sequentially
 
         Parameters
@@ -451,16 +438,12 @@ class Job(BaseNode):
             <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html>`_
             for possible options).
 
-        kwargs : dict, optional
-            .. deprecated:: 0.2.1
-               Use ``submit_options`` instead.
-
         Returns
         -------
         self : object
             Returns self.
         """
         self.build(makedirs, fancyname)
-        self.submit_job(submit_options=submit_options, **kwargs)
+        self.submit_job(submit_options=submit_options)
 
         return self

@@ -337,7 +337,7 @@ class Dagman(BaseNode):
         return self
 
     @requires_command('condor_submit_dag')
-    def submit_dag(self, submit_options=None, maxjobs=3000, **kwargs):
+    def submit_dag(self, submit_options=None):
         """Submits Dagman to condor
 
         Parameters
@@ -348,40 +348,18 @@ class Dagman(BaseNode):
             <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html>`_
             for possible options).
 
-        maxjobs : int, optional
-            .. deprecated:: 0.2.1
-               Use ``submit_options`` instead.
-
-        kwargs : dict, optional
-            .. deprecated:: 0.2.1
-               Use ``submit_options`` instead.
-
         Returns
         -------
         self : object
             Returns self.
         """
         # Construct condor_submit_dag command
-        warnings.simplefilter("always", DeprecationWarning)
         command = 'condor_submit_dag'
         if submit_options is not None:
             command += ' {}'.format(submit_options)
-        if maxjobs:
-            maxjobs_dep_mes = ('maxjobs for submit_dag is deprecated. Use '
-                               'the submit_options parameter instead. '
-                               'maxjobs parameter will be removed in version '
-                               '0.2.2.')
-            warnings.warn(maxjobs_dep_mes, DeprecationWarning)
-            command += ' -maxjobs {}'.format(maxjobs)
-        if kwargs:
-            kwargs_dep_mes = ('kwargs for submit_dag are deprecated. Use the '
-                              'submit_options parameter instead. kwargs will '
-                              'be removed in version 0.2.2.')
-            warnings.warn(kwargs_dep_mes, DeprecationWarning)
-            for option in kwargs:
-                command += ' {} {}'.format(option, kwargs[option])
         command += ' {}'.format(self.submit_file)
-        submit_dag_proc = subprocess.Popen([command], stdout=subprocess.PIPE,
+        submit_dag_proc = subprocess.Popen([command],
+                                           stdout=subprocess.PIPE,
                                            shell=True)
         # Check that there are no illegal node names for newer condor versions
         condor_version = get_condor_version()
@@ -401,8 +379,7 @@ class Dagman(BaseNode):
         return self
 
     @requires_command('condor_submit_dag')
-    def build_submit(self, makedirs=True, fancyname=True, submit_options=None,
-                     maxjobs=3000, **kwargs):
+    def build_submit(self, makedirs=True, fancyname=True, submit_options=None):
         """Calls build and submit sequentially
 
         Parameters
@@ -423,22 +400,12 @@ class Dagman(BaseNode):
             <http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html>`_
             for possible options).
 
-        maxjobs : int, optional
-            .. deprecated:: 0.2.1
-               Use ``submit_options`` instead.
-
-        kwargs : dict, optional
-
-            .. deprecated:: 0.2.1
-               Use ``submit_options`` instead.
-
         Returns
         -------
         self : object
             Returns self.
         """
         self.build(makedirs, fancyname)
-        self.submit_dag(maxjobs=maxjobs, submit_options=submit_options,
-                        **kwargs)
+        self.submit_dag(submit_options=submit_options)
 
         return self

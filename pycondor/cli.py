@@ -209,53 +209,6 @@ def monitor(time_, length, prog_char, file):
 
 @cli.command(
     context_settings=CONTEXT_SETTINGS,
-    short_help='(Depreciated) Monitor Dagman progress',
-)
-# Using time_ variable name so no confusion with time module
-@click.option(
-    '-t',
-    '--time',
-    'time_',
-    default=30,
-    type=float,
-    show_default=True,
-    help='Time (in seconds) in between log checks',
-)
-@click.option(
-    '-l',
-    '--length',
-    default=30,
-    type=int,
-    show_default=True,
-    help='Length of the progress bar',
-)
-@click.option(
-    '--prog_char',
-    default='#',
-    show_default=True,
-    help='Progress bar character',
-)
-@click.argument(
-    'file',
-    type=click.Path(exists=True),
-)
-@click.pass_context
-def dagman_progress(ctx, time_, length, prog_char, file):
-    '''Prints Dagman progress bar to stdout
-
-    The dagman_progress command is now depreciated and will be removed in
-    version 0.2.2. Please use the new "pycondor monitor" command instead.
-    '''
-    warnings.simplefilter("always", DeprecationWarning)
-    dep_mes = ('The dagman_progress command is now depreciated and '
-               'will be removed in version 0.2.2. Please use the new '
-               '"pycondor monitor" command instead.')
-    warnings.warn(dep_mes, DeprecationWarning)
-    ctx.forward(monitor)
-
-
-@cli.command(
-    context_settings=CONTEXT_SETTINGS,
     short_help='Submit a Job',
 )
 @click.option(
