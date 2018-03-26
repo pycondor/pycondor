@@ -2,7 +2,6 @@
 import pytest
 import os
 from datetime import datetime
-import subprocess
 from click.testing import CliRunner
 
 import pycondor

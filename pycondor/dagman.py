@@ -1,7 +1,6 @@
 
 import os
 import subprocess
-import warnings
 
 from .utils import checkdir, get_condor_version, requires_command
 from .basenode import BaseNode

@@ -6,7 +6,6 @@ import time
 from collections import namedtuple
 import click
 from datetime import datetime
-import warnings
 
 from .job import Job
 

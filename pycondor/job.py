@@ -2,7 +2,6 @@
 import os
 import subprocess
 from collections import namedtuple
-import warnings
 
 from .utils import checkdir, string_rep, requires_command
 from .basenode import BaseNode
