@@ -125,7 +125,7 @@ Now we're ready to add some Job objects to the Dagman. Both a ``name`` and an ``
 
 In this example, ``job_date`` will run the shell ``date`` command, and ``job_sleep`` will run the shell ``sleep`` command. A Job can be added to a Dagman object by passing a Dagman to the Job ``dag`` parameter.
 
-In addition to defining an executable for a Job to run, you can also pass arguments to the executable using the Job ``add_arg`` method. Here, we've added three arguments, ``1``, ``2``, and ``3``, to ``job_sleep``. This Job will now run the ``sleep`` command on each of the provided arguments, i.e. ``sleep 1``, ``sleep 2``, and ``sleep 3``.
+In addition to defining an executable for a Job to run, you can also pass arguments to the executable using the Job ``add_arg`` method. Here, we've added three arguments, ``1``, ``2``, and ``3``, to ``job_sleep``. This Job will now run the ``sleep`` command on each of the provided arguments, e.g. ``sleep 1``, ``sleep 2``, and ``sleep 3``.
 
 
 ------------------------------
