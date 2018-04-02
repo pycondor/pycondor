@@ -55,7 +55,7 @@ or to write log files to a specified directory
 
     $ pycondor submit --log /path/to/log_dir my_script.py
 
-Note that when pass command line arguments to an executable, two dashes (i.e. ``--``)
+Note that when passing command line arguments to an executable, two dashes (i.e. ``--``)
 must be used to separate the ``pycondor submit`` command line arguments from
 the command line arguments to be passed to the executable. E.g.
 
