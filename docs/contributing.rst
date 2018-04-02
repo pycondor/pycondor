@@ -45,6 +45,7 @@ From your cloned copy of PyCondor from the previous step, list the existing remo
 
 .. code-block:: bash
 
+    $ cd pycondor
     $ git remote -v
 
 
@@ -132,15 +133,28 @@ The output should be
     Switched to branch '<new_feature_branch_name>'
 
 
+======================================
+Step 6: Install local copy of PyCondor
+======================================
+
+Next, you'll want to make sure that Python imports your local version of PyCondor. This can be done by ``pip`` installing your local PyCondor repository in `editable mode <https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs>`_
+
+.. code-block:: bash
+
+    $ pip install -e .
+
+Note that if you previously had PyCondor installed in your environment to ``pip uninstall pycondor`` before executing the previous command.
+
+
 =========================
-Step 6: Develop new code!
+Step 7: Develop new code!
 =========================
 
 Now add your feature, bug fix, typo fix, etc.
 
 
 =======================================
-Step 7: Running tests with the new code
+Step 8: Running tests with the new code
 =======================================
 
 Once your contributions have been added, you'll want to run the tests for this project to ensure that none of the new code breaks any existing tests. If you haven't already, make sure you have the necessary software installed for running the tests (``pytest``) via
@@ -159,7 +173,7 @@ Now the tests can be run by going to the root directory of your pycondor reposit
 To run with code coverage use ``pytest --cov pycondor``
 
 =====================
-Step 8: Documentation
+Step 9: Documentation
 =====================
 
 If necessary for your contribution, add the appropriate documentation to the files in the ``docs/`` directory. The dependencies needed to build the documentation can be installed by running
@@ -177,9 +191,9 @@ The documentation can be build via
 
 The built documentation will be placed in the ``_build/html`` directory.
 
-========================================
-Step 9: Committing and uploading changes
-========================================
+=========================================
+Step 10: Committing and uploading changes
+=========================================
 
 Now the changes you've made are ready to be committed and uploaded to GitHub. Let git know which files you would like to include in your commit via
 
@@ -203,7 +217,7 @@ Now you can push this commit from your local repository to your copy on GitHub
 
 
 ==================================
-Step 10: Submitting a pull request
+Step 11: Submitting a pull request
 ==================================
 
 Finally, you can go to your copy of PyCondor on GitHub and submit a pull request by clicking the "Compare & pull request" button!
