@@ -1,9 +1,10 @@
+# PyCondor (Python HTCondor)
+
 [![Build Status](https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master)](https://travis-ci.org/jrbourbeau/pycondor)
 [![codecov](https://codecov.io/gh/jrbourbeau/pycondor/branch/master/graph/badge.svg)](https://codecov.io/gh/jrbourbeau/pycondor)
 ![pypi version](https://img.shields.io/pypi/v/pycondor.svg 'pypi version')
 ![license](https://img.shields.io/pypi/l/pycondor.svg 'license')
-
-# PyCondor (Python HTCondor)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pycondor.svg)
 
 [HTCondor](https://research.cs.wisc.edu/htcondor/) is a an open-source workload management system for high throughput computing developed at the University of Wisconsin–Madison. PyCondor is a tool to help **build and submit HTCondor submission files in a straight-forward manner with minimal hassle**.
 
@@ -28,7 +29,7 @@ pip install pycondor
 
 ### Development version
 
-The latest development version of PyCondor can be install directly from GitHub
+The latest development version of PyCondor can be installed directly from GitHub
 
 ```
 pip install git+https://github.com/jrbourbeau/pycondor.git
