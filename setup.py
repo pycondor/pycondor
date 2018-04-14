@@ -12,15 +12,11 @@ MAINTAINER = 'James Bourbeau'
 MAINTAINER_EMAIL = 'james@jamesbourbeau.com'
 URL = 'https://github.com/jrbourbeau/pycondor'
 LICENSE = 'MIT'
-LONG_DESCRIPTION = '''Python utility for HTCondor
-
-Helps construct submit files for submitting jobs and dagmans to HTCondor
-
-Please refer to the online documentation at
-https://jrbourbeau.github.io/pycondor/
-'''
 
 here = os.path.abspath(os.path.dirname(__file__))
+
+with open(os.path.join(here, 'README.md'), 'r') as f:
+    LONG_DESCRIPTION = f.read()
 
 # Want to read in package version number from __version__.py
 about = {}
@@ -74,6 +70,7 @@ setup(
     version=VERSION,
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
     url=URL,
     author=MAINTAINER,
     author_email=MAINTAINER_EMAIL,
@@ -95,6 +92,7 @@ setup(
     keywords='python condor htcondor high-throughput computing utility tool',
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
+    setup_requires=['setuptools>=38.6.0'],
     entry_points={
         'console_scripts': ['dagman_progress=pycondor.cli:dagman_progress',
                             'pycondor=pycondor.cli:cli',
