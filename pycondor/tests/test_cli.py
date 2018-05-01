@@ -11,14 +11,9 @@ from pycondor.cli import (line_to_datetime, progress_bar_str, Status, _states,
 
 clear_pycondor_environment_variables()
 
-pycondor_dir = os.path.dirname(pycondor.__file__)
-example_dagman_submit = os.path.join(pycondor_dir,
-                                     'tests',
-                                     'test_dagman.submit')
-example_script = os.path.join(pycondor_dir,
-                              '..',
-                              'examples',
-                              'savelist.py')
+here = os.path.abspath(os.path.dirname(__file__))
+example_script = os.path.join(here, 'example_script.py')
+example_dagman_submit = os.path.join(here, 'test_dagman.submit')
 
 
 def test_line_to_datetime():
@@ -65,8 +60,7 @@ def test_progress_bar_str_null_status():
 
 
 def test_status_generator():
-    dag_out_file = os.path.join(pycondor_dir,
-                                'tests',
+    dag_out_file = os.path.join(here,
                                 'exampledagman.submit.dagman.out')
 
     status_gen = status_generator(dag_out_file)
