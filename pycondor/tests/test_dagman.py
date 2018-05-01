@@ -9,7 +9,8 @@ from pycondor.utils import clear_pycondor_environment_variables
 
 clear_pycondor_environment_variables()
 
-example_script = os.path.join('examples/savelist.py')
+here = os.path.abspath(os.path.dirname(__file__))
+example_script = os.path.join(here, 'example_script.py')
 
 
 @pytest.fixture()
