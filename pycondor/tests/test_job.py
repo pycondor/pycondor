@@ -143,8 +143,8 @@ def test_repr():
 
     job_non_default = Job('jobname', example_script, queue=2)
     job_repr = repr(job_non_default)
-    expected_repr = ('Job(name=jobname, executable=example_script.py, getenv=True, '
-                     'notification=never, queue=2, submit={}, '
+    expected_repr = ('Job(name=jobname, executable=example_script.py, '
+                     'getenv=True, notification=never, queue=2, submit={}, '
                      'universe=vanilla)'.format(os.getcwd()))
     assert job_repr == expected_repr
 
