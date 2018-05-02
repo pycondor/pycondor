@@ -272,3 +272,19 @@ def test_job_args_warning(caplog, job):
     job.build()
     log_message = 'Consider using a Dagman in the future to help monitor jobs'
     assert log_message in caplog.text
+
+
+def test_init_arg_type_fail():
+    with pytest.raises(TypeError) as excinfo:
+        job_with_arg = Job('jobname', example_script, argument=50)
+        job_with_arg.build()
+    error = 'arg must be a string'
+    assert error == str(excinfo.value)
+
+
+def test_init_retry_type_fail(job):
+    with pytest.raises(TypeError) as excinfo:
+        job_with_retry = Job('jobname', example_script, retry='20')
+        job_with_retry.build()
+    error = 'retry must be an int'
+    assert error == str(excinfo.value)

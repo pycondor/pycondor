@@ -85,6 +85,15 @@ class Job(BaseNode):
     dag : Dagman, optional
         If specified, Job will be added to dag (default is None).
 
+    argument : str
+        Argument with which to initialize the list of arguments for the Job.
+
+    retry : int or None, optional
+        Option to specify the number of times to retry for all arguments in
+        the job. This can be superseded for arguments added via the add_arg()
+        method. Default number of retries is 0. Note: this feature is only
+        available to Jobs that are submitted via a Dagman.
+
     verbose : int, optional
         Level of logging verbosity option are 0-warning, 1-info,
         2-debugging (default is 0).
@@ -116,7 +125,8 @@ class Job(BaseNode):
                  submit=None, request_memory=None, request_disk=None,
                  request_cpus=None, getenv=True, universe='vanilla',
                  initialdir=None, notification='never', requirements=None,
-                 queue=None, extra_lines=None, dag=None, verbose=0):
+                 queue=None, extra_lines=None, dag=None, argument=None,
+                 retry=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
 
@@ -134,7 +144,13 @@ class Job(BaseNode):
         self.requirements = requirements
         self.queue = queue
 
+        if retry and not isinstance(retry, int):
+            raise TypeError('retry must be an int')
+        self.retry = retry
+
         self.args = []
+        if argument is not None:
+            self.add_arg(argument)
 
         self.logger.debug('{} initialized'.format(self.name))
 
@@ -191,7 +207,10 @@ class Job(BaseNode):
         elif retry and not isinstance(retry, int):
             raise TypeError('retry must be an int')
 
-        job_arg = JobArg(arg=arg, name=name, retry=retry)
+        if retry is not None:
+            job_arg = JobArg(arg=arg, name=name, retry=retry)
+        else:
+            job_arg = JobArg(arg=arg, name=name, retry=self.retry)
         self.args.append(job_arg)
         self.logger.debug('Added argument \'{}\' to Job {}'.format(arg,
                                                                    self.name))
