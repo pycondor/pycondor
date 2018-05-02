@@ -143,6 +143,9 @@ class Job(BaseNode):
         self.notification = notification
         self.requirements = requirements
         self.queue = queue
+
+        if retry and not isinstance(retry, int):
+            raise TypeError('retry must be an int')
         self.retry = retry
 
         self.args = []
