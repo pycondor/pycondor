@@ -85,7 +85,7 @@ class Job(BaseNode):
     dag : Dagman, optional
         If specified, Job will be added to dag (default is None).
 
-    arg : str
+    argument : str
         Argument with which to initialize the list of arguments for the Job.
 
     retry : int or None, optional
@@ -125,7 +125,7 @@ class Job(BaseNode):
                  submit=None, request_memory=None, request_disk=None,
                  request_cpus=None, getenv=True, universe='vanilla',
                  initialdir=None, notification='never', requirements=None,
-                 queue=None, extra_lines=None, dag=None, arg=None,
+                 queue=None, extra_lines=None, dag=None, argument=None,
                  retry=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
@@ -146,8 +146,8 @@ class Job(BaseNode):
         self.retry = retry
 
         self.args = []
-        if arg is not None:
-            self.add_arg(arg)
+        if argument is not None:
+            self.add_arg(argument)
 
         self.logger.debug('{} initialized'.format(self.name))
 
