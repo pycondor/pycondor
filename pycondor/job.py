@@ -144,7 +144,7 @@ class Job(BaseNode):
         self.requirements = requirements
         self.queue = queue
 
-        if retry and not isinstance(retry, int):
+        if retry is not None and not isinstance(retry, int):
             raise TypeError('retry must be an int')
         self.retry = retry
 
@@ -202,9 +202,9 @@ class Job(BaseNode):
         # Validate user input
         if not isinstance(arg, str):
             raise TypeError('arg must be a string')
-        elif name and not isinstance(name, str):
+        elif name is not None and not isinstance(name, str):
             raise TypeError('name must be a string')
-        elif retry and not isinstance(retry, int):
+        elif retry is not None and not isinstance(retry, int):
             raise TypeError('retry must be an int')
 
         if retry is not None:
