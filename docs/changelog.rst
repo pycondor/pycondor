@@ -15,6 +15,8 @@ Version 0.4.0.dev0 (TBD)
 
 **Changes**:
 
+- Adds the option to initialize a ``Job`` with an argument. (See `PR #90 <https://github.com/jrbourbeau/pycondor/pull/90>`_)
+- Adds the ``retry`` attribute to ``Job``, which sets the default number of retries for all arguments of the Job if given. (See `PR #90 <https://github.com/jrbourbeau/pycondor/pull/90>`_)
 - Adds informative error message when ``Job.submit_job`` is called on a machine where the ``condor_submit`` command isn't available. (See `PR #83 <https://github.com/jrbourbeau/pycondor/pull/83>`_)
 - Removes deprecated ``maxjobs`` and ``kwargs`` parameters for the ``Job.submit_job``, ``Job.build_submit``, ``Dagman.submit_dag``, and ``Dagman.build_submit`` methods. Also removes the deprecated ``dagman_progress`` command. (See `PR #84 <https://github.com/jrbourbeau/pycondor/pull/84>`_)
 
