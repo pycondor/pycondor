@@ -29,9 +29,9 @@
 
 
 
-**********************
-PyCondor Documentation
-**********************
+********
+PyCondor
+********
 
 .. image:: https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master
     :target: https://travis-ci.org/jrbourbeau/pycondor
@@ -49,8 +49,7 @@ PyCondor Documentation
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/PyCondor/
 
-`PyCondor
-<https://github.com/jrbourbeau/pycondor/>`_ (Python HTCondor) is a tool to help build and submit HTCondor jobs in a straight-forward manner with minimal hassle.
+**PyCondor (Python HTCondor) is a tool to help build and submit HTCondor jobs in a straight-forward manner with minimal hassle.**
 
 With just a few lines of code, you can get PyCondor up and running:
 
