@@ -247,9 +247,6 @@ class Job(BaseNode):
             raise NotImplementedError(message)
 
         # Check that paths/files exist
-        if not os.path.exists(self.executable):
-            raise IOError(
-                'The executable {} does not exist'.format(self.executable))
         for directory in [self.submit, self.log, self.output, self.error]:
             if directory is not None:
                 checkdir(directory + '/', makedirs)
