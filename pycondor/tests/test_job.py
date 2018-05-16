@@ -80,16 +80,6 @@ def test_add_parents_type_fail(job):
         job.add_parents([1, 2, 3, 4])
 
 
-def test_build_executeable_not_found_fail(tmpdir):
-    submit_dir = str(tmpdir.mkdir('submit'))
-    with pytest.raises(IOError) as excinfo:
-        ex = '/path/to/executable'
-        job = Job('jobname', ex, submit=submit_dir)
-        job.build(makedirs=False)
-    error = 'The executable {} does not exist'.format(ex)
-    assert error == str(excinfo.value)
-
-
 def test_queue_written_to_submit_file(tmpdir):
     # Test to check that the queue parameter is properly written
     # to submit file when Job is created. See issue #38.
