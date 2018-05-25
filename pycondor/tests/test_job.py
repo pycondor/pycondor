@@ -278,3 +278,16 @@ def test_init_retry_type_fail(job):
         job_with_retry.build()
     error = 'retry must be an int'
     assert error == str(excinfo.value)
+
+
+def test_job_default_param_future_warning():
+    with pytest.warns(FutureWarning) as record:
+        Job(name='jobname', executable=example_script)
+
+    # check that only one warning was raised
+    assert len(record) == 1
+    # check that the message matches
+    future_msg = ('The default values for the universe, getenv, and '
+                  'notification Job parameters will be changed to None '
+                  'in release version 0.5.0.')
+    assert record[0].message.args[0] == future_msg
