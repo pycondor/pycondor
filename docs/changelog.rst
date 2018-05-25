@@ -15,6 +15,7 @@ Version 0.4.0.dev0 (TBD)
 
 **Changes**:
 
+- Adds ``FutureWarning`` about changing the default values of the ``universe``, ``getenv``, and ``notification`` parameters for ``Job`` objects to None. (See `PR #98 <https://github.com/jrbourbeau/pycondor/pull/98>`_)
 - Removes check that a ``Job`` executable path must exist locally when the ``Job`` is being built.
   (See `PR #96 <https://github.com/jrbourbeau/pycondor/pull/96>`_)
 - Adds the option to initialize a ``Job`` with an argument. (See `PR #90 <https://github.com/jrbourbeau/pycondor/pull/90>`_)
