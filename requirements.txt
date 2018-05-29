@@ -1,1 +1,1 @@
--r requirements/default.txt
+click

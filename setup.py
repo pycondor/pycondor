@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import io
 import os
 import sys
 from shutil import rmtree
@@ -15,17 +16,30 @@ LICENSE = 'MIT'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, 'README.md'), 'r') as f:
-    LONG_DESCRIPTION = f.read()
+def read(path, encoding='utf-8'):
+    with io.open(path, encoding=encoding) as f:
+        content = f.read()
+    return content
+
+def get_install_requirements(path):
+    content = read(path)
+    requirements = [req for req in content.split("\n")
+                    if req != '' and not req.startswith('#')]
+    return requirements
+
+LONG_DESCRIPTION = read(os.path.join(here,'README.md'))
 
 # Want to read in package version number from __version__.py
 about = {}
-with open(os.path.join(here, 'pycondor', '__version__.py'), 'r') as f:
+with io.open(os.path.join(here, 'pycondor', '__version__.py'), encoding='utf-8') as f:
     exec(f.read(), about)
     VERSION = about['__version__']
 
-with open('requirements/default.txt') as f:
-    INSTALL_REQUIRES = [l.strip() for l in f.readlines() if l]
+INSTALL_REQUIRES = get_install_requirements(os.path.join(here, 'requirements.txt'))
+DEV_REQUIRES = get_install_requirements(os.path.join(here, 'requirements_dev.txt'))
+EXTRAS_REQUIRE = {
+    'dev': DEV_REQUIRES,
+}
 
 
 class UploadCommand(Command):
@@ -92,20 +106,13 @@ setup(
     keywords='python condor htcondor high-throughput computing utility tool',
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,
+    extras_require=EXTRAS_REQUIRE,
     setup_requires=['setuptools>=38.6.0'],
     entry_points={
         'console_scripts': ['dagman_progress=pycondor.cli:dagman_progress',
                             'pycondor=pycondor.cli:cli',
                             ],
     },
-    package_data={'': ['LICENSE',
-                       'README.md'],
-                  'examples': ['examples/savelist.py',
-                               'examples/job_example.py',
-                               'examples/job_arguments_example.py',
-                               'examples/dagman_example.py',
-                               'examples/dagman_parentchild_example.py',
-                               'examples/subdag_example.py']},
     cmdclass={
         'upload': UploadCommand,
     },

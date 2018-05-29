@@ -23,10 +23,8 @@ install:
     - conda info -a
     - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
     - source activate test-environment
-
-    - pip install .
-    - pip install -r requirements/docs.txt
-    - pip install -r requirements/test.txt
+    # Install pycondor
+    - pip install .[dev]
 
 script:
     - pytest --cov=pycondor -m "not needs_condor" pycondor
