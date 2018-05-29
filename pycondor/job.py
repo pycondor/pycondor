@@ -2,6 +2,7 @@
 import os
 import subprocess
 from collections import namedtuple
+import warnings
 
 from .utils import checkdir, string_rep, requires_command
 from .basenode import BaseNode
@@ -129,6 +130,12 @@ class Job(BaseNode):
                  retry=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
+
+        # TODO: Remove after 0.5.0 release
+        future_msg = ('The default values for the universe, getenv, and '
+                      'notification Job parameters will be changed to None '
+                      'in release version 0.5.0.')
+        warnings.warn(future_msg, FutureWarning)
 
         self.executable = string_rep(executable)
         self.error = error
