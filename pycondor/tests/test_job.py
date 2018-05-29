@@ -3,9 +3,11 @@ import os
 import sys
 import shutil
 from distutils import spawn
+import warnings
 import pytest
 from pycondor import Job, Dagman
 from pycondor.utils import clear_pycondor_environment_variables
+warnings.simplefilter('always')
 
 clear_pycondor_environment_variables()
 
@@ -281,13 +283,8 @@ def test_init_retry_type_fail(job):
 
 
 def test_job_default_param_future_warning():
-    with pytest.warns(FutureWarning) as record:
-        Job(name='jobname', executable=example_script)
-
-    # check that only one warning was raised
-    assert len(record) == 1
-    # check that the message matches
     future_msg = ('The default values for the universe, getenv, and '
                   'notification Job parameters will be changed to None '
                   'in release version 0.5.0.')
-    assert record[0].message.args[0] == future_msg
+    with pytest.warns(FutureWarning, match=future_msg):
+        Job(name='jobname', executable=example_script)
