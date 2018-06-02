@@ -9,19 +9,22 @@ PyCondor API
 
 The main functionality of PyCondor is contained within the ``Job`` and ``Dagman`` objects.
 
-==========
-Job object
-==========
+.. _job-api:
+
+===
+Job
+===
 
 .. autoclass:: Job
     :members:
     :inherited-members:
     :undoc-members:
 
+.. _dagman-api:
 
-=============
-Dagman object
-=============
+======
+Dagman
+======
 
 .. autoclass:: Dagman
     :members:
