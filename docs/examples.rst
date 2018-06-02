@@ -19,7 +19,7 @@ Job Examples
 
     examples/basic-job
     examples/job-arguments
-
+    examples/environment-variables
 
 Dagman Examples
 ---------------
