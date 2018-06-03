@@ -2,11 +2,23 @@
 
 :github_url: https://github.com/jrbourbeau/pycondor
 
-********
-Tutorial
-********
+**************
+Basic Workflow
+**************
 
-This tutorial walks through the example workflow shown below. This tutorial script can be found in the `PyCondor examples on GitHub <https://github.com/jrbourbeau/pycondor/blob/master/examples/tutorial.py>`_.
+This tutorial walks through the example workflow shown below. To follow along
+with this tutorial, make sure you have PyCondor installed (see the
+:doc:`Installation instruction <installation>`).
+
+Here's an outline of the tutorial:
+
+- :ref:`job-dagman-object`
+- :ref:`file-directories`
+- :ref:`dagman-setup`
+- :ref:`job-setup`
+- :ref:`job-relationships`
+- :ref:`submitting`
+
 
 .. code-block:: python
 
@@ -50,6 +62,8 @@ This tutorial walks through the example workflow shown below. This tutorial scri
     dagman.build_submit()
 
 
+.. _job-dagman-object:
+
 ----------------------
 Job and Dagman objects
 ----------------------
@@ -63,6 +77,8 @@ The basic building blocks in PyCondor are the Job and Dagman objects. A Job obje
 
 Both the Job and Dagman objects can be imported directly from ``pycondor``.
 
+
+.. _file-directories:
 
 -------------------------------
 Job and Dagman file directories
@@ -78,8 +94,12 @@ There are several files associated with both Job and Dagman objects. For each Jo
     log = 'condor/log'
     submit = 'condor/submit'
 
-For this tutorial, we have explicitly specified the directories that we would like the error, output, log, and submit files to be saved to. However, these directories can also be specified by setting the ``PYCONDOR_SUBMIT_DIR``, ``PYCONDOR_ERROR_DIR``, ``PYCONDOR_LOG_DIR``, and ``PYCONDOR_OUTPUT_DIR`` environment variables. For example, setting ``PYCONDOR_SUBMIT_DIR=condor/submit`` is equivalent to the above.
+Above we've specified the paths to where we would like these files to be
+written. These will be passed to Job and Dagman objects we create in the
+following steps.
 
+
+.. _dagman-setup:
 
 -------------------
 Setting up a Dagman
@@ -94,6 +114,8 @@ The Dagman (short for directed acyclic graph manager) object is a collection of 
                     submit=submit)
 
 For a Dagman, only a ``name`` has to be provided (used to construct the submit, log, etc. file names). In this example a ``submit`` parameter, the path to the directory where the Dagman submit file will be saved, is also provided.
+
+.. _job-setup:
 
 ---------------
 Setting up Jobs
@@ -128,6 +150,8 @@ In this example, ``job_date`` will run the shell ``date`` command, and ``job_sle
 In addition to defining an executable for a Job to run, you can also pass arguments to the executable using the Job ``add_arg`` method. Here, we've added three arguments, ``1``, ``2``, and ``3``, to ``job_sleep``. This Job will now run the ``sleep`` command on each of the provided arguments, e.g. ``sleep 1``, ``sleep 2``, and ``sleep 3``.
 
 
+.. _job-relationships:
+
 ------------------------------
 Adding inter-job relationships
 ------------------------------
@@ -145,9 +169,11 @@ In many workflows, there are dependencies between different Jobs. For example, y
 For this tutorial, ``job_sleep.add_child(job_date)`` sets ``job_date`` as a child Job of ``job_sleep``. This means that ``job_date`` will start running only after ``job_sleep`` has finished. Note that ``job_sleep.add_child(job_date)`` is equivalent to ``job_date.add_parent(job_sleep)``.
 
 
------------------------
-Build and submit Dagman
------------------------
+.. _submitting:
+
+---------------------------
+Build and submit the Dagman
+---------------------------
 
 Now that the workflow for this tutorial has been set up, we can build all the appropriate Job and Dagman submit files and submit them to HTCondor for execution.
 
@@ -161,4 +187,4 @@ Now that the workflow for this tutorial has been set up, we can build all the ap
 The Dagman ``build_submit`` method is used to both build the appropriate Job and Dagman submit files and then submit them to HTCondor. Note that the ``build_submit`` method is just shorthand for the ``build`` Dagman method followed by the ``submit`` method.
 
 
-For more examples see the `examples <examples.html>`_ section of the documentation. 
+For more examples see the :doc:`examples` documentation page.

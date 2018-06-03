@@ -5,30 +5,6 @@
 
 :github_url: https://github.com/jrbourbeau/pycondor
 
-.. toctree::
-   :maxdepth: 3
-   :caption: User Guide
-   :hidden:
-
-   installation
-   tutorial
-   api
-   cli
-   examples
-   changelog
-   contributing
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Useful links
-   :hidden:
-
-   PyCondor @ GitHub <https://github.com/jrbourbeau/pycondor>
-   PyCondor @ PyPI <https://pypi.org/project/PyCondor/>
-   Issue tracker <https://github.com/jrbourbeau/pycondor/issues>
-
-
-
 ********
 PyCondor
 ********
@@ -60,41 +36,37 @@ With just a few lines of code, you can get PyCondor up and running:
     job.build_submit()
 
 
-==========
-Motivation
-==========
+.. toctree::
+   :maxdepth: 1
+   :caption: Getting Started
 
-`HTCondor <https://research.cs.wisc.edu/htcondor/>`_ is a an open-source workload management system for high-throughput computing tasks. It's an incredibly useful and versatile tool. However, the process of submitting jobs to HTCondor, especially in complex worflows where there are inter-job dependencies, can quickly become both tedious and intricate. PyCondor helps streamline the job submission process by providing
+   overview
+   installation
+   tutorial
 
-- A simple, user-friendly API
-- Built-in functionality to automate common tasks
-- Familiar terminology
+.. toctree::
+   :maxdepth: 1
+   :caption: User Guide
+
+   api
+   cli
+   examples
+   changelog
+   contributing
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Useful links
+   :hidden:
+
+   PyCondor @ GitHub <https://github.com/jrbourbeau/pycondor>
+   PyCondor @ PyPI <https://pypi.org/project/PyCondor/>
+   Issue tracker <https://github.com/jrbourbeau/pycondor/issues>
 
 
-========
-Overview
-========
+Questions & Bug Reports
+-----------------------
 
-The primary functionality of PyCondor is implemented in the **Job** and **Dagman** objects.
-
-Job objects represent an executable (e.g. a shell command, Python script, etc.) that you would like to run on an HTCondor cluster. While Dagman (short for directed acyclic graph manager) objects are a collection of Jobs to be run. In addition to acting as a collection of Jobs, Dagman objects also allow you to
-
-- Specify dependencies between Jobs (e.g. parent / child relationships)
-- Retry failed Jobs
-- Throttle the number of running Jobs
-- Etc.
-
-These features, in particular specifying inter-job dependencies, allow for the construction of complex workflows.
-
-
-==========
-User Guide
-==========
-
-* :doc:`installation`
-* :doc:`tutorial`
-* :doc:`api`
-* :doc:`cli`
-* :doc:`examples`
-* :doc:`changelog`
-* :doc:`contributing`
+PyCondor is an open-source project and contributions are always welcome from
+anyone. If you have a question, would like to propose a new feature, or submit
+a bug report, feel free to open up an issue on our `issue tracker on GitHub <https://github.com/jrbourbeau/pycondor/issues>`_.
