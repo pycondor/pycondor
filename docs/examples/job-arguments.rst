@@ -43,7 +43,3 @@ case ``/bin/sleep``) on each of the provided arguments. E.g. ``/bin/sleep 1``,
 
 Note that in this example when this single PyCondor Job is submitted, there
 will actually be 3 jobs submitted to HTCondor, one for each of the arguments.
-
-.. code-block:: python
-
-    job.build_submit()

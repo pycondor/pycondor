@@ -16,7 +16,7 @@ submit, log, output, and error files to be written.
     log = ...
     submit = ...
 
-We can create a Dagman by creating an instance of the ``Dagman`` class with a
+We can construct a Dagman by creating an instance of the ``Dagman`` class with a
 name and directory in which to write the corresponding Dagman submit file to.
 
 .. code-block:: python

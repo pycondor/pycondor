@@ -61,9 +61,9 @@ add inter-job relationships using the Job ``add_child`` and
     job_date.add_child(job_sleep)
 
 adds ``job_sleep`` as a child job to ``job_date``. This dependency ensures that
-``job_sleep`` will not be submitted to HTCondor until after ``job_date`` is
-complete. Note that instead of using the ``add_child`` method as above, the same
-dependency can be specified using the ``add_parent`` method. In other words
+``job_sleep`` will not be run until after ``job_date`` has completed. Note
+that instead of using the ``add_child`` method as above, the same dependency
+can be specified using the ``add_parent`` method. In other words
 
 .. code-block:: python
 
@@ -71,7 +71,3 @@ dependency can be specified using the ``add_parent`` method. In other words
 
 
 specifies an equivalent Job dependency.
-
-.. code-block:: python
-
-    dagman.build_submit()
