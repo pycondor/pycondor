@@ -6,8 +6,10 @@
 Overview
 --------
 
-The primary functionality of PyCondor is implemented in the **Job** and
-**Dagman** objects.
+PyCondor is a tool to help build and submit workflows to  HTCondor in a
+straight-forward manner with minimal hassle. The primary functionality of
+PyCondor is implemented in the :ref:`Job <job-api>` and
+:ref:`Dagman <dagman-api>` objects.
 
 Job objects represent an executable (e.g. a shell command, Python script, etc.)
 that you would like to run on an HTCondor cluster. While Dagman (short for
@@ -38,4 +40,4 @@ streamline the job submission process by providing
 - Familiar terminology
 
 For a walkthrough of an example workflow using PyCondor see the
-:doc:`PyCondor tutorial <tutorial>` page.  
+:doc:`tutorial` page.

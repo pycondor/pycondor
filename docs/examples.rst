@@ -6,9 +6,6 @@
 Examples
 --------
 
-Below are several examples that walk through how to construct workflows using
-PyCondor.
-
 Job Examples
 ------------
 

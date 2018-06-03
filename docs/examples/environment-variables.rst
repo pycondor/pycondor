@@ -7,7 +7,7 @@ Specifying file directories using environment variables
 *******************************************************
 
 One way to specify where the submit, log, output, and error files for a Job
-should be written to is by using the ``submit``, ``log``, ``output``, and
+should be written is by using the ``submit``, ``log``, ``output``, and
 ``error`` Job parameters. For example,
 
 .. code-block:: python

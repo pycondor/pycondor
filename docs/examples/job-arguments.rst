@@ -3,10 +3,10 @@
 :github_url: https://github.com/jrbourbeau/pycondor
 
 ********************
-Adding Job Arguments
+Adding Job arguments
 ********************
 
-Set up a Job similar to the :doc:`basic-job`
+First we'll set up a Job similar to the :doc:`basic-job` example.
 
 .. code-block:: python
 

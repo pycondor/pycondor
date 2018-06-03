@@ -16,9 +16,9 @@ would like to run using HTCondor.
     from pycondor import Job
 
 
-Next we define the directories where we would like PyCondor to save the submit
-file, log file, standard output file, and standard error file associated with
-running a Job.
+We will need to define the directories where we would like PyCondor to save
+the submit file, log file, standard output file, and standard error file
+associated with running a Job.
 
 .. code-block:: python
 

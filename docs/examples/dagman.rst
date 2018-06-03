@@ -7,7 +7,7 @@ Creating a Dagman
 *****************
 
 We'll assume we've defined paths to the directories where we'd like our
-submit, log, etc. files to be written to.
+submit, log, output, and error files to be written.
 
 .. code-block:: python
 
@@ -17,7 +17,7 @@ submit, log, etc. files to be written to.
     submit = ...
 
 We can create a Dagman by creating an instance of the ``Dagman`` class with a
-name and directory to write the corresponding Dagman submit file to.
+name and directory in which to write the corresponding Dagman submit file to.
 
 .. code-block:: python
 
@@ -55,7 +55,7 @@ Dagman object to the ``dag`` parameter when instantiating a Job.
     job_sleep.add_arg('3')
 
 
-Alternatively, in addition to using the ``dag`` parameter when instantiating a Job,
+Alternatively, instead of using the ``dag`` parameter when instantiating a Job,
 Dagman objects have an ``add_job`` method that can be used to add Jobs to a
 Dagman. I.e. ``dagman.add_job(job)`` is another way to add a Job to a Dagman.
 See the :ref:`Dagman API documentation <dagman-api>` for more information.
