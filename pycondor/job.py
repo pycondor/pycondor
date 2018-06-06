@@ -1,7 +1,7 @@
 
 import os
 import subprocess
-from collections import namedtuple
+from collections import namedtuple, Iterable
 import warnings
 
 from .utils import checkdir, string_rep, requires_command
@@ -86,8 +86,8 @@ class Job(BaseNode):
     dag : Dagman, optional
         If specified, Job will be added to dag (default is None).
 
-    argument : str
-        Argument with which to initialize the list of arguments for the Job.
+    arguments : str or iterable, optional
+        Arguments with which to initialize the Job list of arguments.
 
     retry : int or None, optional
         Option to specify the number of times to retry for all arguments in
@@ -102,7 +102,7 @@ class Job(BaseNode):
     Attributes
     ----------
     args : list
-        The list of arguments for this Job instance.
+        List of arguments for this Job instance.
 
     parents : list
         Only set when included in a Dagman. List of parent Jobs and Dagmans.
@@ -126,7 +126,7 @@ class Job(BaseNode):
                  submit=None, request_memory=None, request_disk=None,
                  request_cpus=None, getenv=True, universe='vanilla',
                  initialdir=None, notification='never', requirements=None,
-                 queue=None, extra_lines=None, dag=None, argument=None,
+                 queue=None, extra_lines=None, dag=None, arguments=None,
                  retry=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
@@ -156,8 +156,14 @@ class Job(BaseNode):
         self.retry = retry
 
         self.args = []
-        if argument is not None:
-            self.add_arg(argument)
+        if arguments is not None:
+            if isinstance(arguments, str):
+                self.add_arg(arguments)
+            elif isinstance(arguments, Iterable):
+                for arg in arguments:
+                    self.add_arg(arg)
+            else:
+                raise TypeError('arguments must be a string or an iterable')
 
         self.logger.debug('{} initialized'.format(self.name))
 
@@ -229,8 +235,8 @@ class Job(BaseNode):
 
         Parameters
         ----------
-        args : list or tuple
-            Series of arguments to append to the arguments list
+        args : iterable
+            Iterable of arguments to append to the arguments list
 
         Returns
         -------

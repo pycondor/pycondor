@@ -266,15 +266,40 @@ def test_job_args_warning(caplog, job):
     assert log_message in caplog.text
 
 
-def test_init_arg_type_fail():
+def test_init_arguments():
+    arguments = 'my special argument'
+    job = Job(name='jobname',
+              executable=example_script,
+              arguments=arguments)
+    assert len(job.args) == 1
+    assert job.args[0].arg == arguments
+
+
+def test_init_arguments_type_fail():
     with pytest.raises(TypeError) as excinfo:
-        job_with_arg = Job('jobname', example_script, argument=50)
+        job_with_arg = Job(name='jobname',
+                           executable=example_script,
+                           arguments=50)
         job_with_arg.build()
-    error = 'arg must be a string'
+    error = 'arguments must be a string or an iterable'
     assert error == str(excinfo.value)
 
 
-def test_init_retry_type_fail(job):
+def test_init_retry():
+    # Test that global retry applies to add_arg without a retry specified and
+    # not when add_arg has a retry specified
+    job = Job(name='jobname',
+              executable=example_script,
+              retry=7)
+    job.add_arg('arg1')
+    job.add_arg('arg2', retry=3)
+
+    assert len(job.args) == 2
+    assert job.args[0].retry == 7
+    assert job.args[1].retry == 3
+
+
+def test_init_retry_type_fail():
     with pytest.raises(TypeError) as excinfo:
         job_with_retry = Job('jobname', example_script, retry='20')
         job_with_retry.build()
