@@ -87,7 +87,8 @@ class Job(BaseNode):
         If specified, Job will be added to dag (default is None).
 
     arguments : str or iterable, optional
-        Arguments with which to initialize the Job list of arguments.
+        Arguments with which to initialize the Job list of arguments
+        (default is None).
 
     retry : int or None, optional
         Option to specify the number of retries for all Job arguments. This
