@@ -275,6 +275,16 @@ def test_init_arguments():
     assert job.args[0].arg == arguments
 
 
+def test_init_arguments_iterable():
+    arguments = ['arg{}'.format(i) for i in range(10)]
+    job = Job(name='jobname',
+              executable=example_script,
+              arguments=arguments)
+    assert len(job.args) == len(arguments)
+    for jobarg, argument in zip(job.args, arguments):
+        assert jobarg.arg == argument
+
+
 def test_init_arguments_type_fail():
     with pytest.raises(TypeError) as excinfo:
         job_with_arg = Job(name='jobname',

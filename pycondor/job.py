@@ -90,10 +90,10 @@ class Job(BaseNode):
         Arguments with which to initialize the Job list of arguments.
 
     retry : int or None, optional
-        Option to specify the number of times to retry for all arguments in
-        the job. This can be superseded for arguments added via the add_arg()
-        method. Default number of retries is 0. Note: this feature is only
-        available to Jobs that are submitted via a Dagman.
+        Option to specify the number of retries for all Job arguments. This
+        can be superseded for arguments added via the add_arg() method.
+        Note: this feature is only available to Jobs that are submitted via a
+        Dagman (default is None; no retries).
 
     verbose : int, optional
         Level of logging verbosity option are 0-warning, 1-info,
