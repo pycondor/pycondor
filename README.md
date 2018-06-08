@@ -23,6 +23,12 @@ PyCondor can be installed using `pip`
 pip install pycondor
 ```
 
+or `conda`
+
+```
+conda install -c conda-forge pycondor
+```
+
 For more information see the [installation instructions](https://jrbourbeau.github.io/pycondor/installation.html) in the [documentation](https://jrbourbeau.github.io/pycondor).
 
 
