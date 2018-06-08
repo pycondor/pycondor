@@ -27,7 +27,7 @@ install:
     - pip install .[dev]
 
 script:
-    - pytest --cov=pycondor -m "not needs_condor" pycondor
+    - pytest --cov=pycondor pycondor
     - flake8 pycondor
     - bash ci/build_docs.sh
 

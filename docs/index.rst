@@ -57,7 +57,6 @@ With just a few lines of code, you can get PyCondor up and running:
 .. toctree::
    :maxdepth: 1
    :caption: Useful links
-   :hidden:
 
    PyCondor @ GitHub <https://github.com/jrbourbeau/pycondor>
    PyCondor @ PyPI <https://pypi.org/project/PyCondor/>
