@@ -6,15 +6,30 @@
 Installation
 ************
 
----------------
-Release Version
----------------
+----
+PyPI
+----
 
-The latest release version of PyCondor can be installed with ``pip``:
+The latest release of PyCondor can be installed with ``pip``:
 
 .. code-block:: bash
 
     pip install pycondor
+
+This installs PyCondor, along with all the necessary dependencies.
+
+
+-----
+Conda
+-----
+
+PyCondor is available on `conda-forge <https://anaconda.org/conda-forge/pycondor>`_ and can be installed with ``conda``:
+
+.. code-block:: bash
+
+    conda install -c conda-forge pycondor
+
+This installs PyCondor, along with all the necessary dependencies.
 
 
 -------------------
