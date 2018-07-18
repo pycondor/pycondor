@@ -357,7 +357,7 @@ class Dagman(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        submit_dag_proc = subprocess.Popen([command],
+        submit_dag_proc = subprocess.Popen(command,
                                            stdout=subprocess.PIPE,
                                            shell=True)
         # Check that there are no illegal node names for newer condor versions
