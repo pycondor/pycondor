@@ -439,7 +439,7 @@ class Job(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         out, err = proc.communicate()
         print(out)
 
