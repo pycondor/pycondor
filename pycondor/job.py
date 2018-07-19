@@ -3,6 +3,7 @@ import os
 import subprocess
 from collections import namedtuple, Iterable
 import warnings
+import shlex
 
 from .utils import checkdir, string_rep, requires_command
 from .basenode import BaseNode
@@ -439,7 +440,10 @@ class Job(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(shlex.split(command),
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                shell=True)
         out, err = proc.communicate()
         print(out)
 

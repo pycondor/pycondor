@@ -1,6 +1,7 @@
 
 import os
 import subprocess
+import shlex
 
 from .utils import checkdir, get_condor_version, requires_command
 from .basenode import BaseNode
@@ -357,8 +358,9 @@ class Dagman(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        submit_dag_proc = subprocess.Popen(command,
+        submit_dag_proc = subprocess.Popen(shlex.split(command),
                                            stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE,
                                            shell=True)
         # Check that there are no illegal node names for newer condor versions
         condor_version = get_condor_version()
