@@ -360,8 +360,7 @@ class Dagman(BaseNode):
         command += ' {}'.format(self.submit_file)
         submit_dag_proc = subprocess.Popen(shlex.split(command),
                                            stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE,
-                                           shell=True)
+                                           stderr=subprocess.PIPE)
         # Check that there are no illegal node names for newer condor versions
         condor_version = get_condor_version()
         if condor_version >= (8, 7, 2) and self._has_bad_node_names:

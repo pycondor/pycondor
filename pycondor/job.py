@@ -442,8 +442,7 @@ class Job(BaseNode):
         command += ' {}'.format(self.submit_file)
         proc = subprocess.Popen(shlex.split(command),
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                shell=True)
+                                stderr=subprocess.PIPE)
         out, err = proc.communicate()
         print(out)
 
