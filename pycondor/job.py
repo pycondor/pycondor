@@ -4,7 +4,7 @@ import subprocess
 from collections import namedtuple, Iterable
 import warnings
 
-from .utils import checkdir, string_rep, requires_command
+from .utils import checkdir, string_rep, requires_command, split_command_string
 from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
@@ -435,15 +435,15 @@ class Job(BaseNode):
                              'Interjob relationships requires Dagman.')
 
         # Construct and execute condor_submit command
-        command = ['condor_submit']
+        command = 'condor_submit'
         if submit_options is not None:
-          for option in submit_options.split(' '):
-            command.append(option)
-        command.append(self.submit_file)
+          command += ' {}'.format(submit_options)
+        command += ' {}'.format(self.submit_file)
 
-        proc = subprocess.Popen(command,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+          split_command_string(command),
+          stdout=subprocess.PIPE,
+          stderr=subprocess.PIPE)
         out, err = proc.communicate()
         print(out)
 

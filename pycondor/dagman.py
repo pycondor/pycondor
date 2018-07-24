@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-from .utils import checkdir, get_condor_version, requires_command
+from .utils import checkdir, get_condor_version, requires_command, split_command_string
 from .basenode import BaseNode
 from .job import Job
 
@@ -353,15 +353,16 @@ class Dagman(BaseNode):
             Returns self.
         """
         # Construct condor_submit_dag command
-        command = ['condor_submit_dag']
+        command = 'condor_submit_dag'
         if submit_options is not None:
-          for option in submit_options.split(' '):
-            command.append(option)
-        command.append(self.submit_file)
+          command += ' {}'.format(submit_options)
+        command += ' {}'.format(self.submit_file)
 
-        submit_dag_proc = subprocess.Popen(command,
-                                           stdout=subprocess.PIPE,
-                                           stderr=subprocess.PIPE)
+        submit_dag_proc = subprocess.Popen(
+          split_command_string(command),
+          stdout=subprocess.PIPE,
+          stderr=subprocess.PIPE)
+
         # Check that there are no illegal node names for newer condor versions
         condor_version = get_condor_version()
         if condor_version >= (8, 7, 2) and self._has_bad_node_names:
