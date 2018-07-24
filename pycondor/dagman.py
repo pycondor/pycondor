@@ -1,7 +1,6 @@
 
 import os
 import subprocess
-import shlex
 
 from .utils import checkdir, get_condor_version, requires_command, split_command_string
 from .basenode import BaseNode
