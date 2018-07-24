@@ -3,6 +3,7 @@ import os
 import subprocess
 from collections import namedtuple, Iterable
 import warnings
+import shlex
 
 from .utils import checkdir, string_rep, requires_command, split_command_string
 from .basenode import BaseNode
