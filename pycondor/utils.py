@@ -157,6 +157,7 @@ def get_condor_version():
 
     return condor_version
 
+
 def split_command_string(string):
     """Uses shlex.split() to split a string into a list according
     to the operating system

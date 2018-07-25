@@ -4,7 +4,7 @@ import subprocess
 from collections import namedtuple, Iterable
 import warnings
 
-from .utils import (checkdir, string_rep, requires_command, 
+from .utils import (checkdir, string_rep, requires_command,
                     split_command_string)
 from .basenode import BaseNode
 
