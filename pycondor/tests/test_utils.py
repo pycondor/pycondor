@@ -77,15 +77,14 @@ def test_get_condor_version_raises():
 
 
 def test_split_command_string():
-  filename = os.path.join('condor', 'submit', 'job.submit')
-  command = "condor_submit -maxjobs 1000 -interactive {}".format(filename)
-  expected = [
-    'condor_submit',
-    '-maxjobs',
-    '1000',
-    '-interactive',
-    filename]
+    filename = os.path.join('condor', 'submit', 'job.submit')
+    command = "condor_submit -maxjobs 1000 -interactive {}".format(filename)
+    expected = [
+      'condor_submit',
+      '-maxjobs',
+      '1000',
+      '-interactive',
+      filename]
 
-  result = split_command_string(command)
-  assert result == expected
-  
+    result = split_command_string(command)
+    assert result == expected
