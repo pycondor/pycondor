@@ -3,7 +3,8 @@ import os
 import pytest
 import pycondor
 from pycondor.utils import (clear_pycondor_environment_variables, checkdir,
-                            assert_command_exists, get_condor_version)
+                            assert_command_exists, get_condor_version,
+                            split_command_string)
 
 
 def test_string_rep_None_fail():
@@ -73,3 +74,17 @@ def test_get_condor_version_raises():
         get_condor_version()
     error = 'Could not find HTCondor version.'
     assert error == str(excinfo.value)
+
+
+def test_split_command_string():
+    filename = os.path.join('condor', 'submit', 'job.submit')
+    command = "condor_submit -maxjobs 1000 -interactive {}".format(filename)
+    expected = [
+      'condor_submit',
+      '-maxjobs',
+      '1000',
+      '-interactive',
+      filename]
+
+    result = split_command_string(command)
+    assert result == expected

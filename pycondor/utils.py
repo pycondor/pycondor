@@ -5,6 +5,8 @@ import sys
 import subprocess
 import logging
 import shutil
+import shlex
+import platform
 from functools import wraps
 # Note that spawn isn't in namespace if import distutils is used
 # Must use from distutils import spawn
@@ -154,3 +156,11 @@ def get_condor_version():
     condor_version = tuple(map(int, condor_version_str.split('.')))
 
     return condor_version
+
+
+def split_command_string(string):
+    """Uses shlex.split() to split a string into a list according
+    to the operating system
+    """
+    is_posix = platform.system() != 'Windows'
+    return shlex.split(string, posix=is_posix)

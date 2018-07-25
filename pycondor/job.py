@@ -3,9 +3,9 @@ import os
 import subprocess
 from collections import namedtuple, Iterable
 import warnings
-import shlex
 
-from .utils import checkdir, string_rep, requires_command
+from .utils import (checkdir, string_rep, requires_command,
+                    split_command_string)
 from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
@@ -440,9 +440,11 @@ class Job(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        proc = subprocess.Popen(shlex.split(command),
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+
+        proc = subprocess.Popen(
+            split_command_string(command),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
         out, err = proc.communicate()
         print(out)
 
