@@ -239,10 +239,24 @@ class Dagman(BaseNode):
         #     raise ValueError('Job {} must be built before adding it '
         #                      'to a Dagman'.format(job.name))
 
+        def _add_common_args(n_name):
+            for attr in VAR_ATTR + ['queue']:
+                job_attr = getattr(job, attr, None)
+                if job_attr is not None:
+                    if attr in ['output', 'error', 'log']:
+                        file_path = os.path.join(job_attr,
+                                                 '{}.{}'.format(n_name, attr))
+                        var_line = 'VARS {} {}="{}"'.format(n_name, attr.upper(), file_path)
+                    else:
+                        var_line = 'VARS {} {}="{}"'.format(n_name, attr.upper(), job_attr)
+                    job_arg_lines.append(var_line)
+
         job_arg_lines = []
         if len(job.args) == 0:
             job_line = 'JOB {} {}'.format(job.submit_name, self.job_submit_file)
             job_arg_lines.append(job_line)
+
+            _add_common_args(job.submit_name)
         else:
             for node_name, job_arg in _iter_job_args(job):
                 # Check that '.' or '+' are not in node_name
@@ -266,16 +280,7 @@ class Dagman(BaseNode):
                                                                    job_name)
                     job_arg_lines.append(job_name_line)
 
-                for attr in VAR_ATTR + ['queue']:
-                    job_attr = getattr(job, attr, None)
-                    if job_attr is not None:
-                        if attr in ['output', 'error', 'log']:
-                            file_path = os.path.join(job_attr,
-                                                     '{}.{}'.format(node_name, attr))
-                            var_line = 'VARS {} {}="{}"'.format(node_name, attr.upper(), file_path)
-                        else:
-                            var_line = 'VARS {} {}="{}"'.format(node_name, attr.upper(), job_attr)
-                        job_arg_lines.append(var_line)
+                _add_common_args(node_name)
 
                 # Add retry line for Job
                 if retry is not None:
@@ -313,7 +318,6 @@ class Dagman(BaseNode):
 
         name = self._get_fancyname() if fancyname else self.name
         submit_file = os.path.join(self.submit, '{}.submit'.format(name))
-        job_submit_file = os.path.join(self.submit, '{}_job.submit'.format(name))
         self.submit_file = submit_file
         self.submit_name = name
         checkdir(self.submit_file, makedirs)
@@ -322,7 +326,7 @@ class Dagman(BaseNode):
         self.job_submit_file = job_submit_file
         checkdir(self.job_submit_file, makedirs)
 
-        # Write lines to dag submit file
+        # Write lines to job submit file
         with open(job_submit_file, 'w') as file:
             job_submit_lines = ['{} = $({})'.format(attr, attr.upper()) for attr in VAR_ATTR]
             job_submit_lines.append('arguments = $(ARGS)')
