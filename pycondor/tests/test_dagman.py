@@ -194,7 +194,7 @@ def test_repr():
 def test_get_job_arg_lines_non_job_raises():
     not_job = 'not a job'
     with pytest.raises(TypeError) as excinfo:
-        Dagman('dag_name')._get_job_arg_lines(not_job, fancyname=True)
+        Dagman('dag_name')._get_job_arg_lines(not_job)
     error = 'Expecting a Job object, got {}'.format(type(not_job))
     assert error == str(excinfo.value)
 
@@ -202,7 +202,7 @@ def test_get_job_arg_lines_non_job_raises():
 def test_get_job_arg_lines_not_built_raises():
     job = Job('testjob', example_script)
     with pytest.raises(ValueError) as excinfo:
-        Dagman('dag_name')._get_job_arg_lines(job, fancyname=True)
+        Dagman('dag_name')._get_job_arg_lines(job)
     error = ('Job {} must be built before adding it to a '
              'Dagman'.format(job.name))
     assert error == str(excinfo.value)
