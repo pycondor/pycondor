@@ -109,9 +109,7 @@ setup(
     extras_require=EXTRAS_REQUIRE,
     setup_requires=['setuptools>=38.6.0'],
     entry_points={
-        'console_scripts': ['dagman_progress=pycondor.cli:dagman_progress',
-                            'pycondor=pycondor.cli:cli',
-                            ],
+        'console_scripts': ['pycondor=pycondor.cli:cli'],
     },
     cmdclass={
         'upload': UploadCommand,
