@@ -15,7 +15,10 @@ Version 0.5.0 (TBD)
 
 **Changes**:
 
--
+- Updates default values of the ``universe``, ``getenv``, and
+  ``notification`` parameters for ``Job`` objects to ``None``. Now, unless
+  explicitly given, the system defaults will be used.
+  (See `PR #115 <https://github.com/jrbourbeau/pycondor/pull/115>`_)
 
 **Bug Fixes**:
 

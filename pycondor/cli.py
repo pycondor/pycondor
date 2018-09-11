@@ -258,13 +258,14 @@ def monitor(time_, length, prog_char, file):
 )
 @click.option(
     '--universe',
-    default='vanilla',
+    default=None,
     show_default=True,
     help='Universe execution environment to be specified in submit file',
 )
 @click.option(
-    '--getenv/--no-getenv',
-    default=True,
+    '--getenv',
+    default=None,
+    type=bool,
     show_default=True,
     help='Set getenv to True or False',
 )
