@@ -180,7 +180,8 @@ def monitor(time_, length, prog_char, file):
         sys.stdout.flush()
         time.sleep(time_)
 
-    datetime_start = line_to_datetime(open(dag_out_file, 'r').readline())
+    with open(dag_out_file, 'r') as f:
+        datetime_start = line_to_datetime(f.readline())
     current_status = Status(*[0]*len(_states))
     try:
         for status, datetime_current in status_generator(dag_out_file):
