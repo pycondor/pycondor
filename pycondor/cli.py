@@ -265,8 +265,9 @@ def monitor(time_, length, prog_char, file):
 @click.option(
     '--getenv',
     default=None,
+    type=bool,
     show_default=True,
-    help='Set getenv to True',
+    help='Set getenv to True or False',
 )
 @click.option(
     '--dryrun',
