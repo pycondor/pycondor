@@ -30,10 +30,14 @@ def test_setup_logger_noname_fail():
 
 
 def test_clear_pycondor_environment_variables():
+    # Set pycondor-related environment variables
+    for i in ['submit', 'output', 'error', 'log']:
+        os.environ['PYCONDOR_{}_DIR'.format(i.upper())] = 'something'
+
     # Test that environment variables are cleared
     clear_pycondor_environment_variables()
     for i in ['submit', 'output', 'error', 'log']:
-        assert os.environ['PYCONDOR_{}_DIR'.format(i.upper())] == ''
+        assert os.getenv('PYCONDOR_{}_DIR'.format(i.upper())) is None
 
 
 def test_checkdir(tmpdir):

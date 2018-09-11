@@ -104,7 +104,9 @@ def string_rep(obj, quotes=False):
 def clear_pycondor_environment_variables():
     # Unset any pycondor directory environment variables
     for i in ['submit', 'output', 'error', 'log']:
-        os.environ['PYCONDOR_{}_DIR'.format(i.upper())] = ''
+        env_var = 'PYCONDOR_{}_DIR'.format(i.upper())
+        if os.getenv(env_var):
+            del os.environ[env_var]
 
 
 def assert_command_exists(cmd):

@@ -35,6 +35,14 @@ def monkeypatch_condor_submit(monkeypatch):
                             lambda x: 'submit_exists.exe')
 
 
+def test_basic_job_submit_file(job):
+    job.build()
+    with open(job.submit_file, 'r') as f:
+        lines = f.readlines()
+    # Expect two lines, an executeable line and a queue line
+    assert len(lines) == 2
+
+
 def test_add_arg_type_fail(job):
     with pytest.raises(TypeError) as excinfo:
         job.add_arg(50)
