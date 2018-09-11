@@ -59,20 +59,20 @@ class Job(BaseNode):
 
         .. versionadded:: 0.1.0
 
-    getenv : bool, optional
+    getenv : bool or None, optional
         Whether or not to use the current environment settings when running
-        the job (default is True).
+        the job (default is None).
 
-    universe : str, optional
+    universe : str or None, optional
         Universe execution environment to be specified in submit file
-        (default is 'vanilla').
+        (default is None).
 
     initialdir : str or None, optional
         Initial directory for relative paths (defaults to the directory was
         the job was submitted from).
 
-    notification : str, optional
-        E-mail notification preference (default is 'never').
+    notification : str or None, optional
+        E-mail notification preference (default is None).
 
     requirements : str or None, optional
         Additional requirements to be included in ClassAd.
