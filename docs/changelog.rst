@@ -24,6 +24,8 @@ Version 0.5.0 (TBD)
 
 - Removes outdated reference to ``dagman_progress`` in ``entry_points`` of
   ``setup.py``. (See `PR #113 <https://github.com/jrbourbeau/pycondor/pull/113>`_)
+- Resolves a ``ResourceWarning`` and ``DeprecationWarning`` raised while
+  running the tests. (See `PR #116 <https://github.com/jrbourbeau/pycondor/pull/116>`_)
 
 
 Version 0.4.0 (2018-06-07)
