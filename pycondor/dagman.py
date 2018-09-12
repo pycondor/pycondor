@@ -46,7 +46,7 @@ def _iter_job_args(job):
                          'to a Dagman'.format(job.name))
 
     if len(job.args) == 0:
-        raise StopIteration
+        return
     else:
         for idx, job_arg in enumerate(job):
             arg, name, retry = job_arg
