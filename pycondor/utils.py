@@ -135,6 +135,17 @@ def requires_command(*commands):
     return real_decorator
 
 
+def decode_string(s):
+    """Decode bytes array
+    """
+    try:
+        s = s.decode('utf-8')
+    except AttributeError:
+        pass
+
+    return s
+
+
 def parse_condor_version(info):
     """ Extract condor version number tuple from ``condor_version`` output string
 
@@ -148,12 +159,7 @@ def parse_condor_version(info):
     condor_version : tuple
         Version number tuple (e.g. ``(8, 7, 4)``)
     """
-    # Decode bytes string
-    try:
-        info = info.decode('utf-8')
-    except AttributeError:
-        pass
-
+    info = decode_string(info)
     condor_version_str = re.search(r'CondorVersion: \s*([\d.]+)', info).group(1)
     condor_version = tuple(map(int, condor_version_str.split('.')))
 
