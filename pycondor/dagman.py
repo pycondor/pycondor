@@ -2,8 +2,8 @@
 import os
 import subprocess
 
-from .utils import (checkdir, get_condor_version,
-                    requires_command, split_command_string)
+from .utils import (checkdir, get_condor_version, requires_command,
+                    split_command_string, decode_string)
 from .basenode import BaseNode
 from .job import Job
 
@@ -377,7 +377,7 @@ class Dagman(BaseNode):
 
         # Execute condor_submit_dag command
         out, err = submit_dag_proc.communicate()
-        print(out)
+        print(decode_string(out))
 
         return self
 

@@ -4,7 +4,7 @@ import subprocess
 from collections import namedtuple, Iterable
 
 from .utils import (checkdir, string_rep, requires_command,
-                    split_command_string)
+                    split_command_string, decode_string)
 from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
@@ -439,7 +439,7 @@ class Job(BaseNode):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         out, err = proc.communicate()
-        print(out)
+        print(decode_string(out))
 
         return self
 
