@@ -27,7 +27,7 @@ Version 0.5.0 (TBD)
 - Resolves a ``ResourceWarning`` and ``DeprecationWarning`` raised while
   running the tests. (See `PR #116 <https://github.com/jrbourbeau/pycondor/pull/116>`_)
 - Properly handles bytes arrays in ``get_condor_version``. (See `PR #119 <https://github.com/jrbourbeau/pycondor/pull/119>`_)
-
+- Fixed a string formatting bug in ``Dagman.submit_dag`` and ``Job.submit_job``. (See `PR #120 <https://github.com/jrbourbeau/pycondor/pull/120>`_)
 
 Version 0.4.0 (2018-06-07)
 --------------------------
