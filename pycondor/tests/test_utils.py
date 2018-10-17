@@ -4,7 +4,7 @@ import pytest
 import pycondor
 from pycondor.utils import (clear_pycondor_environment_variables, checkdir,
                             assert_command_exists, get_condor_version,
-                            split_command_string)
+                            parse_condor_version, split_command_string)
 
 
 def test_string_rep_None_fail():
@@ -78,6 +78,13 @@ def test_get_condor_version_raises():
         get_condor_version()
     error = 'Could not find HTCondor version.'
     assert error == str(excinfo.value)
+
+
+@pytest.mark.parametrize('info', ['$CondorVersion: 8.7.4 Oct 30 2017 BuildID: $',
+                                  b'$CondorVersion: 8.7.4 Oct 30 2017 BuildID: $'])
+def test_parse_condor_version(info):
+    version = parse_condor_version(info)
+    assert version == (8, 7, 4)
 
 
 def test_split_command_string():

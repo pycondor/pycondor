@@ -89,10 +89,8 @@ def test_monitor_file_raises():
     runner = CliRunner()
     result = runner.invoke(monitor, [non_exist_file])
     assert result.exit_code == 2
-    expected_output = ('Usage: monitor [OPTIONS] FILE\n\nError: Invalid '
-                       'value for "file": Path "{}" does not '
-                       'exist.\n'.format(non_exist_file))
-    assert result.output.replace('\r', '') == expected_output
+    excerpt = 'Path "{}" does not exist'.format(non_exist_file)
+    assert excerpt in result.output.replace('\r', '')
 
 
 def test_submit_file_raises():
@@ -101,10 +99,8 @@ def test_submit_file_raises():
     runner = CliRunner()
     result = runner.invoke(submit, [non_exist_executable])
     assert result.exit_code == 2
-    expected_output = ('Usage: submit [OPTIONS] EXECUTABLE [ARGS]'
-                       '...\n\nError: Invalid value for "executable": Path '
-                       '"{}" does not exist.\n'.format(non_exist_executable))
-    assert result.output.replace('\r', '') == expected_output
+    excerpt = 'Path "{}" does not exist'.format(non_exist_executable)
+    assert excerpt in result.output.replace('\r', '')
 
 
 def test_submit_equality(tmpdir):
