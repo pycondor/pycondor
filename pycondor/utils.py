@@ -135,27 +135,49 @@ def requires_command(*commands):
     return real_decorator
 
 
+def parse_condor_version(info):
+    """ Extract condor version number tuple from ``condor_version`` output string
+
+    Parameters
+    ----------
+    info : str
+        Output from ``condor_version`` command or ``htcondor.version()``
+
+    Returns
+    -------
+    condor_version : tuple
+        Version number tuple (e.g. ``(8, 7, 4)``)
+    """
+    # Decode bytes string
+    try:
+        info = info.decode('utf-8')
+    except AttributeError:
+        pass
+
+    condor_version_str = re.search(r'CondorVersion: \s*([\d.]+)', info).group(1)
+    condor_version = tuple(map(int, condor_version_str.split('.')))
+
+    return condor_version
+
+
 def get_condor_version():
     """Should only be called on a submit machine
     """
-    condor_info_str = None
+    info = None
     try:
         import htcondor
-        condor_info_str = htcondor.version()
+        info = htcondor.version()
     except ImportError:
         assert_command_exists('condor_version')
         proc = subprocess.Popen(['condor_version'], stdout=subprocess.PIPE,
                                 shell=True)
         out, err = proc.communicate()
-        condor_info_str = out
+        info = out
     finally:
-        if condor_info_str is None:
+        if info is None:
             raise OSError('Could not find HTCondor version.')
 
-    condor_version_str = re.search(r'CondorVersion: \s*([\d.]+)',
-                                   condor_info_str).group(1)
-
-    condor_version = tuple(map(int, condor_version_str.split('.')))
+    condor_version = parse_condor_version(info)
 
     return condor_version
 
