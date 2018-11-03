@@ -38,6 +38,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.githubpages',
               'numpydoc',
+              'sphinx_click.ext',
               ]
 
 # this is needed for some reason...
