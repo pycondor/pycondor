@@ -29,6 +29,11 @@ Version 0.5.0 (TBD)
 - Properly handles bytes arrays in ``get_condor_version``. (See `PR #119 <https://github.com/jrbourbeau/pycondor/pull/119>`_)
 - Fixed a string formatting bug in ``Dagman.submit_dag`` and ``Job.submit_job``. (See `PR #120 <https://github.com/jrbourbeau/pycondor/pull/120>`_)
 
+**Documentation**:
+
+- Added API documentation for command line interface. (See `PR #121 <https://github.com/jrbourbeau/pycondor/pull/121>`_)
+
+
 Version 0.4.0 (2018-06-07)
 --------------------------
 
