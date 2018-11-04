@@ -3,6 +3,7 @@ import pytest
 graphviz = pytest.importorskip('graphviz')  # noqa: E402
 
 import os
+import re
 from pycondor.job import Job
 from pycondor.dagman import Dagman
 from pycondor.visualize import visualize, extract_format, dag_to_graphviz
@@ -61,3 +62,25 @@ def test_extract_format_invalid_format(dagman):
 def test_dag_to_graphviz(dagman):
     g = dag_to_graphviz(dagman)
     assert isinstance(g, graphviz.Digraph)
+
+
+def test_graph_shapes(dagman):
+    g = dag_to_graphviz(dagman)
+
+    shapes = {}
+    label_shape_re = re.compile(r'.*\[label=(.*?) shape=(.*?)\]')
+    for line in g.body:
+        match = label_shape_re.match(line)
+        if match:
+            name = match.group(1)
+            shape = match.group(2)
+            shapes[name] = shape
+        else:
+            continue
+
+    # Check node names
+    assert set(node.name for node in dagman) == set(shapes.keys())
+    # Check node shapes
+    for node in dagman:
+        expected_shape = 'circle' if isinstance(node, Job) else 'square'
+        assert shapes[node.name] == expected_shape
