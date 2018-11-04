@@ -11,7 +11,8 @@ Version 0.5.0 (TBD)
 
 **New Features**:
 
--
+- Adds ``visualize`` function and ``Dagman.visualize`` method for graph
+  visualization. (See `PR #122 <https://github.com/jrbourbeau/pycondor/pull/122>`_)
 
 **Changes**:
 
