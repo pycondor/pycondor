@@ -84,3 +84,9 @@ def test_graph_shapes(dagman):
     for node in dagman:
         expected_shape = 'circle' if isinstance(node, Job) else 'square'
         assert shapes[node.name] == expected_shape
+
+
+def test_visualize_method(dagman):
+    graph_vis_func = visualize(dagman).body
+    graph_vis_method = dagman.visualize().body
+    assert graph_vis_func == graph_vis_method
