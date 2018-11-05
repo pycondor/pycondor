@@ -18,6 +18,7 @@ install:
   - conda info -a
   - conda create -q --name test-environment python=%PYTHON_VERSION%
   - activate test-environment
+  - conda install -c conda-forge python-graphviz
   - pip install .[dev]
 
 test_script:

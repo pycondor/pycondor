@@ -6,6 +6,7 @@ from .utils import (checkdir, get_condor_version, requires_command,
                     split_command_string, decode_string)
 from .basenode import BaseNode
 from .job import Job
+from .visualize import visualize as _visualize
 
 
 def _get_subdag_string(dagman):
@@ -412,3 +413,15 @@ class Dagman(BaseNode):
         self.submit_dag(submit_options=submit_options)
 
         return self
+
+    def visualize(self, filename=None):
+        """Visualize Dagman graph
+
+        Parameters
+        ----------
+        filename : str or None, optional
+            File to save graph diagram to. If ``None`` then no file is saved.
+            Valid file extensions are 'png', 'pdf', 'dot', 'svg', 'jpeg', 'jpg'.
+        """
+        g = _visualize(self, filename=filename)
+        return g
