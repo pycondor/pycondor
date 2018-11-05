@@ -6,8 +6,8 @@
 Release Notes
 *************
 
-Version 0.5.0 (TBD)
--------------------
+Version 0.5.0 (2018-11-05)
+--------------------------
 
 **New Features**:
 
@@ -23,6 +23,10 @@ Version 0.5.0 (TBD)
 
 **Bug Fixes**:
 
+- Switch to using ``os.sep`` instead of ``'/'`` as a path separator.
+  (See `PR #107 <https://github.com/jrbourbeau/pycondor/pull/107>`_)
+- Fixed Windows-compability bug in ``Job.submit_job`` and ``Dagman.submit_dag``.
+  (See `PR #110 <https://github.com/jrbourbeau/pycondor/pull/110>`_)
 - Removes outdated reference to ``dagman_progress`` in ``entry_points`` of
   ``setup.py``. (See `PR #113 <https://github.com/jrbourbeau/pycondor/pull/113>`_)
 - Resolves a ``ResourceWarning`` and ``DeprecationWarning`` raised while
@@ -32,7 +36,10 @@ Version 0.5.0 (TBD)
 
 **Documentation**:
 
-- Added API documentation for command line interface. (See `PR #121 <https://github.com/jrbourbeau/pycondor/pull/121>`_)
+- Added conda installation instructions.
+  (See `PR #104 <https://github.com/jrbourbeau/pycondor/pull/104>`_)
+- Added API documentation for command line interface.
+  (See `PR #121 <https://github.com/jrbourbeau/pycondor/pull/121>`_)
 
 
 Version 0.4.0 (2018-06-07)
