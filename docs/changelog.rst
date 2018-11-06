@@ -6,6 +6,26 @@
 Release Notes
 *************
 
+Version 0.6.0 (TBD)
+-------------------
+
+**New Features**:
+
+-
+
+**Changes**:
+
+-
+
+**Bug Fixes**:
+
+-
+
+**Documentation**:
+
+-
+
+
 Version 0.5.0 (2018-11-05)
 --------------------------
 
