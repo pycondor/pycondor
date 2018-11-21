@@ -315,3 +315,37 @@ def test_format_job_name_variable(job, arg_name, arg_num, expected):
     job.build(fancyname=False)  # Need submit_name attribute
     job_name = format_job_name_variable(job, arg_name, arg_num)
     assert job_name == expected
+
+
+def test_example_dag_node_names(job, dagman):
+    job.add_arg('--myarg', name='custom-name')
+    job.add_arg('--myotherarg')
+    dagman.add_job(job)
+    dagman.build(fancyname=False)
+
+    job_submit_file = job.submit_file
+
+    expected = """
+    JOB examplejob_arg_0 {job_submit_file}
+    VARS examplejob_arg_0 ARGS="--myarg"
+    VARS examplejob_arg_0 job_name="examplejob_custom-name"
+    JOB examplejob_arg_1 {job_submit_file}
+    VARS examplejob_arg_1 ARGS="--myotherarg"
+    VARS examplejob_arg_1 job_name="examplejob_arg_1"
+
+    #Inter-job dependencies
+    """.format(job_submit_file=job_submit_file)
+    expected = expected.splitlines()
+
+    with open(dagman.submit_file, 'r') as f:
+        result = f.readlines()
+
+    # Remove leading / trailing whitespace
+    result = [line.strip() for line in result]
+    expected = [line.strip() for line in expected]
+
+    # Remove empty lines
+    expected = [line for line in expected if line != '']
+    result = [line for line in result if line != '']
+
+    assert result == expected
