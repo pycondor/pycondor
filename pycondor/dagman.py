@@ -265,7 +265,7 @@ class Dagman(BaseNode):
         else:
             submit_file = self.job_submit_file
         if len(job.args) == 0:
-            job_line = 'JOB {} {}'.format(job.submit_name,submit_file)
+            job_line = 'JOB {} {}'.format(job.submit_name, submit_file)
             job_arg_lines.append(job_line)
 
             _add_common_args(job.submit_name)
@@ -342,7 +342,8 @@ class Dagman(BaseNode):
             if not os.path.exists(job_submit_file):
                 # Write lines to the single job submit file
                 with open(job_submit_file, 'w') as file:
-                    job_submit_lines = ['{} = $({})'.format(attr, attr.upper()) for attr in VAR_ATTR]
+                    job_submit_lines = [
+                            '{} = $({})'.format(attr, attr.upper()) for attr in VAR_ATTR]
                     job_submit_lines.append('arguments = $(ARGS)')
                     job_submit_lines.append('queue $(queue)')
                     file.writelines('\n'.join(job_submit_lines))
