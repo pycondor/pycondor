@@ -1,8 +1,11 @@
 
-import os
-from collections import Counter
 import filecmp
+import os
+import re
+from collections import Counter
+
 import pytest
+
 from pycondor import Job, Dagman
 from pycondor.dagman import _iter_job_args, _get_subdag_string
 from pycondor.utils import clear_pycondor_environment_variables
@@ -293,3 +296,29 @@ def test_dagman_add_node_ignores_duplicates(tmpdir, dagman):
     dagman.add_job(job)
 
     assert dagman.nodes == [job]
+
+
+def test_dagman_build_single_file(tmpdir):
+    submit_dir = str(tmpdir.join('submit'))
+
+    extra_lines = ['first extra line', 'second extra line']
+    dagman = Dagman('dagman', submit=submit_dir, extra_lines=extra_lines)
+
+    job1 = Job('testjob1', example_script, submit=submit_dir)
+    job2 = Job('testjob2', example_script, submit=submit_dir)
+    dagman.add_job(job1)
+    dagman.add_job(job2)
+
+    dagman.build(single_file=True)
+
+    with open(dagman.submit_file, 'r') as f:
+        lines = f.readlines()
+
+        # make sure the job1 & job2 are in the same submit file
+
+        assert re.match(r'JOB testjob1.*', lines[0])
+        assert re.match(r'VARS testjob1.*EXECUTABLE.*example_script\.py', lines[1])
+        assert re.match(r'JOB testjob2.*', lines[2])
+        assert re.match(r'VARS testjob2.*EXECUTABLE.*example_script\.py', lines[3])
+        assert re.match(r'first extra line', lines[4])
+        assert re.match(r'second extra line', lines[5])
