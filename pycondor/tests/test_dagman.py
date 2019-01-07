@@ -70,7 +70,7 @@ def test_job_arg_name_files(tmpdir, fancyname):
 
     # Get root of the dagman submit file (submit file basename w/o .submit)
     submit_file_line = dagman_submit_lines[0]
-    submit_file_basename = submit_file_line.split('/')[-1].rstrip()
+    submit_file_basename = submit_file_line.split(os.path.sep)[-1].rstrip()
     submit_file_root = os.path.splitext(submit_file_basename)[0]
     # Get job_name variable (used to built error/log/output file basenames)
     jobname_line = dagman_submit_lines[2]

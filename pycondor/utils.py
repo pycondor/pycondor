@@ -12,8 +12,7 @@ from distutils import spawn
 
 
 # Specify logging settings
-logging.basicConfig(
-    format='%(levelname)s: pycondor - %(name)s : %(message)s')
+formatter = logging.Formatter('%(levelname)s: pycondor - %(name)s : %(message)s')
 logging_level_dict = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
 
 
@@ -50,6 +49,9 @@ def _setup_logger(cls, verbose=0):
                        'Valid options are {}.'.format(
                            verbose, cls.name, logging_level_dict.keys()))
     logger = logging.getLogger(cls.name)
+    sh = logging.StreamHandler(sys.stdout)
+    sh.setFormatter(formatter)
+    logger.addHandler(sh)
     logger.setLevel(logging_level_dict[verbose])
 
     return logger
