@@ -12,12 +12,7 @@ install:
     - docker build --build-arg PYTHON_VERSION=$TRAVIS_PYTHON_VERSION -t pycondor .
 
 script:
-    - docker run \
-    -v $PWD/docs:/home/mapper/pycondor/docs pycondor \
-    bash -e -c "pytest --cov=pycondor pycondor ;
-                flake8 pycondor ;
-                bash ci/build_docs.sh;
-                codecov -t dfae3f20-4728-4219-a671-4d9b421bb176"
+    - docker run -v $PWD/docs:/home/mapper/pycondor/docs pycondor bash -e -c "pytest --cov=pycondor pycondor ; flake8 pycondor ; bash ci/build_docs.sh; codecov -t dfae3f20-4728-4219-a671-4d9b421bb176"
 
 after_success:
     - pip install codecov
