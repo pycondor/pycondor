@@ -32,4 +32,4 @@ deploy:
     email: "github-pages-deploy@travis-ci.org"
     on:
         branch: master
-        python: "2.7"
+        python: "3.6"
