@@ -50,8 +50,8 @@ def _setup_logger(cls, verbose=0):
                            verbose, cls.name, logging_level_dict.keys()))
     logger = logging.getLogger(cls.name)
     stream_handler = logging.StreamHandler(sys.stdout)
-    sh.setFormatter(formatter)
-    logger.addHandler(sh)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
     logger.setLevel(logging_level_dict[verbose])
 
     return logger
