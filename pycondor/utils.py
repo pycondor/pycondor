@@ -49,7 +49,7 @@ def _setup_logger(cls, verbose=0):
                        'Valid options are {}.'.format(
                            verbose, cls.name, logging_level_dict.keys()))
     logger = logging.getLogger(cls.name)
-    sh = logging.StreamHandler(sys.stdout)
+    stream_handler = logging.StreamHandler(sys.stdout)
     sh.setFormatter(formatter)
     logger.addHandler(sh)
     logger.setLevel(logging_level_dict[verbose])
