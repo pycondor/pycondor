@@ -37,8 +37,16 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.autosummary',
               'sphinx.ext.githubpages',
+              'sphinx.ext.extlinks',
               'numpydoc',
+              'sphinx_click.ext',
               ]
+
+extlinks = {
+    'issue': ('https://github.com/jrbourbeau/pycondor/issues/%s', 'Issue #'),
+    'pr': ('https://github.com/jrbourbeau/pycondor/pull/%s', 'PR #'),
+    'user': ('https://github.com/%s', '@'),
+}
 
 # this is needed for some reason...
 # see https://github.com/numpy/numpydoc/issues/69

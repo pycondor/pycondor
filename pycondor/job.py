@@ -2,9 +2,9 @@
 import os
 import subprocess
 from collections import namedtuple, Iterable
-import warnings
 
-from .utils import checkdir, string_rep, requires_command
+from .utils import (checkdir, string_rep, requires_command,
+                    split_command_string, decode_string)
 from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
@@ -59,20 +59,20 @@ class Job(BaseNode):
 
         .. versionadded:: 0.1.0
 
-    getenv : bool, optional
+    getenv : bool or None, optional
         Whether or not to use the current environment settings when running
-        the job (default is True).
+        the job (default is None).
 
-    universe : str, optional
+    universe : str or None, optional
         Universe execution environment to be specified in submit file
-        (default is 'vanilla').
+        (default is None).
 
     initialdir : str or None, optional
         Initial directory for relative paths (defaults to the directory was
         the job was submitted from).
 
-    notification : str, optional
-        E-mail notification preference (default is 'never').
+    notification : str or None, optional
+        E-mail notification preference (default is None).
 
     requirements : str or None, optional
         Additional requirements to be included in ClassAd.
@@ -125,18 +125,12 @@ class Job(BaseNode):
 
     def __init__(self, name, executable, error=None, log=None, output=None,
                  submit=None, request_memory=None, request_disk=None,
-                 request_cpus=None, getenv=True, universe='vanilla',
-                 initialdir=None, notification='never', requirements=None,
+                 request_cpus=None, getenv=None, universe=None,
+                 initialdir=None, notification=None, requirements=None,
                  queue=None, extra_lines=None, dag=None, arguments=None,
                  retry=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
-
-        # TODO: Remove after 0.5.0 release
-        future_msg = ('The default values for the universe, getenv, and '
-                      'notification Job parameters will be changed to None '
-                      'in release version 0.5.0.')
-        warnings.warn(future_msg, FutureWarning)
 
         self.executable = string_rep(executable)
         self.error = error
@@ -439,9 +433,13 @@ class Job(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        proc = subprocess.Popen([command], stdout=subprocess.PIPE, shell=True)
+
+        proc = subprocess.Popen(
+            split_command_string(command),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
         out, err = proc.communicate()
-        print(out)
+        print(decode_string(out))
 
         return self
 

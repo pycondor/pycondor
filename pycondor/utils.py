@@ -5,6 +5,8 @@ import sys
 import subprocess
 import logging
 import shutil
+import shlex
+import platform
 from functools import wraps
 # Note that spawn isn't in namespace if import distutils is used
 # Must use from distutils import spawn
@@ -104,7 +106,9 @@ def string_rep(obj, quotes=False):
 def clear_pycondor_environment_variables():
     # Unset any pycondor directory environment variables
     for i in ['submit', 'output', 'error', 'log']:
-        os.environ['PYCONDOR_{}_DIR'.format(i.upper())] = ''
+        env_var = 'PYCONDOR_{}_DIR'.format(i.upper())
+        if os.getenv(env_var):
+            del os.environ[env_var]
 
 
 def assert_command_exists(cmd):
@@ -133,26 +137,62 @@ def requires_command(*commands):
     return real_decorator
 
 
+def decode_string(s):
+    """Decode bytes array
+    """
+    try:
+        s = s.decode('utf-8')
+    except AttributeError:
+        pass
+
+    return s
+
+
+def parse_condor_version(info):
+    """ Extract condor version number tuple from ``condor_version`` output string
+
+    Parameters
+    ----------
+    info : str
+        Output from ``condor_version`` command or ``htcondor.version()``
+
+    Returns
+    -------
+    condor_version : tuple
+        Version number tuple (e.g. ``(8, 7, 4)``)
+    """
+    info = decode_string(info)
+    condor_version_str = re.search(r'CondorVersion: \s*([\d.]+)', info).group(1)
+    condor_version = tuple(map(int, condor_version_str.split('.')))
+
+    return condor_version
+
+
 def get_condor_version():
     """Should only be called on a submit machine
     """
-    condor_info_str = None
+    info = None
     try:
         import htcondor
-        condor_info_str = htcondor.version()
+        info = htcondor.version()
     except ImportError:
         assert_command_exists('condor_version')
         proc = subprocess.Popen(['condor_version'], stdout=subprocess.PIPE,
                                 shell=True)
         out, err = proc.communicate()
-        condor_info_str = out
+        info = out
     finally:
-        if condor_info_str is None:
+        if info is None:
             raise OSError('Could not find HTCondor version.')
 
-    condor_version_str = re.search(r'CondorVersion: \s*([\d.]+)',
-                                   condor_info_str).group(1)
-
-    condor_version = tuple(map(int, condor_version_str.split('.')))
+    condor_version = parse_condor_version(info)
 
     return condor_version
+
+
+def split_command_string(string):
+    """Uses shlex.split() to split a string into a list according
+    to the operating system
+    """
+    is_posix = platform.system() != 'Windows'
+    return shlex.split(string, posix=is_posix)

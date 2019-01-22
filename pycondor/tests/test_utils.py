@@ -3,7 +3,10 @@ import os
 import pytest
 import pycondor
 from pycondor.utils import (clear_pycondor_environment_variables, checkdir,
-                            assert_command_exists, get_condor_version)
+                            assert_command_exists, get_condor_version,
+                            parse_condor_version, split_command_string,
+                            decode_string)
+from pycondor.compatibility import string_types
 
 
 def test_string_rep_None_fail():
@@ -29,10 +32,14 @@ def test_setup_logger_noname_fail():
 
 
 def test_clear_pycondor_environment_variables():
+    # Set pycondor-related environment variables
+    for i in ['submit', 'output', 'error', 'log']:
+        os.environ['PYCONDOR_{}_DIR'.format(i.upper())] = 'something'
+
     # Test that environment variables are cleared
     clear_pycondor_environment_variables()
     for i in ['submit', 'output', 'error', 'log']:
-        assert os.environ['PYCONDOR_{}_DIR'.format(i.upper())] == ''
+        assert os.getenv('PYCONDOR_{}_DIR'.format(i.upper())) is None
 
 
 def test_checkdir(tmpdir):
@@ -73,3 +80,39 @@ def test_get_condor_version_raises():
         get_condor_version()
     error = 'Could not find HTCondor version.'
     assert error == str(excinfo.value)
+
+
+@pytest.mark.parametrize('info', ['$CondorVersion: 8.7.4 Oct 30 2017 BuildID: $',
+                                  b'$CondorVersion: 8.7.4 Oct 30 2017 BuildID: $'])
+def test_parse_condor_version(info):
+    version = parse_condor_version(info)
+    assert version == (8, 7, 4)
+
+
+def test_split_command_string():
+    filename = os.path.join('condor', 'submit', 'job.submit')
+    command = "condor_submit -maxjobs 1000 -interactive {}".format(filename)
+    expected = [
+      'condor_submit',
+      '-maxjobs',
+      '1000',
+      '-interactive',
+      filename]
+
+    result = split_command_string(command)
+    assert result == expected
+
+
+@pytest.mark.parametrize('s', ['regular string',
+                               b'bytes string'])
+def test_decode_string(s):
+    decoded = decode_string(s)
+    # Check type
+    assert isinstance(decoded, string_types)
+
+    if hasattr(s, 'decode'):
+        expected = s.decode('utf-8')
+    else:
+        expected = str(s)
+
+    assert decoded == expected

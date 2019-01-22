@@ -50,6 +50,7 @@ With just a few lines of code, you can get PyCondor up and running:
 
    api
    cli
+   visualize
    examples
    changelog
    contributing

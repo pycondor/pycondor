@@ -2,9 +2,11 @@
 import os
 import subprocess
 
-from .utils import checkdir, get_condor_version, requires_command
+from .utils import (checkdir, get_condor_version, requires_command,
+                    split_command_string, decode_string)
 from .basenode import BaseNode
 from .job import Job
+from .visualize import visualize as _visualize
 
 
 def _get_subdag_string(dagman):
@@ -45,7 +47,7 @@ def _iter_job_args(job):
                          'to a Dagman'.format(job.name))
 
     if len(job.args) == 0:
-        raise StopIteration
+        return
     else:
         for idx, job_arg in enumerate(job):
             arg, name, retry = job_arg
@@ -357,9 +359,12 @@ class Dagman(BaseNode):
         if submit_options is not None:
             command += ' {}'.format(submit_options)
         command += ' {}'.format(self.submit_file)
-        submit_dag_proc = subprocess.Popen([command],
-                                           stdout=subprocess.PIPE,
-                                           shell=True)
+
+        submit_dag_proc = subprocess.Popen(
+            split_command_string(command),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+
         # Check that there are no illegal node names for newer condor versions
         condor_version = get_condor_version()
         if condor_version >= (8, 7, 2) and self._has_bad_node_names:
@@ -373,7 +378,7 @@ class Dagman(BaseNode):
 
         # Execute condor_submit_dag command
         out, err = submit_dag_proc.communicate()
-        print(out)
+        print(decode_string(out))
 
         return self
 
@@ -408,3 +413,15 @@ class Dagman(BaseNode):
         self.submit_dag(submit_options=submit_options)
 
         return self
+
+    def visualize(self, filename=None):
+        """Visualize Dagman graph
+
+        Parameters
+        ----------
+        filename : str or None, optional
+            File to save graph diagram to. If ``None`` then no file is saved.
+            Valid file extensions are 'png', 'pdf', 'dot', 'svg', 'jpeg', 'jpg'.
+        """
+        g = _visualize(self, filename=filename)
+        return g

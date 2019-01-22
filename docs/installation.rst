@@ -49,3 +49,15 @@ or you can fork the `PyCondor GitHub repository <https://github.com/jrbourbeau/p
 
     git clone https://github.com/<your-username>/pycondor.git
     pip install pycondor
+
+
+------------
+Dependencies
+------------
+
+PyCondor has the following dependencies:
+
+- `Python <https://www.python.org/>`_ >= 2.7 or >= 3.4
+- `click <https://github.com/pallets/click>`_
+
+You can use ``pip`` or ``conda`` to install these automatically.

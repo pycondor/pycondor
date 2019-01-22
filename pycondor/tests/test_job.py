@@ -35,6 +35,14 @@ def monkeypatch_condor_submit(monkeypatch):
                             lambda x: 'submit_exists.exe')
 
 
+def test_basic_job_submit_file(job):
+    job.build()
+    with open(job.submit_file, 'r') as f:
+        lines = f.readlines()
+    # Expect two lines, an executeable line and a queue line
+    assert len(lines) == 2
+
+
 def test_add_arg_type_fail(job):
     with pytest.raises(TypeError) as excinfo:
         job.add_arg(50)
@@ -129,15 +137,13 @@ def test_repr():
     default_job = Job('jobname', example_script)
     job_repr = repr(default_job)
     expected_repr = ('Job(name=jobname, executable=example_script.py, '
-                     'getenv=True, notification=never, submit={}, '
-                     'universe=vanilla)'.format(os.getcwd()))
+                     'submit={})'.format(os.getcwd()))
     assert job_repr == expected_repr
 
     job_non_default = Job('jobname', example_script, queue=2)
     job_repr = repr(job_non_default)
     expected_repr = ('Job(name=jobname, executable=example_script.py, '
-                     'getenv=True, notification=never, queue=2, submit={}, '
-                     'universe=vanilla)'.format(os.getcwd()))
+                     'queue=2, submit={})'.format(os.getcwd()))
     assert job_repr == expected_repr
 
 
@@ -315,11 +321,3 @@ def test_init_retry_type_fail():
         job_with_retry.build()
     error = 'retry must be an int'
     assert error == str(excinfo.value)
-
-
-def test_job_default_param_future_warning():
-    future_msg = ('The default values for the universe, getenv, and '
-                  'notification Job parameters will be changed to None '
-                  'in release version 0.5.0.')
-    with pytest.warns(FutureWarning, match=future_msg):
-        Job(name='jobname', executable=example_script)

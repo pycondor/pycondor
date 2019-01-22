@@ -2,9 +2,9 @@
 
 :github_url: https://github.com/jrbourbeau/pycondor
 
-**********************
-Command line interface
-**********************
+************
+Command line
+************
 
 -----------------
 Dagman Monitoring
@@ -64,3 +64,15 @@ the command line arguments to be passed to the executable. E.g.
     $ pycondor submit --request_memory 3GB my_script.py -- --script_option value
 
 See ``pycondor submit --help`` for a complete list of available command line options.
+
+---
+API
+---
+
+.. click:: pycondor.cli:monitor
+   :prog: pycondor monitor
+   :show-nested:
+
+.. click:: pycondor.cli:submit
+   :prog: pycondor submit
+   :show-nested:
