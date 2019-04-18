@@ -20,7 +20,9 @@ install:
   - conda info -a
   - conda create -q --name test-environment python=%PYTHON_VERSION%
   - activate test-environment
-  - conda install -c conda-forge python-graphviz
+  # python-graphviz on conda-forge has an issue on Windows
+  - conda install -c conda-forge graphviz
+  - pip install graphviz
   - pip install .[dev]
 
 test_script:
