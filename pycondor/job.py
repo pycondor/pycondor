@@ -1,7 +1,11 @@
 
 import os
 import subprocess
-from collections import namedtuple, Iterable
+from collections import namedtuple
+try:
+    from collections.abc import Iterable
+except ImportError:  # python < 3.3
+    from collections import Iterable
 
 from .utils import (checkdir, string_rep, requires_command,
                     split_command_string, decode_string)
