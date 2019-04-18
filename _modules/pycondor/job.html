@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pycondor.job &mdash; PyCondor  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/logo-light-color.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Basic Workflow</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">PyCondor API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyCondor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pycondor.job</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pycondor.job</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># python &lt; 3.3</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">checkdir</span><span class="p">,</span> <span class="n">string_rep</span><span class="p">,</span> <span class="n">requires_command</span><span class="p">,</span>
+                    <span class="n">split_command_string</span><span class="p">,</span> <span class="n">decode_string</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.basenode</span> <span class="k">import</span> <span class="n">BaseNode</span>
+
+<span class="n">JobArg</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;JobArg&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;arg&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;retry&#39;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="Job"><a class="viewcode-back" href="../../api.html#pycondor.Job">[docs]</a><span class="k">class</span> <span class="nc">Job</span><span class="p">(</span><span class="n">BaseNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Job object consisting of an executable to be run, potentially with a</span>
+<span class="sd">    series of different command-line arguments.</span>
+
+<span class="sd">    Note that the ``submit``, ``error``, ``log``, and ``output`` parameters</span>
+<span class="sd">    can be explicitly given or configured by setting ``PYCONDOR_SUBMIT_DIR``,</span>
+<span class="sd">    ``PYCONDOR_ERROR_DIR``, ``PYCONDOR_LOG_DIR``, and ``PYCONDOR_OUTPUT_DIR``</span>
+<span class="sd">    environment variables. An explicitly given value will be used over an</span>
+<span class="sd">    environment variable, while an environment variable will be used over a</span>
+<span class="sd">    default value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the Job instance. This will also be the name of the</span>
+<span class="sd">        corresponding error, log, output, and submit files associated with</span>
+<span class="sd">        this Job.</span>
+
+<span class="sd">    executable : str</span>
+<span class="sd">        Path to corresponding executable for Job.</span>
+
+<span class="sd">    error : str or None, optional</span>
+<span class="sd">        Path to directory where condor Job error files will be written (default</span>
+<span class="sd">        is None, will not be included in Job submit file).</span>
+
+<span class="sd">    log : str or None, optional</span>
+<span class="sd">        Path to directory where condor Job log files will be written (default</span>
+<span class="sd">        is None, will not be included in Job submit file).</span>
+
+<span class="sd">    output : str or None, optional</span>
+<span class="sd">        Path to directory where condor Job output files will be written</span>
+<span class="sd">        (default is None, will not be included in Job submit file).</span>
+
+<span class="sd">    submit : str, optional</span>
+<span class="sd">        Path to directory where condor Job submit files will be written</span>
+<span class="sd">        (defaults to the directory was the Job was submitted from).</span>
+
+<span class="sd">    request_memory : str or None, optional</span>
+<span class="sd">        Memory request to be included in submit file.</span>
+
+<span class="sd">    request_disk : str or None, optional</span>
+<span class="sd">        Disk request to be included in submit file.</span>
+
+<span class="sd">    request_cpus : int or None, optional</span>
+<span class="sd">        Number of CPUs to request in submit file.</span>
+
+<span class="sd">        .. versionadded:: 0.1.0</span>
+
+<span class="sd">    getenv : bool or None, optional</span>
+<span class="sd">        Whether or not to use the current environment settings when running</span>
+<span class="sd">        the job (default is None).</span>
+
+<span class="sd">    universe : str or None, optional</span>
+<span class="sd">        Universe execution environment to be specified in submit file</span>
+<span class="sd">        (default is None).</span>
+
+<span class="sd">    initialdir : str or None, optional</span>
+<span class="sd">        Initial directory for relative paths (defaults to the directory was</span>
+<span class="sd">        the job was submitted from).</span>
+
+<span class="sd">    notification : str or None, optional</span>
+<span class="sd">        E-mail notification preference (default is None).</span>
+
+<span class="sd">    requirements : str or None, optional</span>
+<span class="sd">        Additional requirements to be included in ClassAd.</span>
+
+<span class="sd">    queue : int or None, optional</span>
+<span class="sd">        Integer specifying how many times you would like this job to run.</span>
+
+<span class="sd">    extra_lines : list or None, optional</span>
+<span class="sd">        List of additional lines to be added to submit file.</span>
+
+<span class="sd">    dag : Dagman, optional</span>
+<span class="sd">        If specified, Job will be added to dag (default is None).</span>
+
+<span class="sd">    arguments : str or iterable, optional</span>
+<span class="sd">        Arguments with which to initialize the Job list of arguments</span>
+<span class="sd">        (default is None).</span>
+
+<span class="sd">    retry : int or None, optional</span>
+<span class="sd">        Option to specify the number of retries for all Job arguments. This</span>
+<span class="sd">        can be superseded for arguments added via the add_arg() method.</span>
+<span class="sd">        Note: this feature is only available to Jobs that are submitted via a</span>
+<span class="sd">        Dagman (default is None; no retries).</span>
+
+<span class="sd">    verbose : int, optional</span>
+<span class="sd">        Level of logging verbosity option are 0-warning, 1-info,</span>
+<span class="sd">        2-debugging (default is 0).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : list</span>
+<span class="sd">        List of arguments for this Job instance.</span>
+
+<span class="sd">    parents : list</span>
+<span class="sd">        Only set when included in a Dagman. List of parent Jobs and Dagmans.</span>
+<span class="sd">        Ensures that Jobs and Dagmans in the parents list will complete</span>
+<span class="sd">        before this Job is submitted to HTCondor.</span>
+
+<span class="sd">    children : list</span>
+<span class="sd">        Only set when included in a Dagman. List of child Jobs and Dagmans.</span>
+<span class="sd">        Ensures that Jobs and Dagmans in the children list will be</span>
+<span class="sd">        submitted only after this Job has completed.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import pycondor</span>
+<span class="sd">    &gt;&gt;&gt; job = pycondor.Job(&#39;myjob&#39;, &#39;myscript.py&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; job.build_submit()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">submit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request_memory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request_disk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">request_cpus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">getenv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">universe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">initialdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">notification</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">requirements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">queue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">arguments</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">retry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">submit</span><span class="p">,</span> <span class="n">extra_lines</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">executable</span> <span class="o">=</span> <span class="n">string_rep</span><span class="p">(</span><span class="n">executable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">log</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_memory</span> <span class="o">=</span> <span class="n">request_memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_disk</span> <span class="o">=</span> <span class="n">request_disk</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_cpus</span> <span class="o">=</span> <span class="n">request_cpus</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getenv</span> <span class="o">=</span> <span class="n">getenv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">universe</span> <span class="o">=</span> <span class="n">universe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialdir</span> <span class="o">=</span> <span class="n">initialdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notification</span> <span class="o">=</span> <span class="n">notification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requirements</span> <span class="o">=</span> <span class="n">requirements</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">queue</span>
+
+        <span class="k">if</span> <span class="n">retry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retry</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;retry must be an int&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retry</span> <span class="o">=</span> <span class="n">retry</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">arguments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;arguments must be a string or an iterable&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> initialized&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nondefaults</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">default_attr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;executable&#39;</span><span class="p">,</span> <span class="s1">&#39;logger&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_attr</span><span class="p">:</span>
+                <span class="n">nondefaults</span> <span class="o">+=</span> <span class="s1">&#39;, </span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;Job(name=</span><span class="si">{}</span><span class="s1">, executable=</span><span class="si">{}{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executable</span><span class="p">),</span> <span class="n">nondefaults</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Job.add_arg"><a class="viewcode-back" href="../../api.html#pycondor.Job.add_arg">[docs]</a>    <span class="k">def</span> <span class="nf">add_arg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">retry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add argument to Job</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arg : str</span>
+<span class="sd">            Argument to append to Job args list.</span>
+
+<span class="sd">        name : str or None, optional</span>
+<span class="sd">            Option to specify a name related to this argument. If a name is</span>
+<span class="sd">            specified, then a separate set of log, output, and error files</span>
+<span class="sd">            will be generated for this particular argument</span>
+<span class="sd">            (default is ``None``).</span>
+
+<span class="sd">            .. versionadded:: 0.1.2</span>
+
+<span class="sd">        retry : int or None, optional</span>
+<span class="sd">            Option to specify the number of times to retry this node. Default</span>
+<span class="sd">            number of retries is 0. Note: this feature is only available to</span>
+<span class="sd">            Jobs that are submitted via a Dagman.</span>
+
+<span class="sd">            .. versionadded:: 0.1.2</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validate user input</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;arg must be a string&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;name must be a string&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">retry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retry</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;retry must be an int&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">retry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">job_arg</span> <span class="o">=</span> <span class="n">JobArg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">retry</span><span class="o">=</span><span class="n">retry</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">job_arg</span> <span class="o">=</span> <span class="n">JobArg</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">retry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retry</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_arg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Added argument </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> to Job </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span>
+                                                                   <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Job.add_args"><a class="viewcode-back" href="../../api.html#pycondor.Job.add_args">[docs]</a>    <span class="k">def</span> <span class="nf">add_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds multiple arguments to Job</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        args : iterable</span>
+<span class="sd">            Iterable of arguments to append to the arguments list</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_make_submit_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">makedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancyname</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="c1"># Retrying failed nodes is only available to Jobs in a Dagman</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_arg_retries</span> <span class="o">=</span> <span class="nb">any</span><span class="p">([</span><span class="n">job_arg</span><span class="o">.</span><span class="n">retry</span> <span class="k">for</span> <span class="n">job_arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_arg_retries</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">indag</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Retrying failed Jobs is only available when &#39;</span> <span class="o">+</span> \
+                      <span class="s1">&#39;submitting from a Dagman.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="c1"># Check that paths/files exist</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">checkdir</span><span class="p">(</span><span class="n">directory</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">)</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">submit_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;universe&#39;</span><span class="p">,</span> <span class="s1">&#39;executable&#39;</span><span class="p">,</span> <span class="s1">&#39;request_memory&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;request_disk&#39;</span><span class="p">,</span> <span class="s1">&#39;request_cpus&#39;</span><span class="p">,</span> <span class="s1">&#39;getenv&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;initialdir&#39;</span><span class="p">,</span> <span class="s1">&#39;notification&#39;</span><span class="p">,</span> <span class="s1">&#39;requirements&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">submit_attr</span> <span class="ow">in</span> <span class="n">submit_attrs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submit_attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">submit_attr_str</span> <span class="o">=</span> <span class="n">string_rep</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submit_attr</span><span class="p">))</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submit_attr</span><span class="p">,</span> <span class="n">submit_attr_str</span><span class="p">))</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fancyname</span><span class="p">()</span> <span class="k">if</span> <span class="n">fancyname</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">submit_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.submit&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="n">checkdir</span><span class="p">(</span><span class="n">submit_file</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">)</span>
+        <span class="c1"># Add submit_file data member to job for later use</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit_file</span> <span class="o">=</span> <span class="n">submit_file</span>
+
+        <span class="c1"># Set up log, output, and error files paths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_arg_names</span> <span class="o">=</span> <span class="nb">any</span><span class="p">([</span><span class="n">arg</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">]:</span>
+            <span class="n">dir_env_var</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;PYCONDOR_</span><span class="si">{}</span><span class="s1">_DIR&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">upper</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">dir_path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dir_env_var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">dir_path</span> <span class="o">=</span> <span class="n">dir_env_var</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Add log/output/error files to submit file lines</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_arg_names</span><span class="p">:</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span>
+                                         <span class="s1">&#39;$(job_name).</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span>
+                                         <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">file_path</span><span class="p">))</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_file&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">),</span> <span class="n">file_path</span><span class="p">)</span>
+            <span class="n">checkdir</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">)</span>
+
+        <span class="c1"># Add any extra lines to submit file, if specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_lines</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_lines</span><span class="p">)</span>
+
+        <span class="c1"># Add arguments and queue line</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;queue must be of type int&#39;</span><span class="p">)</span>
+        <span class="c1"># If building this submit file for a job that&#39;s being managed by DAGMan</span>
+        <span class="c1"># just add simple arguments and queue lines</span>
+        <span class="k">if</span> <span class="n">indag</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;arguments = $(ARGS)&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_arg_names</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;job_name = $(job_name)&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;queue </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;queue&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                        <span class="s1">&#39;At this time multiple arguments and queue values &#39;</span>
+                        <span class="s1">&#39;are only supported through Dagman&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">arg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">arg</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;arguments = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string_rep</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span>
+                                                         <span class="n">quotes</span><span class="o">=</span><span class="kc">True</span><span class="p">)))</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;queue </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">))</span>
+            <span class="c1"># Any arguments supplied will be taken care of via the queue line</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;arguments = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_arg_names</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">elif</span> <span class="n">arg_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;job_name = </span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;job_name = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;queue&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;queue </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;queue&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">submit_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
+
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="Job.build"><a class="viewcode-back" href="../../api.html#pycondor.Job.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">makedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancyname</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build and saves the submit file for Job</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        makedirs : bool, optional</span>
+<span class="sd">            If Job directories (e.g. error, output, log, submit) don&#39;t exist,</span>
+<span class="sd">            create them (default is ``True``).</span>
+
+<span class="sd">        fancyname : bool, optional</span>
+<span class="sd">            Appends the date and unique id number to error, log, output, and</span>
+<span class="sd">            submit files. For example, instead of ``jobname.submit`` the submit</span>
+<span class="sd">            file becomes ``jobname_YYYYMMD_id``. This is useful when running</span>
+<span class="sd">            several Jobs of the same name (default is ``True``).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s1">&#39;Building submission file for Job </span><span class="si">{}</span><span class="s1">...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_submit_script</span><span class="p">(</span><span class="n">makedirs</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">,</span> <span class="n">indag</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;You are submitting a Job with </span><span class="si">{}</span><span class="s1"> arguments. &#39;</span>
+                                <span class="s1">&#39;Consider using a Dagman in the future to &#39;</span>
+                                <span class="s1">&#39;help monitor jobs.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Condor submission file for </span><span class="si">{}</span><span class="s1"> successfully &#39;</span>
+                         <span class="s1">&#39;built!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_build_from_dag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">makedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancyname</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;Building submission file for Job </span><span class="si">{}</span><span class="s1">...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_submit_script</span><span class="p">(</span><span class="n">makedirs</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">,</span> <span class="n">indag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Condor submission file for </span><span class="si">{}</span><span class="s1"> successfully &#39;</span>
+                          <span class="s1">&#39;built!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="Job.submit_job"><a class="viewcode-back" href="../../api.html#pycondor.Job.submit_job">[docs]</a>    <span class="nd">@requires_command</span><span class="p">(</span><span class="s1">&#39;condor_submit&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">submit_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submit_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Submits Job to condor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        submit_options : str, optional</span>
+<span class="sd">            Options to be passed to ``condor_submit`` for this Job</span>
+<span class="sd">            (see the `condor_submit documentation</span>
+<span class="sd">            &lt;http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html&gt;`_</span>
+<span class="sd">            for possible options).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import pycondor</span>
+<span class="sd">        &gt;&gt;&gt; job = pycondor.Job(&#39;myjob&#39;, &#39;myscript.py&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; job.build()</span>
+<span class="sd">        &gt;&gt;&gt; job.submit_job(submit_options=&#39;-maxjobs 1000 -interactive&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure that submit file has been written</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_built</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;build() must be called before submit()&#39;</span><span class="p">)</span>
+        <span class="c1"># Ensure that there are no parent relationships</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Attempting to submit a Job with parents. &#39;</span>
+                             <span class="s1">&#39;Interjob relationships requires Dagman.&#39;</span><span class="p">)</span>
+        <span class="c1"># Ensure that there are no child relationships</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Attempting to submit a Job with children. &#39;</span>
+                             <span class="s1">&#39;Interjob relationships requires Dagman.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Construct and execute condor_submit command</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;condor_submit&#39;</span>
+        <span class="k">if</span> <span class="n">submit_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submit_options</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit_file</span><span class="p">)</span>
+
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">split_command_string</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">decode_string</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Job.build_submit"><a class="viewcode-back" href="../../api.html#pycondor.Job.build_submit">[docs]</a>    <span class="nd">@requires_command</span><span class="p">(</span><span class="s1">&#39;condor_submit&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">build_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">makedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancyname</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">submit_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls build and submit sequentially</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        makedirs : bool, optional</span>
+<span class="sd">            If Job directories (e.g. error, output, log, submit) don&#39;t exist,</span>
+<span class="sd">            create them (default is ``True``).</span>
+
+<span class="sd">        fancyname : bool, optional</span>
+<span class="sd">            Appends the date and unique id number to error, log, output, and</span>
+<span class="sd">            submit files. For example, instead of ``jobname.submit`` the submit</span>
+<span class="sd">            file becomes ``jobname_YYYYMMD_id``. This is useful when running</span>
+<span class="sd">            several Jobs of the same name (default is ``True``).</span>
+
+<span class="sd">        submit_options : str, optional</span>
+<span class="sd">            Options to be passed to ``condor_submit`` for this Job</span>
+<span class="sd">            (see the `condor_submit documentation</span>
+<span class="sd">            &lt;http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html&gt;`_</span>
+<span class="sd">            for possible options).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">makedirs</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">submit_options</span><span class="o">=</span><span class="n">submit_options</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, James Bourbeau
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

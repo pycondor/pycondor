@@ -1,0 +1,1131 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyCondor API &mdash; PyCondor  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Command line" href="cli.html" />
+    <link rel="prev" title="Basic Workflow" href="tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo-light-color.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Basic Workflow</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PyCondor API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#job">Job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dagman">Dagman</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyCondor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>PyCondor API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/jrbourbeau/pycondor" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-pycondor"><span id="api"></span></span><div class="section" id="pycondor-api">
+<h1>PyCondor API<a class="headerlink" href="#pycondor-api" title="Permalink to this headline">¶</a></h1>
+<p>The main functionality of PyCondor is contained within the <code class="docutils literal notranslate"><span class="pre">Job</span></code> and <code class="docutils literal notranslate"><span class="pre">Dagman</span></code> objects.</p>
+<div class="section" id="job">
+<span id="job-api"></span><h2>Job<a class="headerlink" href="#job" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pycondor.Job">
+<em class="property">class </em><code class="descclassname">pycondor.</code><code class="descname">Job</code><span class="sig-paren">(</span><em>name</em>, <em>executable</em>, <em>error=None</em>, <em>log=None</em>, <em>output=None</em>, <em>submit=None</em>, <em>request_memory=None</em>, <em>request_disk=None</em>, <em>request_cpus=None</em>, <em>getenv=None</em>, <em>universe=None</em>, <em>initialdir=None</em>, <em>notification=None</em>, <em>requirements=None</em>, <em>queue=None</em>, <em>extra_lines=None</em>, <em>dag=None</em>, <em>arguments=None</em>, <em>retry=None</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/job.html#Job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Job object consisting of an executable to be run, potentially with a
+series of different command-line arguments.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">submit</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, and <code class="docutils literal notranslate"><span class="pre">output</span></code> parameters
+can be explicitly given or configured by setting <code class="docutils literal notranslate"><span class="pre">PYCONDOR_SUBMIT_DIR</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PYCONDOR_ERROR_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">PYCONDOR_LOG_DIR</span></code>, and <code class="docutils literal notranslate"><span class="pre">PYCONDOR_OUTPUT_DIR</span></code>
+environment variables. An explicitly given value will be used over an
+environment variable, while an environment variable will be used over a
+default value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Name of the Job instance. This will also be the name of the
+corresponding error, log, output, and submit files associated with
+this Job.</p>
+</dd>
+<dt><strong>executable</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to corresponding executable for Job.</p>
+</dd>
+<dt><strong>error</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Path to directory where condor Job error files will be written (default
+is None, will not be included in Job submit file).</p>
+</dd>
+<dt><strong>log</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Path to directory where condor Job log files will be written (default
+is None, will not be included in Job submit file).</p>
+</dd>
+<dt><strong>output</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Path to directory where condor Job output files will be written
+(default is None, will not be included in Job submit file).</p>
+</dd>
+<dt><strong>submit</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first last">Path to directory where condor Job submit files will be written
+(defaults to the directory was the Job was submitted from).</p>
+</dd>
+<dt><strong>request_memory</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Memory request to be included in submit file.</p>
+</dd>
+<dt><strong>request_disk</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Disk request to be included in submit file.</p>
+</dd>
+<dt><strong>request_cpus</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None, optional</span></dt>
+<dd><p class="first">Number of CPUs to request in submit file.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 0.1.0.</span></p>
+</div>
+</dd>
+<dt><strong>getenv</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool or None, optional</span></dt>
+<dd><p class="first last">Whether or not to use the current environment settings when running
+the job (default is None).</p>
+</dd>
+<dt><strong>universe</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Universe execution environment to be specified in submit file
+(default is None).</p>
+</dd>
+<dt><strong>initialdir</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Initial directory for relative paths (defaults to the directory was
+the job was submitted from).</p>
+</dd>
+<dt><strong>notification</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">E-mail notification preference (default is None).</p>
+</dd>
+<dt><strong>requirements</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">Additional requirements to be included in ClassAd.</p>
+</dd>
+<dt><strong>queue</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None, optional</span></dt>
+<dd><p class="first last">Integer specifying how many times you would like this job to run.</p>
+</dd>
+<dt><strong>extra_lines</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or None, optional</span></dt>
+<dd><p class="first last">List of additional lines to be added to submit file.</p>
+</dd>
+<dt><strong>dag</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Dagman, optional</span></dt>
+<dd><p class="first last">If specified, Job will be added to dag (default is None).</p>
+</dd>
+<dt><strong>arguments</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or iterable, optional</span></dt>
+<dd><p class="first last">Arguments with which to initialize the Job list of arguments
+(default is None).</p>
+</dd>
+<dt><strong>retry</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None, optional</span></dt>
+<dd><p class="first last">Option to specify the number of retries for all Job arguments. This
+can be superseded for arguments added via the add_arg() method.
+Note: this feature is only available to Jobs that are submitted via a
+Dagman (default is None; no retries).</p>
+</dd>
+<dt><strong>verbose</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd><p class="first last">Level of logging verbosity option are 0-warning, 1-info,
+2-debugging (default is 0).</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pycondor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">pycondor</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="s1">&#39;myjob&#39;</span><span class="p">,</span> <span class="s1">&#39;myscript.py&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">build_submit</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>args</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of arguments for this Job instance.</p>
+</dd>
+<dt><strong>parents</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Only set when included in a Dagman. List of parent Jobs and Dagmans.
+Ensures that Jobs and Dagmans in the parents list will complete
+before this Job is submitted to HTCondor.</p>
+</dd>
+<dt><strong>children</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">Only set when included in a Dagman. List of child Jobs and Dagmans.
+Ensures that Jobs and Dagmans in the children list will be
+submitted only after this Job has completed.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Job.add_arg" title="pycondor.Job.add_arg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_arg</span></code></a>(arg[,&nbsp;name,&nbsp;retry])</td>
+<td>Add argument to Job</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Job.add_args" title="pycondor.Job.add_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_args</span></code></a>(args)</td>
+<td>Adds multiple arguments to Job</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Job.add_child" title="pycondor.Job.add_child"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_child</span></code></a>(node)</td>
+<td>Adds node to children list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Job.add_children" title="pycondor.Job.add_children"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_children</span></code></a>(nodes)</td>
+<td>Adds nodes to the children list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Job.add_parent" title="pycondor.Job.add_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_parent</span></code></a>(node)</td>
+<td>Adds node to parents list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Job.add_parents" title="pycondor.Job.add_parents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_parents</span></code></a>(nodes)</td>
+<td>Adds nodes to the parents list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Job.build" title="pycondor.Job.build"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build</span></code></a>([makedirs,&nbsp;fancyname])</td>
+<td>Build and saves the submit file for Job</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Job.build_submit" title="pycondor.Job.build_submit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_submit</span></code></a>(**kwargs)</td>
+<td>Calls build and submit sequentially</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Job.haschildren" title="pycondor.Job.haschildren"><code class="xref py py-obj docutils literal notranslate"><span class="pre">haschildren</span></code></a>()</td>
+<td>Checks for any children nodes</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Job.hasparents" title="pycondor.Job.hasparents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasparents</span></code></a>()</td>
+<td>Checks for any parent nodes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Job.submit_job" title="pycondor.Job.submit_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit_job</span></code></a>(**kwargs)</td>
+<td>Submits Job to condor</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pycondor.Job.add_arg">
+<code class="descname">add_arg</code><span class="sig-paren">(</span><em>arg</em>, <em>name=None</em>, <em>retry=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/job.html#Job.add_arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Job.add_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add argument to Job</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>arg</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Argument to append to Job args list.</p>
+</dd>
+<dt><strong>name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first">Option to specify a name related to this argument. If a name is
+specified, then a separate set of log, output, and error files
+will be generated for this particular argument
+(default is <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 0.1.2.</span></p>
+</div>
+</dd>
+<dt><strong>retry</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int or None, optional</span></dt>
+<dd><p class="first">Option to specify the number of times to retry this node. Default
+number of retries is 0. Note: this feature is only available to
+Jobs that are submitted via a Dagman.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 0.1.2.</span></p>
+</div>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.add_args">
+<code class="descname">add_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/job.html#Job.add_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Job.add_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds multiple arguments to Job</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>args</strong> <span class="classifier-delimiter">:</span> <span class="classifier">iterable</span></dt>
+<dd><p class="first last">Iterable of arguments to append to the arguments list</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.add_child">
+<code class="descname">add_child</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Job.add_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds node to children list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>node</strong> <span class="classifier-delimiter">:</span> <span class="classifier">BaseNode</span></dt>
+<dd><p class="first last">Job or Dagman to append to the children list.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.add_children">
+<code class="descname">add_children</code><span class="sig-paren">(</span><em>nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Job.add_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds nodes to the children list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>nodes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or tuple</span></dt>
+<dd><p class="first last">List of nodes to append to the children list</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.add_parent">
+<code class="descname">add_parent</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Job.add_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds node to parents list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>node</strong> <span class="classifier-delimiter">:</span> <span class="classifier">BaseNode</span></dt>
+<dd><p class="first last">Job or Dagman to append to the parents list.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.add_parents">
+<code class="descname">add_parents</code><span class="sig-paren">(</span><em>nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Job.add_parents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds nodes to the parents list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>nodes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or tuple</span></dt>
+<dd><p class="first last">List of nodes to append to the parents list</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.build">
+<code class="descname">build</code><span class="sig-paren">(</span><em>makedirs=True</em>, <em>fancyname=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/job.html#Job.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Job.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build and saves the submit file for Job</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>makedirs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If Job directories (e.g. error, output, log, submit) don’t exist,
+create them (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+<dt><strong>fancyname</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Appends the date and unique id number to error, log, output, and
+submit files. For example, instead of <code class="docutils literal notranslate"><span class="pre">jobname.submit</span></code> the submit
+file becomes <code class="docutils literal notranslate"><span class="pre">jobname_YYYYMMD_id</span></code>. This is useful when running
+several Jobs of the same name (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.build_submit">
+<code class="descname">build_submit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/job.html#Job.build_submit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Job.build_submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls build and submit sequentially</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>makedirs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If Job directories (e.g. error, output, log, submit) don’t exist,
+create them (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+<dt><strong>fancyname</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Appends the date and unique id number to error, log, output, and
+submit files. For example, instead of <code class="docutils literal notranslate"><span class="pre">jobname.submit</span></code> the submit
+file becomes <code class="docutils literal notranslate"><span class="pre">jobname_YYYYMMD_id</span></code>. This is useful when running
+several Jobs of the same name (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+<dt><strong>submit_options</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first last">Options to be passed to <code class="docutils literal notranslate"><span class="pre">condor_submit</span></code> for this Job
+(see the <a class="reference external" href="http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html">condor_submit documentation</a>
+for possible options).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.haschildren">
+<code class="descname">haschildren</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Job.haschildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for any children nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>bool</strong></dt>
+<dd><p class="first last">Returns whether or not this node has any child nodes.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.hasparents">
+<code class="descname">hasparents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Job.hasparents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for any parent nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>bool</strong></dt>
+<dd><p class="first last">Returns whether or not this node has any parent nodes.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Job.submit_job">
+<code class="descname">submit_job</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/job.html#Job.submit_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Job.submit_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits Job to condor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>submit_options</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first last">Options to be passed to <code class="docutils literal notranslate"><span class="pre">condor_submit</span></code> for this Job
+(see the <a class="reference external" href="http://research.cs.wisc.edu/htcondor/manual/current/condor_submit.html">condor_submit documentation</a>
+for possible options).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pycondor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">pycondor</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span><span class="s1">&#39;myjob&#39;</span><span class="p">,</span> <span class="s1">&#39;myscript.py&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">submit_options</span><span class="o">=</span><span class="s1">&#39;-maxjobs 1000 -interactive&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="dagman">
+<span id="dagman-api"></span><h2>Dagman<a class="headerlink" href="#dagman" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pycondor.Dagman">
+<em class="property">class </em><code class="descclassname">pycondor.</code><code class="descname">Dagman</code><span class="sig-paren">(</span><em>name</em>, <em>submit=None</em>, <em>extra_lines=None</em>, <em>dag=None</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dagman object consisting of a series of Jobs and sub-Dagmans to manage.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">submit</span></code> parameter can be explicitly given or configured
+by setting the <code class="docutils literal notranslate"><span class="pre">PYCONDOR_SUBMIT_DIR</span></code> environment variable. An explicitly
+given value for <code class="docutils literal notranslate"><span class="pre">submit</span></code> will be used over the environment variable,
+while the environment variable will be used over a default value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Name of the Dagman instance. This will also be the name of the
+corresponding error, log, output, and submit files associated with
+this Dagman.</p>
+</dd>
+<dt><strong>submit</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">Path to directory where condor dagman submit files will be written
+(defaults to the directory was the Dagman was submitted from).</p>
+</dd>
+<dt><strong>extra_lines</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or None, optional</span></dt>
+<dd><p class="first">List of additional lines to be added to submit file.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">New in version 0.1.1.</span></p>
+</div>
+</dd>
+<dt><strong>dag</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Dagman, optional</span></dt>
+<dd><p class="first last">If specified, Dagman will be added to dag as a subdag
+(default is None).</p>
+</dd>
+<dt><strong>verbose</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd><p class="first last">Level of logging verbosity option are 0-warning, 1-info,
+2-debugging (default is 0).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Attributes:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>jobs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">The list of jobs for this Dagman instance to manage.</p>
+</dd>
+<dt><strong>parents</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of parent Jobs and Dagmans. Ensures that Jobs and Dagmans in the
+parents list will complete before this Dagman is submitted to HTCondor.</p>
+</dd>
+<dt><strong>children</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">List of child Jobs and Dagmans. Ensures that Jobs and Dagmans in the
+children list will be submitted only after this Dagman has completed.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Dagman.add_child" title="pycondor.Dagman.add_child"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_child</span></code></a>(node)</td>
+<td>Adds node to children list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Dagman.add_children" title="pycondor.Dagman.add_children"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_children</span></code></a>(nodes)</td>
+<td>Adds nodes to the children list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Dagman.add_job" title="pycondor.Dagman.add_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_job</span></code></a>(job)</td>
+<td>Add job to Dagman</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Dagman.add_parent" title="pycondor.Dagman.add_parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_parent</span></code></a>(node)</td>
+<td>Adds node to parents list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Dagman.add_parents" title="pycondor.Dagman.add_parents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_parents</span></code></a>(nodes)</td>
+<td>Adds nodes to the parents list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Dagman.add_subdag" title="pycondor.Dagman.add_subdag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_subdag</span></code></a>(dag)</td>
+<td>Add dag to Dagman</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Dagman.build" title="pycondor.Dagman.build"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build</span></code></a>([makedirs,&nbsp;fancyname])</td>
+<td>Build and saves the submit file for Dagman</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Dagman.build_submit" title="pycondor.Dagman.build_submit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_submit</span></code></a>(**kwargs)</td>
+<td>Calls build and submit sequentially</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Dagman.haschildren" title="pycondor.Dagman.haschildren"><code class="xref py py-obj docutils literal notranslate"><span class="pre">haschildren</span></code></a>()</td>
+<td>Checks for any children nodes</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Dagman.hasparents" title="pycondor.Dagman.hasparents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hasparents</span></code></a>()</td>
+<td>Checks for any parent nodes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#pycondor.Dagman.submit_dag" title="pycondor.Dagman.submit_dag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">submit_dag</span></code></a>(**kwargs)</td>
+<td>Submits Dagman to condor</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#pycondor.Dagman.visualize" title="pycondor.Dagman.visualize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">visualize</span></code></a>([filename])</td>
+<td>Visualize Dagman graph</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pycondor.Dagman.add_child">
+<code class="descname">add_child</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Dagman.add_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds node to children list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>node</strong> <span class="classifier-delimiter">:</span> <span class="classifier">BaseNode</span></dt>
+<dd><p class="first last">Job or Dagman to append to the children list.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.add_children">
+<code class="descname">add_children</code><span class="sig-paren">(</span><em>nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Dagman.add_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds nodes to the children list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>nodes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or tuple</span></dt>
+<dd><p class="first last">List of nodes to append to the children list</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.add_job">
+<code class="descname">add_job</code><span class="sig-paren">(</span><em>job</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman.add_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman.add_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add job to Dagman</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>job</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Job</span></dt>
+<dd><p class="first last">Job to append to Dagman jobs list.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.add_parent">
+<code class="descname">add_parent</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Dagman.add_parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds node to parents list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>node</strong> <span class="classifier-delimiter">:</span> <span class="classifier">BaseNode</span></dt>
+<dd><p class="first last">Job or Dagman to append to the parents list.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.add_parents">
+<code class="descname">add_parents</code><span class="sig-paren">(</span><em>nodes</em><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Dagman.add_parents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds nodes to the parents list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>nodes</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or tuple</span></dt>
+<dd><p class="first last">List of nodes to append to the parents list</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.add_subdag">
+<code class="descname">add_subdag</code><span class="sig-paren">(</span><em>dag</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman.add_subdag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman.add_subdag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add dag to Dagman</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>dag</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Dagman</span></dt>
+<dd><p class="first last">Subdag to append to Dagman jobs list.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.build">
+<code class="descname">build</code><span class="sig-paren">(</span><em>makedirs=True</em>, <em>fancyname=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build and saves the submit file for Dagman</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>makedirs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If Job directories (e.g. error, output, log, submit) don’t exist,
+create them (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+<dt><strong>fancyname</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Appends the date and unique id number to error, log, output, and
+submit files. For example, instead of <code class="docutils literal notranslate"><span class="pre">dagname.submit</span></code> the submit
+file becomes <code class="docutils literal notranslate"><span class="pre">dagname_YYYYMMD_id</span></code>. This is useful when running
+several Dags/Jobs of the same name (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.build_submit">
+<code class="descname">build_submit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman.build_submit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman.build_submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls build and submit sequentially</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>makedirs</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If Job directories (e.g. error, output, log, submit) don’t exist,
+create them (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+<dt><strong>fancyname</strong> <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Appends the date and unique id number to error, log, output, and
+submit files. For example, instead of <code class="docutils literal notranslate"><span class="pre">dagname.submit</span></code> the submit
+file becomes <code class="docutils literal notranslate"><span class="pre">dagname_YYYYMMD_id</span></code>. This is useful when running
+several Dags/Jobs of the same name (default is <code class="docutils literal notranslate"><span class="pre">True</span></code>).</p>
+</dd>
+<dt><strong>submit_options</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first last">Options to be passed to <code class="docutils literal notranslate"><span class="pre">condor_submit_dag</span></code> for this Dagman
+(see the <a class="reference external" href="http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html">condor_submit_dag documentation</a>
+for possible options).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.haschildren">
+<code class="descname">haschildren</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Dagman.haschildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for any children nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>bool</strong></dt>
+<dd><p class="first last">Returns whether or not this node has any child nodes.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.hasparents">
+<code class="descname">hasparents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pycondor.Dagman.hasparents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for any parent nodes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>bool</strong></dt>
+<dd><p class="first last">Returns whether or not this node has any parent nodes.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.submit_dag">
+<code class="descname">submit_dag</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman.submit_dag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman.submit_dag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits Dagman to condor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>submit_options</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first last">Options to be passed to <code class="docutils literal notranslate"><span class="pre">condor_submit_dag</span></code> for this Dagman
+(see the <a class="reference external" href="http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html">condor_submit_dag documentation</a>
+for possible options).</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd><p class="first last">Returns self.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pycondor.Dagman.visualize">
+<code class="descname">visualize</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycondor/dagman.html#Dagman.visualize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycondor.Dagman.visualize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualize Dagman graph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>filename</strong> <span class="classifier-delimiter">:</span> <span class="classifier">str or None, optional</span></dt>
+<dd><p class="first last">File to save graph diagram to. If <code class="docutils literal notranslate"><span class="pre">None</span></code> then no file is saved.
+Valid file extensions are ‘png’, ‘pdf’, ‘dot’, ‘svg’, ‘jpeg’, ‘jpg’.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, James Bourbeau
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Basic Workflow &mdash; PyCondor  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="PyCondor API" href="api.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo-light-color.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Workflow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#job-and-dagman-objects">Job and Dagman objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-and-dagman-file-directories">Job and Dagman file directories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-a-dagman">Setting up a Dagman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-jobs">Setting up Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-inter-job-relationships">Adding inter-job relationships</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-and-submit-the-dagman">Build and submit the Dagman</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">PyCondor API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyCondor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Basic Workflow</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/jrbourbeau/pycondor" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="basic-workflow">
+<h1>Basic Workflow<a class="headerlink" href="#basic-workflow" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial walks through the example workflow shown below. To follow along
+with this tutorial, make sure you have PyCondor installed (see the
+<a class="reference internal" href="installation.html"><span class="doc">Installation instruction</span></a>).</p>
+<p>Here’s an outline of the tutorial:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#job-dagman-object"><span class="std std-ref">Job and Dagman objects</span></a></li>
+<li><a class="reference internal" href="#file-directories"><span class="std std-ref">Job and Dagman file directories</span></a></li>
+<li><a class="reference internal" href="#dagman-setup"><span class="std std-ref">Setting up a Dagman</span></a></li>
+<li><a class="reference internal" href="#job-setup"><span class="std std-ref">Setting up Jobs</span></a></li>
+<li><a class="reference internal" href="#job-relationships"><span class="std std-ref">Adding inter-job relationships</span></a></li>
+<li><a class="reference internal" href="#submitting"><span class="std std-ref">Build and submit the Dagman</span></a></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pycondor</span> <span class="kn">import</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Dagman</span>
+
+<span class="c1"># Define the error, output, log, and submit directories</span>
+<span class="n">error</span> <span class="o">=</span> <span class="s1">&#39;condor/error&#39;</span>
+<span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;condor/output&#39;</span>
+<span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;condor/log&#39;</span>
+<span class="n">submit</span> <span class="o">=</span> <span class="s1">&#39;condor/submit&#39;</span>
+
+<span class="c1"># Instantiate a Dagman</span>
+<span class="n">dagman</span> <span class="o">=</span> <span class="n">Dagman</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;tutorial_dagman&#39;</span><span class="p">,</span>
+                <span class="n">submit</span><span class="o">=</span><span class="n">submit</span><span class="p">)</span>
+
+<span class="c1"># Instantiate Jobs</span>
+<span class="n">job_date</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;date_job&#39;</span><span class="p">,</span>
+               <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;/bin/date&#39;</span><span class="p">,</span>
+               <span class="n">submit</span><span class="o">=</span><span class="n">submit</span><span class="p">,</span>
+               <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+               <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+               <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+               <span class="n">dag</span><span class="o">=</span><span class="n">dagman</span><span class="p">)</span>
+
+<span class="n">job_sleep</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sleep_job&#39;</span><span class="p">,</span>
+                <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;/bin/sleep&#39;</span><span class="p">,</span>
+                <span class="n">submit</span><span class="o">=</span><span class="n">submit</span><span class="p">,</span>
+                <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+                <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+                <span class="n">dag</span><span class="o">=</span><span class="n">dagman</span><span class="p">)</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add inter-job relationship</span>
+<span class="c1"># Ensure that job_sleep finishes before job_date starts</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">job_date</span><span class="p">)</span>
+
+<span class="c1"># Write all necessary submit files and submit job to HTCondor</span>
+<span class="n">dagman</span><span class="o">.</span><span class="n">build_submit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="job-and-dagman-objects">
+<span id="job-dagman-object"></span><h2>Job and Dagman objects<a class="headerlink" href="#job-and-dagman-objects" title="Permalink to this headline">¶</a></h2>
+<p>The basic building blocks in PyCondor are the Job and Dagman objects. A Job object represents an executable (e.g. a shell command, Python script, etc.) that you would like to run using HTCondor. While the Dagman object represents a collection of Job objects to run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pycondor</span> <span class="kn">import</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Dagman</span>
+</pre></div>
+</div>
+<p>Both the Job and Dagman objects can be imported directly from <code class="docutils literal notranslate"><span class="pre">pycondor</span></code>.</p>
+</div>
+<div class="section" id="job-and-dagman-file-directories">
+<span id="file-directories"></span><h2>Job and Dagman file directories<a class="headerlink" href="#job-and-dagman-file-directories" title="Permalink to this headline">¶</a></h2>
+<p>There are several files associated with both Job and Dagman objects. For each Job and Dagman object, PyCondor will create a submit file. This file will be formatted such that it can be submitted to HTCondor for execution. In addition to submit files, there will also be log files, standard output files, and standard error files associated with running a Job and/or Dagman.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the error, output, log, and submit directories</span>
+<span class="n">error</span> <span class="o">=</span> <span class="s1">&#39;condor/error&#39;</span>
+<span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;condor/output&#39;</span>
+<span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;condor/log&#39;</span>
+<span class="n">submit</span> <span class="o">=</span> <span class="s1">&#39;condor/submit&#39;</span>
+</pre></div>
+</div>
+<p>Above we’ve specified the paths to where we would like these files to be
+written. These will be passed to Job and Dagman objects we create in the
+following steps.</p>
+</div>
+<div class="section" id="setting-up-a-dagman">
+<span id="dagman-setup"></span><h2>Setting up a Dagman<a class="headerlink" href="#setting-up-a-dagman" title="Permalink to this headline">¶</a></h2>
+<p>The Dagman (short for directed acyclic graph manager) object is a collection of Job objects to be run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate a Dagman</span>
+<span class="n">dagman</span> <span class="o">=</span> <span class="n">Dagman</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;tutorial_dagman&#39;</span><span class="p">,</span>
+                <span class="n">submit</span><span class="o">=</span><span class="n">submit</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For a Dagman, only a <code class="docutils literal notranslate"><span class="pre">name</span></code> has to be provided (used to construct the submit, log, etc. file names). In this example a <code class="docutils literal notranslate"><span class="pre">submit</span></code> parameter, the path to the directory where the Dagman submit file will be saved, is also provided.</p>
+</div>
+<div class="section" id="setting-up-jobs">
+<span id="job-setup"></span><h2>Setting up Jobs<a class="headerlink" href="#setting-up-jobs" title="Permalink to this headline">¶</a></h2>
+<p>Now we’re ready to add some Job objects to the Dagman. Both a <code class="docutils literal notranslate"><span class="pre">name</span></code> and an <code class="docutils literal notranslate"><span class="pre">executable</span></code> must be provided to create a Job.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate Jobs</span>
+<span class="n">job_date</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;date_job&#39;</span><span class="p">,</span>
+               <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;/bin/date&#39;</span><span class="p">,</span>
+               <span class="n">submit</span><span class="o">=</span><span class="n">submit</span><span class="p">,</span>
+               <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+               <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+               <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+               <span class="n">dag</span><span class="o">=</span><span class="n">dagman</span><span class="p">)</span>
+
+<span class="n">job_sleep</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;sleep_job&#39;</span><span class="p">,</span>
+                <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;/bin/sleep&#39;</span><span class="p">,</span>
+                <span class="n">submit</span><span class="o">=</span><span class="n">submit</span><span class="p">,</span>
+                <span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span>
+                <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+                <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+                <span class="n">dag</span><span class="o">=</span><span class="n">dagman</span><span class="p">)</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">)</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_arg</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example, <code class="docutils literal notranslate"><span class="pre">job_date</span></code> will run the shell <code class="docutils literal notranslate"><span class="pre">date</span></code> command, and <code class="docutils literal notranslate"><span class="pre">job_sleep</span></code> will run the shell <code class="docutils literal notranslate"><span class="pre">sleep</span></code> command. A Job can be added to a Dagman object by passing a Dagman to the Job <code class="docutils literal notranslate"><span class="pre">dag</span></code> parameter.</p>
+<p>In addition to defining an executable for a Job to run, you can also pass arguments to the executable using the Job <code class="docutils literal notranslate"><span class="pre">add_arg</span></code> method. Here, we’ve added three arguments, <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, and <code class="docutils literal notranslate"><span class="pre">3</span></code>, to <code class="docutils literal notranslate"><span class="pre">job_sleep</span></code>. This Job will now run the <code class="docutils literal notranslate"><span class="pre">sleep</span></code> command on each of the provided arguments, e.g. <code class="docutils literal notranslate"><span class="pre">sleep</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">sleep</span> <span class="pre">2</span></code>, and <code class="docutils literal notranslate"><span class="pre">sleep</span> <span class="pre">3</span></code>.</p>
+</div>
+<div class="section" id="adding-inter-job-relationships">
+<span id="job-relationships"></span><h2>Adding inter-job relationships<a class="headerlink" href="#adding-inter-job-relationships" title="Permalink to this headline">¶</a></h2>
+<p>One useful feature of Dagman objects is they can support inter-job relationships between the Jobs they manage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add inter-job relationship</span>
+<span class="c1"># Ensure that job_sleep finishes before job_date starts</span>
+<span class="n">job_sleep</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">job_date</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In many workflows, there are dependencies between different Jobs. For example, you might want to make sure one Job finishes before another Job begins. Inter-job relationships in PyCondor can be specified using the Job <code class="docutils literal notranslate"><span class="pre">add_child</span></code> and <code class="docutils literal notranslate"><span class="pre">add_parent</span></code> methods.</p>
+<p>For this tutorial, <code class="docutils literal notranslate"><span class="pre">job_sleep.add_child(job_date)</span></code> sets <code class="docutils literal notranslate"><span class="pre">job_date</span></code> as a child Job of <code class="docutils literal notranslate"><span class="pre">job_sleep</span></code>. This means that <code class="docutils literal notranslate"><span class="pre">job_date</span></code> will start running only after <code class="docutils literal notranslate"><span class="pre">job_sleep</span></code> has finished. Note that <code class="docutils literal notranslate"><span class="pre">job_sleep.add_child(job_date)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">job_date.add_parent(job_sleep)</span></code>.</p>
+</div>
+<div class="section" id="build-and-submit-the-dagman">
+<span id="submitting"></span><h2>Build and submit the Dagman<a class="headerlink" href="#build-and-submit-the-dagman" title="Permalink to this headline">¶</a></h2>
+<p>Now that the workflow for this tutorial has been set up, we can build all the appropriate Job and Dagman submit files and submit them to HTCondor for execution.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write all necessary submit files and submit job to HTCondor</span>
+<span class="n">dagman</span><span class="o">.</span><span class="n">build_submit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The Dagman <code class="docutils literal notranslate"><span class="pre">build_submit</span></code> method is used to both build the appropriate Job and Dagman submit files and then submit them to HTCondor. Note that the <code class="docutils literal notranslate"><span class="pre">build_submit</span></code> method is just shorthand for the <code class="docutils literal notranslate"><span class="pre">build</span></code> Dagman method followed by the <code class="docutils literal notranslate"><span class="pre">submit</span></code> method.</p>
+<p>For more examples see the <a class="reference internal" href="examples.html"><span class="doc">Examples</span></a> documentation page.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, James Bourbeau
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

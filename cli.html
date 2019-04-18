@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Command line &mdash; PyCondor  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Visualizing Workflows" href="visualize.html" />
+    <link rel="prev" title="PyCondor API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo-light-color.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Basic Workflow</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api.html">PyCondor API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command line</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dagman-monitoring">Dagman Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-job-submission">Command line Job submission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pycondor-monitor">pycondor monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pycondor-submit">pycondor submit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyCondor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Command line</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/jrbourbeau/pycondor" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="command-line">
+<h1>Command line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dagman-monitoring">
+<h2>Dagman Monitoring<a class="headerlink" href="#dagman-monitoring" title="Permalink to this headline">¶</a></h2>
+<p>PyCondor comes with a <code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">monitor</span></code> command, to display a
+progress bar for Dagman jobs in the terminal. This can be useful for long
+running Dagman processes.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pycondor monitor /path/to/dagman/submit_file.submit
+<span class="o">[</span><span class="c1">##############################] 100% Done | 89 done, 0 queued, 0 ready, 0 unready, 0 failed | 51.3m</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">monitor</span></code> displays:</p>
+<ul class="simple">
+<li>A progress bar indicating the percent of all jobs that are marked as done.</li>
+<li>The number of jobs that are done, queued, ready, unready, and failed.</li>
+<li>The duration the Dagman has been running (in minutes).</li>
+</ul>
+<p>See <code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">monitor</span> <span class="pre">--help</span></code> for a complete list of available command line options.</p>
+</div>
+<div class="section" id="command-line-job-submission">
+<h2>Command line Job submission<a class="headerlink" href="#command-line-job-submission" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">submit</span></code> command can be used to easily submit Jobs to
+HTCondor directly from the command line. This can be useful for testing and
+debugging. For example,</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pycondor submit  my_script.py
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">submit</span></code> command accepts several options. For example, to
+requesting a specified amount of memory</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pycondor submit --request_memory 3GB  my_script.py
+</pre></div>
+</div>
+<p>or to write log files to a specified directory</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pycondor submit --log /path/to/log_dir my_script.py
+</pre></div>
+</div>
+<p>Note that when passing command line arguments to an executable, two dashes (i.e. <code class="docutils literal notranslate"><span class="pre">--</span></code>)
+must be used to separate the <code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">submit</span></code> command line arguments from
+the command line arguments to be passed to the executable. E.g.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pycondor submit --request_memory 3GB my_script.py -- --script_option value
+</pre></div>
+</div>
+<p>See <code class="docutils literal notranslate"><span class="pre">pycondor</span> <span class="pre">submit</span> <span class="pre">--help</span></code> for a complete list of available command line options.</p>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pycondor-monitor">
+<h3>pycondor monitor<a class="headerlink" href="#pycondor-monitor" title="Permalink to this headline">¶</a></h3>
+<p>Prints Dagman progress bar to stdout</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pycondor monitor <span class="o">[</span>OPTIONS<span class="o">]</span> FILE
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="option">
+<dt id="cmdoption-pycondor-monitor-t">
+<code class="descname">-t</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--time</code><code class="descclassname"> &lt;time_&gt;</code><a class="headerlink" href="#cmdoption-pycondor-monitor-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time (in seconds) in between log checks  [default: 30]</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-monitor-l">
+<code class="descname">-l</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--length</code><code class="descclassname"> &lt;length&gt;</code><a class="headerlink" href="#cmdoption-pycondor-monitor-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of the progress bar  [default: 30]</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-monitor-prog-char">
+<code class="descname">--prog_char</code><code class="descclassname"> &lt;prog_char&gt;</code><a class="headerlink" href="#cmdoption-pycondor-monitor-prog-char" title="Permalink to this definition">¶</a></dt>
+<dd><p>Progress bar character  [default: #]</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="option">
+<dt id="cmdoption-pycondor-monitor-arg-file">
+<code class="descname">FILE</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-pycondor-monitor-arg-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pycondor-submit">
+<h3>pycondor submit<a class="headerlink" href="#pycondor-submit" title="Permalink to this headline">¶</a></h3>
+<p>Quickly submit a Job to HTCondor from the command line</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pycondor submit <span class="o">[</span>OPTIONS<span class="o">]</span> EXECUTABLE <span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-submit">
+<code class="descname">--submit</code><code class="descclassname"> &lt;submit&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory to store submit files</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-log">
+<code class="descname">--log</code><code class="descclassname"> &lt;log&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory to store log files</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-output">
+<code class="descname">--output</code><code class="descclassname"> &lt;output&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory to store output files</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-error">
+<code class="descname">--error</code><code class="descclassname"> &lt;error&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory to store error files</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-request-memory">
+<code class="descname">--request_memory</code><code class="descclassname"> &lt;request_memory&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-request-memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Memory request to be included in submit file</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-request-disk">
+<code class="descname">--request_disk</code><code class="descclassname"> &lt;request_disk&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-request-disk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disk request to be included in submit file</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-request-cpus">
+<code class="descname">--request_cpus</code><code class="descclassname"> &lt;request_cpus&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-request-cpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of CPUs to request in submit file</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-universe">
+<code class="descname">--universe</code><code class="descclassname"> &lt;universe&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Universe execution environment to be specified in submit file</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-getenv">
+<code class="descname">--getenv</code><code class="descclassname"> &lt;getenv&gt;</code><a class="headerlink" href="#cmdoption-pycondor-submit-getenv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set getenv to True or False</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-dryrun">
+<code class="descname">--dryrun</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-pycondor-submit-dryrun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only build submit file, but do not submit it for execution  [default: False]</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-arg-executable">
+<code class="descname">EXECUTABLE</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-pycondor-submit-arg-executable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-pycondor-submit-arg-args">
+<code class="descname">ARGS</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-pycondor-submit-arg-args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, James Bourbeau
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

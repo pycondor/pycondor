@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyCondor &mdash; PyCondor  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#">
+          
+
+          
+            
+            <img src="_static/logo-light-color.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Basic Workflow</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">PyCondor API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">PyCondor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>PyCondor</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/jrbourbeau/pycondor" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pycondor">
+<h1>PyCondor<a class="headerlink" href="#pycondor" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://travis-ci.org/jrbourbeau/pycondor"><img alt="https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master" src="https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://codecov.io/gh/jrbourbeau/pycondor"><img alt="https://codecov.io/gh/jrbourbeau/pycondor/branch/master/graph/badge.svg" src="https://codecov.io/gh/jrbourbeau/pycondor/branch/master/graph/badge.svg" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/PyCondor/"><img alt="https://img.shields.io/pypi/v/pycondor.svg" src="https://img.shields.io/pypi/v/pycondor.svg" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/PyCondor/"><img alt="https://img.shields.io/pypi/l/pycondor.svg" src="https://img.shields.io/pypi/l/pycondor.svg" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/PyCondor/"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/pycondor.svg" /></a>
+<p><strong>PyCondor (Python HTCondor) is a tool to help build and submit workflows to HTCondor in a straight-forward manner with minimal hassle.</strong></p>
+<p>With just a few lines of code, you can get PyCondor up and running:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pycondor</span> <span class="kn">import</span> <span class="n">Job</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;examplejob&#39;</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;my_script.py&#39;</span><span class="p">)</span>
+<span class="n">job</span><span class="o">.</span><span class="n">build_submit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Basic Workflow</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">PyCondor API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+</div>
+<div class="section" id="questions-bug-reports">
+<h2>Questions &amp; Bug Reports<a class="headerlink" href="#questions-bug-reports" title="Permalink to this headline">¶</a></h2>
+<p>PyCondor is an open-source project and contributions are always welcome from
+anyone. If you have a question, would like to propose a new feature, or submit
+a bug report, feel free to open up an issue on our <a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">issue tracker on GitHub</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, James Bourbeau
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

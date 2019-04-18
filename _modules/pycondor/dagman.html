@@ -1,0 +1,632 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pycondor.dagman &mdash; PyCondor  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/logo-light-color.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Basic Workflow</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">PyCondor API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualize.html">Visualizing Workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Useful links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor">PyCondor &#64; GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/PyCondor/">PyCondor &#64; PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jrbourbeau/pycondor/issues">Issue tracker</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyCondor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pycondor.dagman</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pycondor.dagman</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">checkdir</span><span class="p">,</span> <span class="n">get_condor_version</span><span class="p">,</span> <span class="n">requires_command</span><span class="p">,</span>
+                    <span class="n">split_command_string</span><span class="p">,</span> <span class="n">decode_string</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.basenode</span> <span class="k">import</span> <span class="n">BaseNode</span>
+<span class="kn">from</span> <span class="nn">.job</span> <span class="k">import</span> <span class="n">Job</span>
+<span class="kn">from</span> <span class="nn">.visualize</span> <span class="k">import</span> <span class="n">visualize</span> <span class="k">as</span> <span class="n">_visualize</span>
+
+
+<span class="k">def</span> <span class="nf">_get_subdag_string</span><span class="p">(</span><span class="n">dagman</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dagman</span><span class="p">,</span> <span class="n">Dagman</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;Expecting a Dagman object, got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dagman</span><span class="p">)))</span>
+
+    <span class="n">subdag_string</span> <span class="o">=</span> <span class="s1">&#39;SUBDAG EXTERNAL </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dagman</span><span class="o">.</span><span class="n">submit_name</span><span class="p">,</span>
+                                                   <span class="n">dagman</span><span class="o">.</span><span class="n">submit_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">subdag_string</span>
+
+
+<span class="k">def</span> <span class="nf">_iter_job_args</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Iterates over Job args list. Yields the name (and JobArg) for each node</span>
+<span class="sd">    to be used when adding job to a Dagman (i.e. the name in the</span>
+<span class="sd">    &#39;JOB name job_submit_file&#39; line).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    job : Job</span>
+<span class="sd">        Job to iterate over. Note that the submit file for job must be built</span>
+<span class="sd">        prior to using _iter_job_args.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    node_name : str</span>
+<span class="sd">        Node name to use in Dagman object.</span>
+<span class="sd">    job_arg : JobArg namedtuple</span>
+<span class="sd">        Job argument object (``arg``, ``name``, ``retry`` attributes).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting a Job object, got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">job</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s1">&#39;_built&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Job </span><span class="si">{}</span><span class="s1"> must be built before adding it &#39;</span>
+                         <span class="s1">&#39;to a Dagman&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">job_arg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
+            <span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">retry</span> <span class="o">=</span> <span class="n">job_arg</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">node_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">submit_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">node_name</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_arg_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">submit_name</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">job_arg</span>
+
+
+<span class="k">def</span> <span class="nf">_get_parent_child_string</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs the parent/child line for node to be added to a Dagman</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">BaseNode</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Expecting a Job or Dagman object, &#39;</span>
+                         <span class="s1">&#39;got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+
+    <span class="n">parent_string</span> <span class="o">=</span> <span class="s1">&#39;Parent&#39;</span>
+    <span class="k">for</span> <span class="n">parent_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parent_node</span><span class="p">,</span> <span class="n">Job</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_node</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">job_arg</span> <span class="ow">in</span> <span class="n">_iter_job_args</span><span class="p">(</span><span class="n">parent_node</span><span class="p">):</span>
+                <span class="n">parent_string</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parent_string</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parent_node</span><span class="o">.</span><span class="n">submit_name</span><span class="p">)</span>
+
+    <span class="n">child_string</span> <span class="o">=</span> <span class="s1">&#39;Child&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Job</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">job_arg</span> <span class="ow">in</span> <span class="n">_iter_job_args</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="n">child_string</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">child_string</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">submit_name</span><span class="p">)</span>
+
+    <span class="n">parent_child_string</span> <span class="o">=</span> <span class="n">parent_string</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">child_string</span>
+
+    <span class="k">return</span> <span class="n">parent_child_string</span>
+
+
+<div class="viewcode-block" id="Dagman"><a class="viewcode-back" href="../../api.html#pycondor.Dagman">[docs]</a><span class="k">class</span> <span class="nc">Dagman</span><span class="p">(</span><span class="n">BaseNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dagman object consisting of a series of Jobs and sub-Dagmans to manage.</span>
+
+<span class="sd">    Note that the ``submit`` parameter can be explicitly given or configured</span>
+<span class="sd">    by setting the ``PYCONDOR_SUBMIT_DIR`` environment variable. An explicitly</span>
+<span class="sd">    given value for ``submit`` will be used over the environment variable,</span>
+<span class="sd">    while the environment variable will be used over a default value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the Dagman instance. This will also be the name of the</span>
+<span class="sd">        corresponding error, log, output, and submit files associated with</span>
+<span class="sd">        this Dagman.</span>
+
+<span class="sd">    submit : str</span>
+<span class="sd">        Path to directory where condor dagman submit files will be written</span>
+<span class="sd">        (defaults to the directory was the Dagman was submitted from).</span>
+
+<span class="sd">    extra_lines : list or None, optional</span>
+<span class="sd">        List of additional lines to be added to submit file.</span>
+
+<span class="sd">        .. versionadded:: 0.1.1</span>
+
+<span class="sd">    dag : Dagman, optional</span>
+<span class="sd">        If specified, Dagman will be added to dag as a subdag</span>
+<span class="sd">        (default is None).</span>
+
+<span class="sd">    verbose : int, optional</span>
+<span class="sd">        Level of logging verbosity option are 0-warning, 1-info,</span>
+<span class="sd">        2-debugging (default is 0).</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    jobs : list</span>
+<span class="sd">        The list of jobs for this Dagman instance to manage.</span>
+
+<span class="sd">    parents : list</span>
+<span class="sd">        List of parent Jobs and Dagmans. Ensures that Jobs and Dagmans in the</span>
+<span class="sd">        parents list will complete before this Dagman is submitted to HTCondor.</span>
+
+<span class="sd">    children : list</span>
+<span class="sd">        List of child Jobs and Dagmans. Ensures that Jobs and Dagmans in the</span>
+<span class="sd">        children list will be submitted only after this Dagman has completed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">submit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Dagman</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">submit</span><span class="p">,</span> <span class="n">extra_lines</span><span class="p">,</span> <span class="n">dag</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_bad_node_names</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> initialized&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nondefaults</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;nodes&#39;</span><span class="p">,</span> <span class="s1">&#39;logger&#39;</span><span class="p">]:</span>
+                <span class="n">nondefaults</span> <span class="o">+=</span> <span class="s1">&#39;, </span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;Dagman(name=</span><span class="si">{}</span><span class="s1">, n_nodes=</span><span class="si">{}{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                        <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span>
+                                                        <span class="n">nondefaults</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
+
+    <span class="k">def</span> <span class="nf">_hasnode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
+
+    <span class="k">def</span> <span class="nf">_add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="c1"># Don&#39;t bother adding node if it&#39;s already been added</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hasnode</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">BaseNode</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting a Job or Dagman. &#39;</span>
+                            <span class="s1">&#39;Got an object of type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;Added </span><span class="si">{}</span><span class="s1"> to Dagman </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="Dagman.add_job"><a class="viewcode-back" href="../../api.html#pycondor.Dagman.add_job">[docs]</a>    <span class="k">def</span> <span class="nf">add_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add job to Dagman</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        job : Job</span>
+<span class="sd">            Job to append to Dagman jobs list.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_node</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Dagman.add_subdag"><a class="viewcode-back" href="../../api.html#pycondor.Dagman.add_subdag">[docs]</a>    <span class="k">def</span> <span class="nf">add_subdag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dag</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add dag to Dagman</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dag : Dagman</span>
+<span class="sd">            Subdag to append to Dagman jobs list.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_node</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_job_arg_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructs the lines to be added to a Dagman related to job</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expecting a Job object, got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">job</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s1">&#39;_built&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Job </span><span class="si">{}</span><span class="s1"> must be built before adding it &#39;</span>
+                             <span class="s1">&#39;to a Dagman&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="n">job_arg_lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">job_line</span> <span class="o">=</span> <span class="s1">&#39;JOB </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">submit_name</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">submit_file</span><span class="p">)</span>
+            <span class="n">job_arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">node_name</span><span class="p">,</span> <span class="n">job_arg</span> <span class="ow">in</span> <span class="n">_iter_job_args</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
+                <span class="c1"># Check that &#39;.&#39; or &#39;+&#39; are not in node_name</span>
+                <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">node_name</span> <span class="ow">or</span> <span class="s1">&#39;+&#39;</span> <span class="ow">in</span> <span class="n">node_name</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_has_bad_node_names</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="n">arg</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">retry</span> <span class="o">=</span> <span class="n">job_arg</span>
+                <span class="c1"># Add JOB line with Job submit file</span>
+                <span class="n">job_line</span> <span class="o">=</span> <span class="s1">&#39;JOB </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">submit_file</span><span class="p">)</span>
+                <span class="n">job_arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_line</span><span class="p">)</span>
+                <span class="c1"># Add job ARGS line for command line arguments</span>
+                <span class="n">arg_line</span> <span class="o">=</span> <span class="s1">&#39;VARS </span><span class="si">{}</span><span class="s1"> ARGS=&quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+                <span class="n">job_arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_line</span><span class="p">)</span>
+                <span class="c1"># Define job_name variable if there are arg_names for job</span>
+                <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">_has_arg_names</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">job_name</span> <span class="o">=</span> <span class="n">node_name</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">job_name</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">submit_name</span>
+                    <span class="n">job_name_line</span> <span class="o">=</span> <span class="s1">&#39;VARS </span><span class="si">{}</span><span class="s1"> job_name=&quot;</span><span class="si">{}</span><span class="s1">&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span>
+                                                                   <span class="n">job_name</span><span class="p">)</span>
+                    <span class="n">job_arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job_name_line</span><span class="p">)</span>
+                <span class="c1"># Add retry line for Job</span>
+                <span class="k">if</span> <span class="n">retry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">retry_line</span> <span class="o">=</span> <span class="s1">&#39;Retry </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node_name</span><span class="p">,</span> <span class="n">retry</span><span class="p">)</span>
+                    <span class="n">job_arg_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">retry_line</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">job_arg_lines</span>
+
+<div class="viewcode-block" id="Dagman.build"><a class="viewcode-back" href="../../api.html#pycondor.Dagman.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">makedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancyname</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build and saves the submit file for Dagman</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        makedirs : bool, optional</span>
+<span class="sd">            If Job directories (e.g. error, output, log, submit) don&#39;t exist,</span>
+<span class="sd">            create them (default is ``True``).</span>
+
+<span class="sd">        fancyname : bool, optional</span>
+<span class="sd">            Appends the date and unique id number to error, log, output, and</span>
+<span class="sd">            submit files. For example, instead of ``dagname.submit`` the submit</span>
+<span class="sd">            file becomes ``dagname_YYYYMMD_id``. This is useful when running</span>
+<span class="sd">            several Dags/Jobs of the same name (default is ``True``).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_built&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> submit file has already been built. &#39;</span>
+                    <span class="s1">&#39;Skipping the build process...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fancyname</span><span class="p">()</span> <span class="k">if</span> <span class="n">fancyname</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">submit_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.submit&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit_file</span> <span class="o">=</span> <span class="n">submit_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">checkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit_file</span><span class="p">,</span> <span class="n">makedirs</span><span class="p">)</span>
+
+        <span class="c1"># Build submit files for all nodes in self.nodes</span>
+        <span class="c1"># Note: nodes must be built before the submit file for self is built</span>
+        <span class="k">for</span> <span class="n">node_index</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Job</span><span class="p">):</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">_build_from_dag</span><span class="p">(</span><span class="n">makedirs</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Dagman</span><span class="p">):</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">makedirs</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Nodes must be either a Job or Dagman object&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Write dag submit file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Building DAG submission file </span><span class="si">{}</span><span class="s1">...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit_file</span><span class="p">))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parent_child_lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node_index</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Working on </span><span class="si">{}</span><span class="s1"> [</span><span class="si">{}</span><span class="s1"> of </span><span class="si">{}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">node_index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)))</span>
+            <span class="c1"># Build the BaseNode submit file</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Job</span><span class="p">):</span>
+                <span class="c1"># Add Job variables to Dagman submit file</span>
+                <span class="n">job_arg_lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_job_arg_lines</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">job_arg_lines</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Dagman</span><span class="p">):</span>
+                <span class="n">subdag_string</span> <span class="o">=</span> <span class="n">_get_subdag_string</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subdag_string</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Nodes must be either a Job or Dagman object&#39;</span><span class="p">)</span>
+            <span class="c1"># Add parent/child information, if necessary</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">hasparents</span><span class="p">():</span>
+                <span class="n">parent_child_string</span> <span class="o">=</span> <span class="n">_get_parent_child_string</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="n">parent_child_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent_child_string</span><span class="p">)</span>
+
+        <span class="c1"># Add any extra lines to submit file, if specified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_lines</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_lines</span><span class="p">)</span>
+
+        <span class="c1"># Write lines to dag submit file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">submit_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+            <span class="n">dag</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">#Inter-job dependencies&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                     <span class="n">parent_child_lines</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_built</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Dagman submission file for </span><span class="si">{}</span><span class="s1"> successfully &#39;</span>
+                         <span class="s1">&#39;built!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Dagman.submit_dag"><a class="viewcode-back" href="../../api.html#pycondor.Dagman.submit_dag">[docs]</a>    <span class="nd">@requires_command</span><span class="p">(</span><span class="s1">&#39;condor_submit_dag&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">submit_dag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submit_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Submits Dagman to condor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        submit_options : str, optional</span>
+<span class="sd">            Options to be passed to ``condor_submit_dag`` for this Dagman</span>
+<span class="sd">            (see the `condor_submit_dag documentation</span>
+<span class="sd">            &lt;http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html&gt;`_</span>
+<span class="sd">            for possible options).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Construct condor_submit_dag command</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;condor_submit_dag&#39;</span>
+        <span class="k">if</span> <span class="n">submit_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">submit_options</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submit_file</span><span class="p">)</span>
+
+        <span class="n">submit_dag_proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">split_command_string</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+
+        <span class="c1"># Check that there are no illegal node names for newer condor versions</span>
+        <span class="n">condor_version</span> <span class="o">=</span> <span class="n">get_condor_version</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">condor_version</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_bad_node_names</span><span class="p">:</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Found an illegal character (either &#39;+&#39; or &#39;.&#39;) in the &quot;</span>
+                   <span class="s2">&quot;name for a node in Dagman </span><span class="si">{}</span><span class="s2">. As of HTCondor version &quot;</span>
+                   <span class="s2">&quot;8.7.2, &#39;+&#39; and  &#39;.&#39; are prohibited in Dagman node names. &quot;</span>
+                   <span class="s2">&quot;This means a &#39;+&#39; or &#39;.&#39; character is in a Job name, &quot;</span>
+                   <span class="s2">&quot;Dagman name, or the name for a Job argument.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+        <span class="c1"># Execute condor_submit_dag command</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">submit_dag_proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">decode_string</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Dagman.build_submit"><a class="viewcode-back" href="../../api.html#pycondor.Dagman.build_submit">[docs]</a>    <span class="nd">@requires_command</span><span class="p">(</span><span class="s1">&#39;condor_submit_dag&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">build_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">makedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fancyname</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">submit_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls build and submit sequentially</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        makedirs : bool, optional</span>
+<span class="sd">            If Job directories (e.g. error, output, log, submit) don&#39;t exist,</span>
+<span class="sd">            create them (default is ``True``).</span>
+
+<span class="sd">        fancyname : bool, optional</span>
+<span class="sd">            Appends the date and unique id number to error, log, output, and</span>
+<span class="sd">            submit files. For example, instead of ``dagname.submit`` the submit</span>
+<span class="sd">            file becomes ``dagname_YYYYMMD_id``. This is useful when running</span>
+<span class="sd">            several Dags/Jobs of the same name (default is ``True``).</span>
+
+<span class="sd">        submit_options : str, optional</span>
+<span class="sd">            Options to be passed to ``condor_submit_dag`` for this Dagman</span>
+<span class="sd">            (see the `condor_submit_dag documentation</span>
+<span class="sd">            &lt;http://research.cs.wisc.edu/htcondor/manual/current/condor_submit_dag.html&gt;`_</span>
+<span class="sd">            for possible options).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : object</span>
+<span class="sd">            Returns self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">makedirs</span><span class="p">,</span> <span class="n">fancyname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submit_dag</span><span class="p">(</span><span class="n">submit_options</span><span class="o">=</span><span class="n">submit_options</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Dagman.visualize"><a class="viewcode-back" href="../../api.html#pycondor.Dagman.visualize">[docs]</a>    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Visualize Dagman graph</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str or None, optional</span>
+<span class="sd">            File to save graph diagram to. If ``None`` then no file is saved.</span>
+<span class="sd">            Valid file extensions are &#39;png&#39;, &#39;pdf&#39;, &#39;dot&#39;, &#39;svg&#39;, &#39;jpeg&#39;, &#39;jpg&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">g</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, James Bourbeau
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
