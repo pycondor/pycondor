@@ -378,7 +378,12 @@ class Dagman(BaseNode):
 
         # Execute condor_submit_dag command
         out, err = submit_dag_proc.communicate()
-        print(decode_string(out))
+
+        if decode_string(out):
+            self.logger.info(decode_string(out))
+
+        if err:
+            self.logger.error(decode_string(err))
 
         return self
 
