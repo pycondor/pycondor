@@ -1,6 +1,6 @@
 .. _environment-variables:
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 *******************************************************
 Specifying file directories using environment variables

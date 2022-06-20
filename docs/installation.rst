@@ -1,6 +1,6 @@
 .. _installation:
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 ************
 Installation
@@ -40,10 +40,10 @@ The latest development version of PyCondor can be install directly from GitHub
 
 .. code-block:: bash
 
-    pip install git+https://github.com/jrbourbeau/pycondor.git
+    pip install git+https://github.com/pycondor/pycondor.git
 
 
-or you can fork the `PyCondor GitHub repository <https://github.com/jrbourbeau/pycondor>`_ and install PyCondor on your local machine via
+or you can fork the `PyCondor GitHub repository <https://github.com/pycondor/pycondor>`_ and install PyCondor on your local machine via
 
 .. code-block:: bash
 

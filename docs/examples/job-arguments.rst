@@ -1,6 +1,6 @@
 .. _job-arguments:
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 ********************
 Adding Job arguments

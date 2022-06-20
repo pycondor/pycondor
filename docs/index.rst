@@ -3,17 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 ********
 PyCondor
 ********
 
-.. image:: https://travis-ci.org/jrbourbeau/pycondor.svg?branch=master
-    :target: https://travis-ci.org/jrbourbeau/pycondor
+.. image:: https://travis-ci.org/pycondor/pycondor.svg?branch=master
+    :target: https://travis-ci.org/pycondor/pycondor
 
-.. image:: https://codecov.io/gh/jrbourbeau/pycondor/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/jrbourbeau/pycondor
+.. image:: https://codecov.io/gh/pycondor/pycondor/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/pycondor/pycondor
 
 .. image:: https://img.shields.io/pypi/v/pycondor.svg
     :target: https://pypi.org/project/PyCondor/
@@ -59,9 +59,9 @@ With just a few lines of code, you can get PyCondor up and running:
    :maxdepth: 1
    :caption: Useful links
 
-   PyCondor @ GitHub <https://github.com/jrbourbeau/pycondor>
+   PyCondor @ GitHub <https://github.com/pycondor/pycondor>
    PyCondor @ PyPI <https://pypi.org/project/PyCondor/>
-   Issue tracker <https://github.com/jrbourbeau/pycondor/issues>
+   Issue tracker <https://github.com/pycondor/pycondor/issues>
 
 
 Questions & Bug Reports
@@ -69,4 +69,4 @@ Questions & Bug Reports
 
 PyCondor is an open-source project and contributions are always welcome from
 anyone. If you have a question, would like to propose a new feature, or submit
-a bug report, feel free to open up an issue on our `issue tracker on GitHub <https://github.com/jrbourbeau/pycondor/issues>`_.
+a bug report, feel free to open up an issue on our `issue tracker on GitHub <https://github.com/pycondor/pycondor/issues>`_.

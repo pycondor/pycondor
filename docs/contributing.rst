@@ -1,6 +1,6 @@
 .. _contributing:
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 ************
 Contributing
@@ -15,7 +15,7 @@ Step 1: Creating a new issue
 ============================
 
 - If you don't already have a `GitHub <http://www.github.com>`_ account, create one
-- Go to the `PyCondor GitHub page <https://github.com/jrbourbeau/pycondor>`_ and create a new issue by clicking on the "Issues" tab and then the "New issue" button
+- Go to the `PyCondor GitHub page <https://github.com/pycondor/pycondor>`_ and create a new issue by clicking on the "Issues" tab and then the "New issue" button
 
 .. image:: _static/open-new-issue.png
 
@@ -61,7 +61,7 @@ To add the original PyCondor project repository as a remote (named "upstream") t
 
 .. code-block:: bash
 
-    $ git remote add upstream https://github.com/jrbourbeau/pycondor.git
+    $ git remote add upstream https://github.com/pycondor/pycondor.git
 
 
 Now when you execute ``git remote -v``, the newly added upstream remote should be present
@@ -70,8 +70,8 @@ Now when you execute ``git remote -v``, the newly added upstream remote should b
 
     origin  https://github.com/<your_username>/pycondor.git (fetch)
     origin  https://github.com/<your_username>/pycondor.git (push)
-    upstream        https://github.com/jrbourbeau/pycondor.git (fetch)
-    upstream        https://github.com/jrbourbeau/pycondor.git (push)
+    upstream        https://github.com/pycondor/pycondor.git (fetch)
+    upstream        https://github.com/pycondor/pycondor.git (push)
 
 
 ================================
@@ -93,11 +93,11 @@ The output should look something like
     remote: Compressing objects: 100% (xx/xx), done.
     remote: Total xx (delta xx), reused xx (delta x)
     Unpacking objects: 100% (xx/xx), done.
-    From https://github.com/jrbourbeau/pycondor
+    From https://github.com/pycondor/pycondor
      * [new branch]      master     -> upstream/master
 
 
-Now the commits to the master branch of jrbourbeau/pycondor are stored in your local upstream/master branch. At this point, you'll want to make sure (if you're not already) that you're on the master branch of your local repository
+Now the commits to the master branch of pycondor/pycondor are stored in your local upstream/master branch. At this point, you'll want to make sure (if you're not already) that you're on the master branch of your local repository
 
 .. code-block:: bash
 
