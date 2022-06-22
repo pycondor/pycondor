@@ -1,0 +1,100 @@
+# -----------------------
+#
+# Run a full build-and-test from the git repo
+# using pip to install all dependencies.
+#
+# -----------------------
+
+name: Build and test
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - release/**
+  pull_request:
+    branches:
+      - main
+      - master
+      - release/**
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }} (${{ matrix.os }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macOS
+          - Ubuntu
+          - Windows
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+    runs-on: ${{ matrix.os }}-latest
+
+    # this is needed for conda environments to activate automatically
+    defaults:
+      run:
+        shell: bash -el {0}
+
+    steps:
+    - name: Get source code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Configure conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: test
+        miniforge-variant: Mambaforge
+        python-version: ${{ matrix.python-version }}
+        use-mamba: true
+        # this is needed for caching to work properly:
+        use-only-tar-bz2: true
+
+    - name: Conda info
+      run: conda info --all
+
+    - name: Install build/test requirements
+      run: |
+          mamba install --quiet --yes --name test \
+              python-graphviz \
+          ;
+
+    - name: Install this project with dev extras
+      run: python -m pip install .[dev]
+
+    - name: Package list
+      run: mamba list --name test
+
+    - name: Run pytest suite
+      run: python -m pytest --cov pycondor --junitxml=pytest.xml --pyargs pycondor -ra -v
+
+    - name: Coverage report
+      run: python -m coverage report --show-missing
+
+    - name: Prepare codecov upload
+      run: python -m coverage xml
+
+    - name: Publish coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        files: ./coverage.xml
+        flags: ${{ runner.os }},python${{ matrix.python-version }}
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: pytest-${{ matrix.os }}-${{ matrix.python-version }}
+        path: pytest.xml
