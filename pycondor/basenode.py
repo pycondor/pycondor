@@ -66,8 +66,9 @@ class BaseNode(object):
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
             raise TypeError(
-                    'add_parent() is expecting a Job or Dagman instance.'
-                    ' Got an object of type {}'.format(type(node)))
+                'add_parent() is expecting a Job or Dagman instance.'
+                ' Got an object of type {}'.format(type(node)),
+            )
 
         # Don't bother continuing if node is already in the parents list
         if self._hasparent(node):
@@ -98,8 +99,10 @@ class BaseNode(object):
 
         """
         # Check that nodes is a list/tuple of BaseNode objects
-        if (isinstance(nodes, (list, tuple)) and
-                all([isinstance(node, BaseNode) for node in nodes])):
+        if (
+            isinstance(nodes, (list, tuple))
+            and all([isinstance(node, BaseNode) for node in nodes])
+        ):
             for node in nodes:
                 self.add_parent(node)
         else:
@@ -128,8 +131,9 @@ class BaseNode(object):
         # Ensure that node is a BaseNode
         if not isinstance(node, BaseNode):
             raise TypeError(
-                    'add_child() is expecting a Job or Dagman instance.'
-                    ' Got an object of type {}'.format(type(node)))
+                'add_child() is expecting a Job or Dagman instance.'
+                ' Got an object of type {}'.format(type(node)),
+            )
 
         # Don't bother continuing if node is already in the children list
         if self._haschild(node):
@@ -159,8 +163,10 @@ class BaseNode(object):
 
         """
         # Check that nodes is a list/tuple of BaseNode objects
-        if (isinstance(nodes, (list, tuple)) and
-                all([isinstance(node, BaseNode) for node in nodes])):
+        if (
+            isinstance(nodes, (list, tuple))
+            and all([isinstance(node, BaseNode) for node in nodes])
+        ):
             for node in nodes:
                 self.add_child(node)
         else:
