@@ -1,13 +1,14 @@
-
-import pytest
-graphviz = pytest.importorskip('graphviz')  # noqa: E402
-
 import os
 import re
+
+import pytest
+
 from pycondor.job import Job
 from pycondor.dagman import Dagman
 from pycondor.visualize import visualize, extract_format, dag_to_graphviz
 from pycondor.utils import clear_pycondor_environment_variables
+
+graphviz = pytest.importorskip('graphviz')  # noqa: E402
 
 clear_pycondor_environment_variables()
 

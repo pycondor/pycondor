@@ -66,7 +66,7 @@ def status_generator(dag_out_file):
                 if idx == 0:
                     datetime_current = line_to_datetime(line)
                 if status_str in line:
-                    num_line = lines[idx-2]
+                    num_line = lines[idx - 2]
                     node_counts = [i for i in num_line.split(' ') if i != ''
                                    and ':' not in i and '/' not in i]
                     node_counts = map(int, node_counts)
@@ -75,7 +75,7 @@ def status_generator(dag_out_file):
             if node_counts:
                 status = Status(*node_counts)
             else:
-                status = Status(*[0]*len(_states))
+                status = Status(*[0] * len(_states))
                 datetime_current = datetime.now()
 
             yield status, datetime_current
@@ -114,11 +114,11 @@ def progress_bar_str(status, datetime_start, datetime_current, length=30,
         frac_done = 0
     width = int(frac_done * length)
 
-    bar_str = '\r[{0:<{1}}] {2}% Done'.format(prog_char*width, length,
-                                              int(100*frac_done))
+    bar_str = '\r[{0:<{1}}] {2}% Done'.format(prog_char * width, length,
+                                              int(100 * frac_done))
     count_str = '{} done, {} queued, {} ready, {} unready, {} failed'.format(
-            status.Done, status.Queued, status.Ready,
-            status.UnReady, status.Failed)
+        status.Done, status.Queued, status.Ready,
+        status.UnReady, status.Failed)
 
     dt = datetime_current - datetime_start
     time_str = '{:0.1f}m'.format(dt.seconds / 60)
@@ -182,7 +182,7 @@ def monitor(time_, length, prog_char, file):
 
     with open(dag_out_file, 'r') as f:
         datetime_start = line_to_datetime(f.readline())
-    current_status = Status(*[0]*len(_states))
+    current_status = Status(*[0] * len(_states))
     try:
         for status, datetime_current in status_generator(dag_out_file):
             # If no line with dagman status is found, wait and try again

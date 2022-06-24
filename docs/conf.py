@@ -19,7 +19,6 @@
 #
 import os
 import sys
-import pycondor
 sys.path.insert(0, os.path.abspath('../pycondor'))
 sys.path.insert(0, os.path.abspath('_themes'))
 
@@ -113,8 +112,10 @@ templates_path = ['_templates']
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+
 def setup(app):
     app.add_stylesheet('custom.css')
+
 
 html_sidebars = {
     '**': [
