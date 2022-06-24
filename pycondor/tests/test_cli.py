@@ -89,7 +89,7 @@ def test_monitor_file_raises():
     runner = CliRunner()
     result = runner.invoke(monitor, [non_exist_file])
     assert result.exit_code == 2
-    excerpt = 'Path "{}" does not exist'.format(non_exist_file)
+    excerpt = "Path '{}' does not exist".format(non_exist_file)
     assert excerpt in result.output.replace('\r', '')
 
 
@@ -99,7 +99,7 @@ def test_submit_file_raises():
     runner = CliRunner()
     result = runner.invoke(submit, [non_exist_executable])
     assert result.exit_code == 2
-    excerpt = 'Path "{}" does not exist'.format(non_exist_executable)
+    excerpt = "Path '{}' does not exist".format(non_exist_executable)
     assert excerpt in result.output.replace('\r', '')
 
 
