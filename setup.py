@@ -16,10 +16,12 @@ LICENSE = 'MIT'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+
 def read(path, encoding='utf-8'):
     with io.open(path, encoding=encoding) as f:
         content = f.read()
     return content
+
 
 def get_install_requirements(path):
     content = read(path)
@@ -27,7 +29,8 @@ def get_install_requirements(path):
                     if req != '' and not req.startswith('#')]
     return requirements
 
-LONG_DESCRIPTION = read(os.path.join(here,'README.md'))
+
+LONG_DESCRIPTION = read(os.path.join(here, 'README.md'))
 
 # Want to read in package version number from __version__.py
 about = {}

@@ -94,8 +94,9 @@ def test_get_subdag_string(tmpdir, dagman):
     subdag_str = _get_subdag_string(dagman)
 
     expected_str = 'SUBDAG EXTERNAL {} {}.submit'.format(
-                        dagman.name,
-                        os.path.join(submit_dir, dagman.name))
+        dagman.name,
+        os.path.join(submit_dir, dagman.name),
+    )
 
     assert subdag_str == expected_str
 

@@ -13,7 +13,8 @@ def _get_subdag_string(dagman):
 
     if not isinstance(dagman, Dagman):
         raise TypeError(
-                'Expecting a Dagman object, got {}'.format(type(dagman)))
+            'Expecting a Dagman object, got {}'.format(type(dagman)),
+        )
 
     subdag_string = 'SUBDAG EXTERNAL {} {}'.format(dagman.submit_name,
                                                    dagman.submit_file)
@@ -279,8 +280,9 @@ class Dagman(BaseNode):
         """
         if getattr(self, '_built', False):
             self.logger.warning(
-                    '{} submit file has already been built. '
-                    'Skipping the build process...'.format(self.name))
+                '{} submit file has already been built. '
+                'Skipping the build process...'.format(self.name),
+            )
             return self
 
         name = self._get_fancyname() if fancyname else self.name
@@ -328,8 +330,11 @@ class Dagman(BaseNode):
 
         # Write lines to dag submit file
         with open(submit_file, 'w') as dag:
-            dag.writelines('\n'.join(lines + ['\n#Inter-job dependencies'] +
-                                     parent_child_lines))
+            dag.writelines('\n'.join(
+                lines
+                + ['\n#Inter-job dependencies']
+                + parent_child_lines),
+            )
 
         self._built = True
         self.logger.info('Dagman submission file for {} successfully '
@@ -368,13 +373,15 @@ class Dagman(BaseNode):
         # Check that there are no illegal node names for newer condor versions
         condor_version = get_condor_version()
         if condor_version >= (8, 7, 2) and self._has_bad_node_names:
-            err = ("Found an illegal character (either '+' or '.') in the "
-                   "name for a node in Dagman {}. As of HTCondor version "
-                   "8.7.2, '+' and  '.' are prohibited in Dagman node names. "
-                   "This means a '+' or '.' character is in a Job name, "
-                   "Dagman name, or the name for a Job argument.".format(
-                        self.name))
-            raise RuntimeError(err)
+            raise RuntimeError(
+                "Found an illegal character (either '+' or '.') in the "
+                "name for a node in Dagman {}. As of HTCondor version "
+                "8.7.2, '+' and  '.' are prohibited in Dagman node names. "
+                "This means a '+' or '.' character is in a Job name, "
+                "Dagman name, or the name for a Job argument.".format(
+                    self.name,
+                ),
+            )
 
         # Execute condor_submit_dag command
         out, err = submit_dag_proc.communicate()
