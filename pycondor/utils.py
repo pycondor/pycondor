@@ -3,7 +3,6 @@ import os
 import re
 import sys
 import subprocess
-import logging
 import shutil
 import shlex
 import platform
