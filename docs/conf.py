@@ -42,8 +42,8 @@ extensions = ['sphinx.ext.autodoc',
               ]
 
 extlinks = {
-    'issue': ('https://github.com/jrbourbeau/pycondor/issues/%s', 'Issue #'),
-    'pr': ('https://github.com/jrbourbeau/pycondor/pull/%s', 'PR #'),
+    'issue': ('https://github.com/pycondor/pycondor/issues/%s', 'Issue #'),
+    'pr': ('https://github.com/pycondor/pycondor/pull/%s', 'PR #'),
     'user': ('https://github.com/%s', '@'),
 }
 

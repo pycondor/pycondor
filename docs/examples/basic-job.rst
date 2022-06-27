@@ -1,6 +1,6 @@
 .. _basic-job-example:
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 **************
 Creating a Job

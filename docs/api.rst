@@ -1,7 +1,7 @@
 .. _api:
 .. module:: pycondor
 
-:github_url: https://github.com/jrbourbeau/pycondor
+:github_url: https://github.com/pycondor/pycondor
 
 ************
 PyCondor API

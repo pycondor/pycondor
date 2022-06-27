@@ -11,7 +11,7 @@ NAME = 'PyCondor'
 DESCRIPTION = 'Python utility for HTCondor'
 MAINTAINER = 'James Bourbeau'
 MAINTAINER_EMAIL = 'james@jamesbourbeau.com'
-URL = 'https://github.com/jrbourbeau/pycondor'
+URL = 'https://github.com/pycondor/pycondor'
 LICENSE = 'MIT'
 
 here = os.path.abspath(os.path.dirname(__file__))
