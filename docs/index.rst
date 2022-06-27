@@ -9,21 +9,25 @@
 PyCondor
 ********
 
-.. image:: https://travis-ci.org/pycondor/pycondor.svg?branch=master
-    :target: https://travis-ci.org/pycondor/pycondor
+.. image:: https://github.com/pycondor/pycondor/actions/workflows/test.yml/badge.svg
+   :target: https://github.com/pycondor/pycondor/actions/workflows/test.yml
+   :alt: Build status
 
 .. image:: https://codecov.io/gh/pycondor/pycondor/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/pycondor/pycondor
+   :target: https://codecov.io/gh/pycondor/pycondor
+   :alt: Coverage
 
 .. image:: https://img.shields.io/pypi/v/pycondor.svg
-    :target: https://pypi.org/project/PyCondor/
+   :target: https://pypi.org/project/PyCondor/
+   :alt: PyPI - Project Version
 
 .. image:: https://img.shields.io/pypi/l/pycondor.svg
-    :target: https://pypi.org/project/PyCondor/
+   :target: https://pypi.org/project/PyCondor/
+   :alt: PyPI - Project License
 
 .. image:: https://img.shields.io/pypi/pyversions/pycondor.svg
-    :alt: PyPI - Python Version
-    :target: https://pypi.org/project/PyCondor/
+   :target: https://pypi.org/project/PyCondor/
+   :alt: PyPI - Python Version
 
 **PyCondor (Python HTCondor) is a tool to help build and submit workflows to HTCondor in a straight-forward manner with minimal hassle.**
 
