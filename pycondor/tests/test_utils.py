@@ -24,13 +24,6 @@ def test_string_rep_list_quotes():
     assert pycondor.utils.string_rep([1, 2, 3], quotes=True) == '"1, 2, 3"'
 
 
-def test_setup_logger_noname_fail():
-    with pytest.raises(AttributeError) as excinfo:
-        pycondor.utils._setup_logger('string_has_no_name')
-    error = 'Input must have a "name" attribute.'
-    assert error == str(excinfo.value)
-
-
 def test_clear_pycondor_environment_variables():
     # Set pycondor-related environment variables
     for i in ['submit', 'output', 'error', 'log']:
