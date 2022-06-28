@@ -1,6 +1,6 @@
 # PyCondor
 
-[![Build Status](https://travis-ci.org/pycondor/pycondor.svg?branch=master)](https://travis-ci.org/pycondor/pycondor)
+[![Build Status](https://github.com/pycondor/pycondor/actions/workflows/test.yml/badge.svg)](https://github.com/pycondor/pycondor/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/pycondor/pycondor/branch/master/graph/badge.svg)](https://codecov.io/gh/pycondor/pycondor)
 ![pypi version](https://img.shields.io/pypi/v/pycondor.svg 'pypi version')
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pycondor.svg)
