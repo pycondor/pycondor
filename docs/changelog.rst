@@ -6,6 +6,25 @@
 Release Notes
 *************
 
+Version 0.7.0 (TBC)
+-------------------
+
+**New Features**:
+
+-
+
+**Changes**:
+
+-
+
+**Bug Fixes**:
+
+-
+
+**Documentation**:
+
+-
+
 Version 0.6.0 (2022-07-13)
 -------------------
 
