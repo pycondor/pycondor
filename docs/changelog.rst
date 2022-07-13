@@ -6,24 +6,30 @@
 Release Notes
 *************
 
-Version 0.6.0 (TBD)
+Version 0.6.0 (2022-07-13)
 -------------------
+
+Bug fix release to get development started again.
 
 **New Features**:
 
--
+No new features added
 
 **Changes**:
 
--
+- Transition to pycondor namespace (See :pr:`149`)
+- Improvements to testing and infrastructure (See :pr:`135`, :pr:`148`, :pr:`149`, :pr:`141`, and :pr:`152`)
+- Use sphinx extlinks in the changelog (See :pr:`130`)
 
 **Bug Fixes**:
 
--
+- Fix counting of unready jobs in monitor (See :pr:`138`)
+- Updates to the logging setup (See :pr:`129`)
+- Fix issue in python 3.8 (See :pr:`140`)
 
 **Documentation**:
 
--
+- Migrate documentation to readthedocs (See :pr:`150`)
 
 
 Version 0.5.0 (2018-11-05)
