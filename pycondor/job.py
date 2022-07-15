@@ -140,7 +140,8 @@ class Job(BaseNode):
     Related HTCondor documentation
     ------------------------------
     - `Jobs <https://htcondor.readthedocs.io/en/latest/users-manual/submitting-a-job.html>`_
-    - `Pre and Post Scripts <https://htcondor.readthedocs.io/en/latest/users-manual/dagman-workflows.html?highlight=post%20scipt#pre-and-post-scripts>`_
+    - `Dagman <https://htcondor.readthedocs.io/en/latest/users-manual/dagman-workflows.html>`_
+       + pre and postscript secion
     """
 
     def __init__(self, name, executable, error=None, log=None, output=None,
