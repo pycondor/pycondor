@@ -229,6 +229,8 @@ class Dagman(BaseNode):
         if len(job.args) == 0:
             job_line = 'JOB {} {}'.format(job.submit_name, job.submit_file)
             job_arg_lines.append(job_line)
+            # Add pre and post script if defined
+            job_arg_lines += self._get_script_lines(job, job.submit_name)
         else:
             for node_name, job_arg in _iter_job_args(job):
                 # Check that '.' or '+' are not in node_name
@@ -242,6 +244,9 @@ class Dagman(BaseNode):
                 # Add job ARGS line for command line arguments
                 arg_line = 'VARS {} ARGS="{}"'.format(node_name, arg)
                 job_arg_lines.append(arg_line)
+                # Add pre and post script if defined
+                job_arg_lines += self._get_script_lines(job, node_name)
+
                 # Define job_name variable if there are arg_names for job
                 if job._has_arg_names:
                     if name is not None:
@@ -257,6 +262,36 @@ class Dagman(BaseNode):
                     job_arg_lines.append(retry_line)
 
         return job_arg_lines
+
+    def _get_script_lines(self, job, node_name):
+        """ Adds dagman lines for pre post and hold scripts if defined by job
+
+        Parameters
+        ----------
+        job : Job
+            Job for which to add pre post and hold script
+
+        node_name : str
+            name of the job in the dagman file
+
+        Returns
+        -------
+        script_lines : list
+            list of dagman lines containing pre post and hold scripts
+
+        """
+        script_lines = []
+        if job.pre_script is not None:
+            prescript_line = "SCRIPT PRE {} {}".format(node_name, job.pre_script)
+            script_lines.append(prescript_line)
+        if job.post_script is not None:
+            postscript_line = "SCRIPT POST {} {}".format(node_name, job.post_script)
+            script_lines.append(postscript_line)
+        if job.hold_script is not None:
+            holdscript_line = "SCRIPT HOLD {} {}".format(node_name, job.hold_script)
+            script_lines.append(holdscript_line)
+
+        return script_lines
 
     def build(self, makedirs=True, fancyname=True):
         """Build and saves the submit file for Dagman
