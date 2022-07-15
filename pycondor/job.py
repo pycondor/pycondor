@@ -100,6 +100,18 @@ class Job(BaseNode):
         Note: this feature is only available to Jobs that are submitted via a
         Dagman (default is None; no retries).
 
+    pre_script : str, optional
+        Executable and arguments to be added as pre script if job is part
+        of a dagman
+
+    post_script : str, optional
+        Executable and arguments to be added as post script if job is part
+        of a dagman
+
+    hold_script : str, optional
+        Executable and arguments to be added as hold script if job is part
+        of a dagman
+
     verbose : int, optional
         Level of logging verbosity option are 0-warning, 1-info,
         2-debugging (default is 0).
@@ -125,6 +137,10 @@ class Job(BaseNode):
     >>> job = pycondor.Job('myjob', 'myscript.py')
     >>> job.build_submit()
 
+    Related HTCondor documentation
+    ------------------------------
+    - `Jobs <https://htcondor.readthedocs.io/en/latest/users-manual/submitting-a-job.html>`_
+    - `Pre and Post Scripts <https://htcondor.readthedocs.io/en/latest/users-manual/dagman-workflows.html?highlight=post%20scipt#pre-and-post-scripts>`_
     """
 
     def __init__(self, name, executable, error=None, log=None, output=None,
@@ -132,7 +148,8 @@ class Job(BaseNode):
                  request_cpus=None, getenv=None, universe=None,
                  initialdir=None, notification=None, requirements=None,
                  queue=None, extra_lines=None, dag=None, arguments=None,
-                 retry=None, verbose=0):
+                 retry=None, pre_script=None, post_script=None,
+                 hold_script=None, verbose=0):
 
         super(Job, self).__init__(name, submit, extra_lines, dag, verbose)
 
@@ -149,6 +166,9 @@ class Job(BaseNode):
         self.notification = notification
         self.requirements = requirements
         self.queue = queue
+        self.pre_script = pre_script
+        self.post_script = post_script
+        self.hold_script = hold_script
 
         if retry is not None and not isinstance(retry, int):
             raise TypeError('retry must be an int')
