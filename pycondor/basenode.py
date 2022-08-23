@@ -2,6 +2,7 @@
 import os
 import time
 import glob
+import logging
 
 from . import utils
 
@@ -34,7 +35,7 @@ class BaseNode(object):
         self.children = []
 
         # Set up logger
-        self.logger = utils._setup_logger(self, verbose)
+        self.logger = logging.getLogger(self.__module__)
 
     def _get_fancyname(self):
 
