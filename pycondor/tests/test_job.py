@@ -90,21 +90,27 @@ def test_add_parents_type_fail(job):
         job.add_parents([1, 2, 3, 4])
 
 
-def test_queue_written_to_submit_file(tmpdir):
+@pytest.mark.parametrize('queue', [None, 5, 'arg from 1, 2, 3'])
+def test_queue_written_to_submit_file(tmpdir, queue):
     # Test to check that the queue parameter is properly written
     # to submit file when Job is created. See issue #38.
 
     submit_dir = str(tmpdir.mkdir('submit'))
 
-    # Build Job object with queue=5
-    job = Job('jobname', example_script, submit=submit_dir, queue=5)
+    # Build Job object with indicated queue command
+    job = Job('jobname', example_script, submit=submit_dir, queue=queue)
     job.build(fancyname=False)
 
-    # Read the built submit file and check that the 'queue 5' is
-    # contained in the file.
+    # Read the built submit file and check that the
+    # expecteed queue command is contained in the file.
     with open(job.submit_file, 'r') as f:
         lines = f.readlines()
-    assert 'queue 5' in lines
+
+    if queue is not None:
+        assert f'queue {queue}' in lines
+    else:
+        assert 'queue' in lines
+    
 
 
 def test_job_submit_env_variable_dir(tmpdir, monkeypatch):

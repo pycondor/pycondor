@@ -81,8 +81,10 @@ class Job(BaseNode):
     requirements : str or None, optional
         Additional requirements to be included in ClassAd.
 
-    queue : int or None, optional
-        Integer specifying how many times you would like this job to run.
+    queue : int, str, or None, optional
+        Either an integer specifying how many times
+        you would like this job to run, or a string to
+        append after 'queue' in the submit file.
 
     extra_lines : list or None, optional
         List of additional lines to be added to submit file.
@@ -305,9 +307,7 @@ class Job(BaseNode):
         if self.extra_lines:
             lines.extend(self.extra_lines)
 
-        # Add arguments and queue line
-        if self.queue is not None and not isinstance(self.queue, int):
-            raise ValueError('queue must be of type int')
+        # Add arguments
         # If building this submit file for a job that's being managed by DAGMan
         # just add simple arguments and queue lines
         if indag:
@@ -315,10 +315,6 @@ class Job(BaseNode):
                 lines.append('arguments = $(ARGS)')
             if self._has_arg_names:
                 lines.append('job_name = $(job_name)')
-            if self.queue:
-                lines.append('queue {}'.format(self.queue))
-            else:
-                lines.append('queue')
         else:
             if self.args and self.queue:
                 if len(self.args) > 1:
@@ -329,7 +325,6 @@ class Job(BaseNode):
                     arg = self.args[0].arg
                     lines.append('arguments = {}'.format(string_rep(arg,
                                                          quotes=True)))
-                    lines.append('queue {}'.format(self.queue))
             # Any arguments supplied will be taken care of via the queue line
             elif self.args:
                 for arg, arg_name, _ in self.args:
@@ -340,11 +335,10 @@ class Job(BaseNode):
                         lines.append('job_name = {}_{}'.format(name, arg_name))
                     else:
                         lines.append('job_name = {}'.format(name))
-                    lines.append('queue')
-            elif self.queue:
-                lines.append('queue {}'.format(self.queue))
-            else:
-                lines.append('queue')
+
+        # write queue line last, only specifying
+        # 'queue' if self.queue is None
+        lines.append(f'queue {self.queue or ""}'.rstrip())
 
         with open(submit_file, 'w') as f:
             f.writelines('\n'.join(lines))
