@@ -6,7 +6,6 @@ from pycondor.utils import (clear_pycondor_environment_variables, checkdir,
                             assert_command_exists, get_condor_version,
                             parse_condor_version, split_command_string,
                             decode_string)
-from pycondor.compatibility import string_types
 
 
 def test_string_rep_None_fail():
@@ -109,7 +108,7 @@ def test_split_command_string():
 def test_decode_string(s):
     decoded = decode_string(s)
     # Check type
-    assert isinstance(decoded, string_types)
+    assert isinstance(decoded, str)
 
     if hasattr(s, 'decode'):
         expected = s.decode('utf-8')
