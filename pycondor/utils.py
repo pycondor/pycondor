@@ -8,9 +8,6 @@ import shutil
 import shlex
 import platform
 from functools import wraps
-# Note that spawn isn't in namespace if import distutils is used
-# Must use from distutils import spawn
-from distutils import spawn
 
 
 # Specify logging settings
@@ -112,12 +109,7 @@ def clear_pycondor_environment_variables():
 
 
 def assert_command_exists(cmd):
-    version_major = sys.version_info.major
-    version_minor = sys.version_info.minor
-    if (version_major, version_minor) >= (3, 3):
-        cmd_path = shutil.which(cmd)
-    else:
-        cmd_path = spawn.find_executable(cmd)
+    cmd_path = shutil.which(cmd)
 
     if cmd_path is None:
         raise OSError(
