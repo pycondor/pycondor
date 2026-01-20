@@ -42,9 +42,9 @@ extensions = ['sphinx.ext.autodoc',
               ]
 
 extlinks = {
-    'issue': ('https://github.com/pycondor/pycondor/issues/%s', 'Issue #'),
-    'pr': ('https://github.com/pycondor/pycondor/pull/%s', 'PR #'),
-    'user': ('https://github.com/%s', '@'),
+    'issue': ('https://github.com/pycondor/pycondor/issues/%s', 'Issue #%s'),
+    'pr': ('https://github.com/pycondor/pycondor/pull/%s', 'PR #%s'),
+    'user': ('https://github.com/%s', '@%s'),
 }
 
 # this is needed for some reason...
@@ -114,7 +114,7 @@ html_static_path = ['_static']
 
 
 def setup(app):
-    app.add_stylesheet('custom.css')
+    app.add_css_file('custom.css')
 
 
 html_sidebars = {
