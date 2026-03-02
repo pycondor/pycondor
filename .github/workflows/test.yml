@@ -1,11 +1,11 @@
 # -----------------------
 #
-# Run a full build-and-test from the git repo
-# using pip to install all dependencies.
+# Run the test suite from the git repo
+# using uv to install all dependencies.
 #
 # -----------------------
 
-name: Build and test
+name: Python test
 
 on:
   push:
