@@ -1,0 +1,61 @@
+name: Publish Python distribution to PyPI
+
+# Build the distributions on every push/PR,
+# but we only publish to PyPI when a tag is pushed.
+on:
+  push:
+    branches:
+      - main
+      - master
+      - release/**
+  pull_request:
+    branches:
+      - main
+      - master
+      - release/**
+
+jobs:
+  build:
+    name: Build distributions
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Build a binary wheel and a source tarball
+        run: uv build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  publish-to-pypi:
+    # only publish to PyPI on tag pushes
+    if: startsWith(github.ref, 'refs/tags/')
+
+    name: Publish Python distributions to PyPI
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pycondor
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v8
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
