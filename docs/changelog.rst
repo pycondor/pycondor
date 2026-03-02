@@ -26,7 +26,7 @@ Version 0.7.0 (TBC)
 -
 
 Version 0.6.0 (2022-07-13)
--------------------
+--------------------------
 
 Bug fix release to get development started again.
 

@@ -1,0 +1,147 @@
+[build-system]
+requires = [
+    "setuptools>=64",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PyCondor"
+description = "Python utility for HTCondor"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+authors = [
+    {name = "James Bourbeau", email = "james@jamesbourbeau.com"},
+]
+maintainers = [
+    {name = "Duncan Macleod", email = "macleoddm@cardiff.ac.uk"},
+    {name = "Greg Ashton", email = "gregory.ashton@ligo.org"}
+]
+keywords = [
+    "computing",
+    "condor",
+    "htcondor",
+    "high-throughput",
+    "python",
+    "tool",
+    "utility",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Build Tools",
+]
+dependencies = [
+    "click",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/pycondor/pycondor"
+Repository = "https://github.com/pycondor/pycondor"
+Documentation = "https://pycondor.readthedocs.io"
+"Bug Tracker" = "https://github.com/pycondor/pycondor/issues"
+
+[dependency-groups]
+dev = [
+    {"include-group" = "docs"},
+    {"include-group" = "test"},
+    "build",
+    "ruff",
+]
+docs = [
+    "numpydoc",
+    "sphinx",
+    "sphinx-click",
+    "sphinx_rtd_theme",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+
+[project.scripts]
+pycondor = "pycondor.cli:cli"
+
+# -- tools ------------------
+
+# -- Coverage.py
+
+[tool.coverage.paths]
+source = [
+    "pycondor/",
+    "*/pycondor/",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    # ignore when asked
+    "pragma: no( |-)cover",
+    # don't complain about typing blocks
+    "if (typing\\.)?TYPE_CHECKING",
+    # don't complain about __main__ blocks
+    "if __name__ == '__main__'",
+]
+omit = [
+    # don't report coverage for _version.py
+    # (generated automatically by setuptools-scm)
+    "*/_version.py",
+]
+# print report with one decimal point
+precision = 1
+
+# -- PyTest
+
+[tool.pytest.ini_options]
+addopts = "-sv"
+
+# -- Ruff
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN",  # missing type annotations
+    "D203",  # blank line before class docstring
+    "D213",  # docstring summary on second line
+    "D413",  # blank line after last section
+    "EM",  # error formatting
+    "ICN001",  # unconventional import alias
+    "PLC0415",  # import outside top level
+    "PLR0913",  # too many arguments
+    "Q",  # quote style
+    "SIM108",  # if-else instead of ternary if
+    "TID252",  # relative imports
+]
+future-annotations = true
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401",  # unused import
+]
+"*/tests/*" = [
+    "S101",  # assert
+]
+"docs/*" = [
+    "D",  # docstrings
+]
+
+# -- Setuptools
+
+[tool.setuptools.packages.find]
+include = [
+    "pycondor*",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "pycondor.__version__.__version__"}
