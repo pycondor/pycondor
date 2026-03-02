@@ -6,24 +6,12 @@
 Release Notes
 *************
 
-Version 0.7.0 (TBC)
+Version 0.6.1 (2026-03-02)
 -------------------
-
-**New Features**:
-
--
-
-**Changes**:
-
--
 
 **Bug Fixes**:
 
--
-
-**Documentation**:
-
--
+- Remove use of distutils stdlib module, update package metadata (See :pr:`159`)
 
 Version 0.6.0 (2022-07-13)
 --------------------------
