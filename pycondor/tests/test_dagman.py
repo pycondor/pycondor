@@ -294,3 +294,45 @@ def test_dagman_add_node_ignores_duplicates(tmpdir, dagman):
     dagman.add_job(job)
 
     assert dagman.nodes == [job]
+
+
+def test_dagman_prescript(tmpdir, dagman):
+    submit_dir = str(tmpdir.join('submit'))
+    job = Job(
+        'job', example_script, submit=submit_dir,
+        pre_script="{} --length 2".format(example_script)
+    )
+    dagman.add_job(job)
+    dagman.build()
+    with open(dagman.submit_file) as dagfile:
+        dag = dagfile.read()
+
+    assert "SCRIPT PRE {} {}".format(job.submit_name, job.pre_script) in dag
+
+
+def test_dagman_postscript(tmpdir, dagman):
+    submit_dir = str(tmpdir.join('submit'))
+    job = Job(
+        'job', example_script, submit=submit_dir,
+        post_script="{} --length 2".format(example_script)
+    )
+    dagman.add_job(job)
+    dagman.build()
+    with open(dagman.submit_file) as dagfile:
+        dag = dagfile.read()
+
+    assert "SCRIPT POST {} {}".format(job.submit_name, job.post_script) in dag
+
+
+def test_dagman_holdscript(tmpdir, dagman):
+    submit_dir = str(tmpdir.join('submit'))
+    job = Job(
+        'job', example_script, submit=submit_dir,
+        hold_script="{} --length 2".format(example_script)
+    )
+    dagman.add_job(job)
+    dagman.build()
+    with open(dagman.submit_file) as dagfile:
+        dag = dagfile.read()
+
+    assert "SCRIPT HOLD {} {}".format(job.submit_name, job.hold_script) in dag
