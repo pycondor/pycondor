@@ -1,5 +1,6 @@
 
 import os
+import re
 import subprocess
 from collections import namedtuple
 try:
@@ -7,11 +8,16 @@ try:
 except ImportError:  # python < 3.3
     from collections import Iterable
 
+from .cluster import JobCluster
 from .utils import (checkdir, string_rep, requires_command,
                     split_command_string, decode_string)
 from .basenode import BaseNode
 
 JobArg = namedtuple('JobArg', ['arg', 'name', 'retry'])
+
+
+class FailedSubmitError(Exception):
+    pass
 
 
 class Job(BaseNode):
@@ -410,8 +416,8 @@ class Job(BaseNode):
 
         Returns
         -------
-        self : object
-            Returns self.
+        cluster : JobCluster
+            Returns a JobCluster corresponding to the id of the submitted job.
 
         Examples
         --------
@@ -443,9 +449,24 @@ class Job(BaseNode):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         out, err = proc.communicate()
-        print(decode_string(out))
 
-        return self
+        # check if the job submission reported any errors
+        if err:
+            msg = err.strip().replace('ERROR: ', '')
+            raise FailedSubmitError(msg)
+
+        # otherwise, try to parse the stdout to determine
+        # the id of the cluster of submitted jobs
+        match = re.search(r'(?<=submitted\sto\scluster )[0-9]+', out)
+        if match is None:
+            raise ValueError(
+                'Something went wrong, couldn\'t retrieve cluster id '
+                'from daemon response: "{}"'.format(out)
+            )
+        cluster_id = match.group(0)
+
+        # return an object for interacting with this cluster
+        return JobCluster(cluster_id)
 
     @requires_command('condor_submit')
     def build_submit(self, makedirs=True, fancyname=True, submit_options=None):
@@ -471,10 +492,9 @@ class Job(BaseNode):
 
         Returns
         -------
-        self : object
-            Returns self.
+        cluster : JobCluster
+            Returns a JobCluster corresponding to the id of the submitted job.
         """
         self.build(makedirs, fancyname)
-        self.submit_job(submit_options=submit_options)
+        return self.submit_job(submit_options=submit_options)
 
-        return self
